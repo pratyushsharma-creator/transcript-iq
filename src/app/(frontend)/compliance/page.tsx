@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: 'Compliance Framework',
   description:
     'How Transcript IQ screens experts, protects clients, and ensures every research product meets MNPI, SEC, and FCA standards.',
+  robots: { index: false, follow: false },
 }
 
 export default function CompliancePage() {

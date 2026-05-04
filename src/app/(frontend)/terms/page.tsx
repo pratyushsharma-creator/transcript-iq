@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: 'Terms of Engagement',
   description:
     'Terms governing access to and use of expert call transcripts and earnings analysis briefs on the Transcript IQ platform.',
+  robots: { index: false, follow: false },
 }
 
 const LAST_UPDATED = '1 May 2026'
