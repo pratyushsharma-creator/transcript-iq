@@ -2,7 +2,8 @@ const BASE_URL = 'https://transcript-iq.com'
 
 /** Returns the full canonical URL for a given path */
 export function canonical(path: string): string {
-  return `${BASE_URL}${path}`
+  const normalised = path.startsWith('/') ? path : `/${path}`
+  return `${BASE_URL}${normalised}`
 }
 
 /** Truncates a string to maxLen chars, appending '…' if cut */
@@ -16,13 +17,13 @@ export function truncate(str: string | null | undefined, maxLen = 155): string {
 export type SectorMeta = { title: string; description: string }
 
 export const SECTOR_META: Record<string, SectorMeta> = {
-  'technology-saas': {
-    title: 'Technology & SaaS Expert Call Transcripts',
+  'technology-software': {
+    title: 'Technology & Software Expert Call Transcripts',
     description:
       'Former executives from Tier-1 SaaS, semiconductor, and cloud companies. MNPI-screened. Buy individual transcripts from $349.',
   },
-  'healthcare-pharma': {
-    title: 'Healthcare & Pharma Expert Call Transcripts',
+  'healthcare-life-sciences': {
+    title: 'Healthcare & Life Sciences Expert Call Transcripts',
     description:
       'Former pharma, biotech, and medical device executives. Regulatory, pricing, pipeline dynamics. MNPI-screened.',
   },
