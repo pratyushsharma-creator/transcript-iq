@@ -5,6 +5,8 @@ import { notFound } from 'next/navigation'
 import config from '@/payload.config'
 import { TranscriptProductPage } from '@/components/product/TranscriptProductPage'
 import type { RelatedTranscript } from '@/components/product/TranscriptProductPage'
+import { productSchema, breadcrumbSchema, JsonLd } from '@/lib/seo/jsonld'
+import { canonical, truncate } from '@/lib/seo/metadata'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,20 +26,25 @@ async function getTranscript(slug: string) {
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params
   const transcript = await getTranscript(slug)
-  if (!transcript) return { title: 'Transcript Not Found' }
+  if (!transcript) return { title: 'Transcript Not Found', robots: { index: false } }
 
   const tier = transcript.tier
     ? `${transcript.tier.charAt(0).toUpperCase()}${transcript.tier.slice(1)}`
     : 'Expert'
+  const price = transcript.priceUsd ?? 349
+  const description =
+    transcript.summary
+      ? truncate(transcript.summary, 155)
+      : `${tier} expert call transcript. MNPI-screened, compliance certified. Available from $${price}.`
 
   return {
-    title: transcript.title,
-    description:
-      transcript.summary ??
-      `${tier} expert call transcript. MNPI-screened, PII-redacted. Available for $${transcript.priceUsd}.`,
+    title: `${transcript.title} — Expert Call Transcript`,
+    description,
+    alternates: { canonical: canonical(`/expert-transcripts/${slug}`) },
     openGraph: {
       title: `${transcript.title} | Expert Transcript — Transcript IQ`,
-      description: transcript.summary ?? undefined,
+      description,
+      url: canonical(`/expert-transcripts/${slug}`),
       type: 'website',
     },
   }
@@ -82,6 +89,16 @@ export default async function ExpertTranscriptDetailPage({ params }: { params: P
     geography: r.geography as RelatedTranscript['geography'],
   }))
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return <TranscriptProductPage transcript={transcript as any} related={related} />
+  return (
+    <>
+      <JsonLd schema={productSchema(transcript as any)} />
+      <JsonLd schema={breadcrumbSchema([
+        { name: 'Home', url: 'https://transcript-iq.com' },
+        { name: 'Expert Transcripts', url: 'https://transcript-iq.com/expert-transcripts' },
+        { name: transcript.title, url: `https://transcript-iq.com/expert-transcripts/${slug}` },
+      ])} />
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      <TranscriptProductPage transcript={transcript as any} related={related} />
+    </>
+  )
 }
