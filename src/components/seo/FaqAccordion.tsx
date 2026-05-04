@@ -83,20 +83,19 @@ export function FaqAccordion({
                 +
               </span>
             </button>
-            {open === i && (
-              <div
-                id={`faq-panel-${i}`}
-                style={{
-                  padding: '0 20px 18px',
-                  fontSize: 14,
-                  color: 'var(--ink-2)',
-                  lineHeight: 1.72,
-                  background: 'var(--s1)',
-                }}
-              >
-                {faq.answer}
-              </div>
-            )}
+            <div
+              id={`faq-panel-${i}`}
+              hidden={open !== i}
+              style={{
+                padding: '0 20px 18px',
+                fontSize: 14,
+                color: 'var(--ink-2)',
+                lineHeight: 1.72,
+                background: 'var(--s1)',
+              }}
+            >
+              {faq.answer}
+            </div>
           </div>
         ))}
       </div>
