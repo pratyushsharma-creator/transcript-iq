@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'motion/react'
+import Image from 'next/image'
 import { Info, AlertTriangle, CheckCircle, FileText } from 'lucide-react'
 import { SectionShell, SectionHeader, MintGradientHeading } from './SectionShell'
 import { CTAButtons } from './CTAButtons'
@@ -78,9 +79,11 @@ export function PullQuoteRenderer({ block }: { block: PullQuoteBlock }) {
         {(block.attributionName || block.attributionRole) && (
           <div className="mt-6 flex items-center justify-center gap-3">
             {block.attributionImage?.url && (
-              <img
+              <Image
                 src={block.attributionImage.url}
                 alt={block.attributionName ?? ''}
+                width={36}
+                height={36}
                 className="h-9 w-9 rounded-full border border-[var(--border)] object-cover"
               />
             )}

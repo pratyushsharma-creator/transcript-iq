@@ -199,12 +199,12 @@ export function ImageRevealRenderer({ block }: { block: ImageRevealBlock }) {
       />
       <div ref={ref} className="relative mx-auto aspect-[16/9] w-full max-w-5xl overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
         {block.image.url ? (
-          <motion.img
-            src={block.image.url}
-            alt={block.image.alt ?? ''}
+          <motion.div
             style={style === 'iris' ? { clipPath: clipValue as never } : { clipPath: clipValue as never }}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
+            className="absolute inset-0"
+          >
+            <Image src={block.image.url} alt={block.image.alt ?? ''} fill className="object-cover" />
+          </motion.div>
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-variant-mesh">
             <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--mist)]">[Image]</span>
