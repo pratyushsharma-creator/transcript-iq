@@ -1,31 +1,18 @@
 import type { Metadata } from 'next'
-import type { Where } from 'payload'
-import { getPayload } from 'payload'
 import { notFound } from 'next/navigation'
-import config from '@/payload.config'
 import { TranscriptProductPage } from '@/components/product/TranscriptProductPage'
 import type { RelatedTranscript } from '@/components/product/TranscriptProductPage'
 import { productSchema, breadcrumbSchema, JsonLd } from '@/lib/seo/jsonld'
 import { canonical, truncate } from '@/lib/seo/metadata'
+import { getTranscriptBySlug, getRelatedTranscripts } from '@/lib/cache/queries'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 86400
 
 type Params = Promise<{ slug: string }>
 
-async function getTranscript(slug: string) {
-  const payload = await getPayload({ config: await config })
-  const { docs } = await payload.find({
-    collection: 'expert-transcripts',
-    where: { slug: { equals: slug } },
-    limit: 1,
-    depth: 2,
-  })
-  return docs[0] ?? null
-}
-
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params
-  const transcript = await getTranscript(slug)
+  const transcript = await getTranscriptBySlug(slug)
   if (!transcript) return { title: 'Transcript Not Found', robots: { index: false } }
 
   const tier = transcript.tier
@@ -52,7 +39,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
 export default async function ExpertTranscriptDetailPage({ params }: { params: Params }) {
   const { slug } = await params
-  const transcript = await getTranscript(slug)
+  const transcript = await getTranscriptBySlug(slug)
   if (!transcript) notFound()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -61,18 +48,7 @@ export default async function ExpertTranscriptDetailPage({ params }: { params: P
   ) as Array<{ id: string; name: string; slug: string }>
   const sectorSlugs = sectors.map(s => s.slug)
 
-  const payload = await getPayload({ config: await config })
-  const relatedWhere: Where = sectorSlugs.length > 0
-    ? { and: [{ slug: { not_equals: slug } }, { 'sectors.slug': { in: sectorSlugs } }] }
-    : { slug: { not_equals: slug } }
-
-  const { docs: relatedDocs } = await payload.find({
-    collection: 'expert-transcripts',
-    where: relatedWhere,
-    limit: 3,
-    sort: '-dateConducted',
-    depth: 1,
-  })
+  const relatedDocs = await getRelatedTranscripts(slug, sectorSlugs)
 
   const related: RelatedTranscript[] = relatedDocs.map(r => ({
     id: String(r.id),
