@@ -115,7 +115,9 @@ content.
 | `/resources/[slug]` | 0.7 | weekly | Payload `blog-posts` |
 
 **Excluded:** `/admin/**`, `/checkout/**`, `/api/**`, `/styleguide`, `/privacy`,
-`/terms`, `/compliance`, `/contact`
+`/terms`, `/compliance`
+
+**Included (not excluded):** `/contact` — this is a conversion page and should be indexed.
 
 **Implementation note:** `export const revalidate = 3600` — sitemap rebuilds hourly so
 newly published content propagates within one hour without a deploy.
@@ -149,6 +151,8 @@ The following pages must not be indexed. They receive
 - `/compliance`
 - `/styleguide`
 
+`/contact` is **intentionally indexed** — it is a conversion page.
+
 ### 4.4 Canonical URLs
 
 Every `generateMetadata` call includes `alternates: { canonical: 'https://transcript-iq.com/[path]' }`.
@@ -172,7 +176,8 @@ metadataBase:    https://transcript-iq.com
 openGraph.siteName: Transcript IQ
 openGraph.type:  website
 twitter.card:    summary_large_image
-twitter.site:    @TranscriptIQ (to be confirmed)
+twitter.site:    omitted until a Twitter/X handle is confirmed (omitting is safe — cards
+                 still render without it)
 ```
 
 ### 5.2 Static page metadata
@@ -239,20 +244,28 @@ All images: 1200 × 630px, dark background, brand font (Geist).
 - Layout: article title (max 3 lines, 48px), category badge top-left
 - Bottom: author name + published date + "transcript-iq.com"
 
-All OG images use `edge` runtime and `revalidate = 86400` (regenerate daily).
+All OG images use `edge` runtime. **No `revalidate` is set** — images are generated on
+first request and cached by Vercel's CDN indefinitely (or until a new deploy). This
+avoids the cold-start problem where a newly published transcript has a broken OG image
+for up to 24 hours. On first social share, the image generates in ~300ms at the edge.
+If content changes (title edit), a Vercel cache purge or new deploy regenerates it.
 
 ---
 
 ## 7. JSON-LD Structured Data
 
 All schemas built in `src/lib/seo/jsonld.ts` as typed functions returning plain objects.
-Injected as `<script type="application/ld+json">` in server component `<head>` via
-`generateMetadata` or direct JSX in the page.
+Each builder function wraps its output with `"@context": "https://schema.org"` so callers
+never need to add it manually. Injected as `<script type="application/ld+json">` in
+server component `<head>` via `generateMetadata` or direct JSX in the page. Multiple
+schemas on one page are injected as separate `<script>` tags (not an array), which is
+the pattern that passes the Google Rich Results Test most reliably.
 
 ### 7.1 Organization (homepage only)
 
 ```json
 {
+  "@context": "https://schema.org",
   "@type": "Organization",
   "name": "Transcript IQ",
   "url": "https://transcript-iq.com",
@@ -413,33 +426,174 @@ defaults for editorial control.
 
 ### 8.2 Expert Transcripts Index FAQs (7 questions)
 
-1. What expert levels are available?
-2. How are transcripts screened for MNPI?
-3. Can I preview a transcript before buying?
-4. What file format do I receive?
-5. How many transcripts are in the library?
-6. Are new transcripts added regularly?
-7. Do you offer bulk or team pricing?
+1. **What expert levels are available?**
+   Three levels: Standard (Director and Senior Manager, $349), Premium (VP and SVP, $449),
+   and Elite (C-suite: CEO, CFO, CTO, COO, $599). The level reflects the seniority of the
+   practitioner who participated in the call, not the complexity of the content.
+
+2. **How are transcripts screened for MNPI?**
+   Every transcript undergoes a compliance review by the Nextyn team before publication.
+   The review checks for forward-looking guidance, undisclosed financial information,
+   customer-specific data, and regulatory non-public information. Each document that passes
+   receives a compliance certification with the review date and methodology. Documents that
+   do not pass are not published.
+
+3. **Can I preview a transcript before buying?**
+   Yes. Every transcript listing includes a moderator-written executive summary (150–300
+   words) covering the key themes, expert background, and main findings. You can assess
+   relevance from the summary before purchasing the full document.
+
+4. **What file format do I receive?**
+   PDF. The document is downloaded immediately after purchase and is yours to keep. It is
+   not locked inside a platform — you can store, share, and cite it freely within your
+   organisation.
+
+5. **How many transcripts are in the library?**
+   77+ published transcripts at launch, across 12 industry sectors. New transcripts are
+   added regularly. If you need a transcript on a topic not currently in the library, you
+   can commission a custom expert call.
+
+6. **Are new transcripts added regularly?**
+   Yes. New transcripts are added to the library as they are produced and cleared through
+   the MNPI review process. Subscribe to the research newsletter for notifications when
+   transcripts relevant to your sectors are published.
+
+7. **Do you offer bulk or team pricing?**
+   Custom pricing is available for teams purchasing five or more transcripts. Contact us
+   at the link below to discuss volume pricing and team access arrangements.
 
 ### 8.3 Free Transcript FAQs (5 questions)
 
-1. What do I get in the free transcript?
-2. Do I need a credit card?
-3. Can I get more than one free transcript?
-4. Is the free transcript a full document or a summary?
-5. How do I qualify for a free transcript?
+1. **What do I get in the free transcript?**
+   A full expert call transcript — the same format and quality as a paid document.
+   Verbatim dialogue, expert profile, compliance certification, and sector tags. The free
+   transcript is matched to the industry sector you specify when you sign up.
+
+2. **Do I need a credit card?**
+   No. A work email address and a sector selection are all that is required. No payment
+   information is collected at any point in the free transcript flow.
+
+3. **Can I get more than one free transcript?**
+   One free transcript is available per registered email address. Additional transcripts
+   are available for purchase from $349.
+
+4. **Is the free transcript a full document or a summary?**
+   It is the full verbatim transcript — not an excerpt or a summary. The only difference
+   between the free transcript and a paid document is that the free transcript is selected
+   by the Transcript IQ team based on your sector, rather than chosen by you from the
+   full library.
+
+5. **How do I qualify for a free transcript?**
+   Register with a work email address (institutional email preferred) and select your
+   primary research sector. The matched transcript is delivered to your inbox within
+   one business day.
 
 ### 8.4 Per-article FAQs (`/resources/[slug]`)
 
-Each of the 6 blog posts gets 3–5 article-specific FAQs targeting the "People Also Ask"
-cluster for that article's primary keyword. Stored in `faq-data.ts` keyed by slug.
+Each blog post gets 4–5 FAQs targeting the "People Also Ask" cluster for the article's
+primary keyword. Stored in `faq-data.ts` keyed by slug. Full Q&A pairs follow.
 
-Example for `what-are-expert-call-transcripts`:
-1. What is an expert call transcript?
-2. How long is a typical expert call transcript?
-3. What is the difference between an expert call transcript and an earnings call transcript?
-4. Are expert call transcripts legal to use?
-5. Where can I buy expert call transcripts?
+**Slug: `what-are-expert-call-transcripts`**
+1. **What is an expert call transcript?** A verbatim record of a structured conversation
+   between an institutional researcher and an industry practitioner — typically a former
+   executive or sector specialist. Used for primary research in investment analysis, deal
+   diligence, and strategy engagements.
+2. **How long is a typical expert call transcript?** A standard 45–60 minute expert call
+   produces 8,000–12,000 words of verbatim dialogue. At a comfortable reading pace, that
+   is 30–40 minutes.
+3. **What is the difference between an expert call transcript and an earnings call
+   transcript?** An earnings call transcript records the formal quarterly investor call
+   between company management and the public market. An expert call transcript records a
+   private, structured conversation with a practitioner who has direct operating experience
+   — typically a former employee, supplier, or customer of the company being researched.
+4. **Are expert call transcripts legal to use?** Yes, when sourced from a reputable
+   provider that conducts MNPI screening. The legal framework is well established: expert
+   networks have operated within SEC and FCA guidance for over two decades.
+5. **Where can I buy expert call transcripts?** Transcript IQ offers individual expert
+   call transcripts from $349 per document, with no subscription required. Browse 77+
+   published transcripts at transcript-iq.com/expert-transcripts.
+
+**Slug: `expert-call-transcript-to-investment-memo-workflow`**
+1. **How do you use an expert call transcript in an investment memo?** Identify the 2–3
+   insights from the transcript that directly bear on your thesis. Write those as explicit
+   sentences connecting the expert's view to your investment case. Cite as: Expert call,
+   [Sector], via Transcript IQ, [Date].
+2. **What is the difference between summarising and synthesising a transcript?** A summary
+   answers "what did the expert say?" A synthesis answers "what does that mean for my
+   thesis?" IC memos need synthesis, not summaries.
+3. **How many transcripts do you need for a conviction investment thesis?** Three to five
+   transcripts from independent sources covering the same question generates a pattern.
+   Convergent views build conviction; divergent views reveal the most interesting
+   analytical question.
+4. **Can I cite an expert call transcript in a regulated investment process?** Yes. Each
+   Transcript IQ document includes a compliance certification. Recommended citation:
+   Expert call, [Sector], via Transcript IQ, [Date].
+
+**Slug: `hedge-fund-expert-transcripts-earnings-research`**
+1. **How do hedge funds use expert call transcripts for earnings research?** Primarily
+   for channel checks (demand, pricing, competitive dynamics), management quality
+   calibration, thesis stress-testing before the call, and post-earnings variance
+   analysis.
+2. **How much does a quarterly transcript library cost?** At Transcript IQ pricing,
+   maintaining a refresh library for 15 positions costs approximately $3,000–$5,000 per
+   quarter — a fraction of the cost of a platform subscription or fresh expert call
+   programme.
+3. **When should you buy transcripts relative to earnings season?** Ideally 2–3 weeks
+   before the earnings date, to allow time for two reads and synthesis before the call.
+4. **Can transcripts replace fresh expert calls for earnings prep?** For structural
+   questions (competitive dynamics, management quality, cost structure), existing
+   transcripts are usually sufficient. For time-sensitive questions (what happened in the
+   last 90 days), a fresh call is still the right tool.
+
+**Slug: `mnpi-compliance-expert-networks-analyst-guide`**
+1. **What is MNPI in the context of expert networks?** Material Non-Public Information —
+   information a reasonable investor would consider significant for an investment decision
+   that has not been publicly disclosed. In expert network research, MNPI risk arises when
+   an expert inadvertently discloses forward-looking financial guidance, customer data, or
+   non-public regulatory developments.
+2. **How do expert network platforms screen for MNPI?** Most platforms use a combination
+   of pre-call compliance training for experts, interviewer guidelines, and post-call
+   review of transcripts or notes. The weakness is reliance on self-disclosure by the
+   expert. Transcript IQ reviews each transcript against a compliance framework before
+   publication.
+3. **What does a transcript compliance certificate include?** The compliance certification
+   date, the review methodology used, confirmation that no MNPI was identified, and the
+   expert anonymisation confirmation.
+4. **What should institutional compliance teams ask when approving a transcript platform?**
+   Evidence of MNPI screening methodology, expert anonymisation practice, audit trail
+   capability, and the format of the compliance certification. All four are addressed in
+   the Transcript IQ compliance documentation.
+
+**Slug: `tegus-vs-third-bridge-vs-transcript-iq-cost-comparison`**
+1. **How much does a Tegus subscription cost?** Tegus typically starts at approximately
+   $15,000–$30,000 per user per year, depending on access tier and library scope. Pricing
+   is negotiated and not publicly listed.
+2. **What is the break-even point between a subscription and per-transcript pricing?**
+   Roughly 25–30 transcripts per user per year. Below that, per-transcript pricing is
+   almost always more cost-efficient.
+3. **Is Transcript IQ cheaper than Tegus?** For episodic research needs (fewer than 25
+   transcripts per user per year), yes — significantly. For high-frequency users reading
+   50+ transcripts per year, a subscription platform may offer better unit economics.
+4. **Do per-transcript providers have smaller libraries than subscription platforms?**
+   Yes, currently. Tegus has tens of thousands of transcripts; Transcript IQ launched with
+   77+. The gap narrows for teams with specific sector focus — and Transcript IQ offers
+   custom commissioning for topics not in the library.
+
+**Slug: `pe-expert-networks-deal-diligence-transcripts`**
+1. **How do PE firms use expert networks in deal diligence?** Primarily for sector
+   orientation at the start of a new process, management quality calibration, competitive
+   positioning analysis, and customer/supplier perspective on the target.
+2. **How many expert calls does a PE deal team typically run per transaction?** Varies
+   significantly by deal size and process length. Mid-market PE teams commonly run 4–10
+   expert interactions per transaction; large-cap teams may run 20+.
+3. **What is the advantage of buying existing transcripts over commissioning fresh
+   calls?** Immediate availability (minutes vs 3–7 business days), lower cost, and the
+   ability to read before committing to a deeper primary research programme. Transcripts
+   are a screening tool; fresh calls are for confirmed priority questions.
+4. **Can Transcript IQ transcripts be used in an IC memo for a PE deal?** Yes. Each
+   document includes a compliance certification. Cite as: Expert call, [Sector], via
+   Transcript IQ, [Date]. This satisfies institutional compliance documentation
+   requirements.
 
 ---
 
