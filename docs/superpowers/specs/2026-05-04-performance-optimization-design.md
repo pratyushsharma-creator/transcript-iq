@@ -47,7 +47,7 @@ Three-layer caching stack:
 
 ### `unstable_cache` pattern
 
-Every Payload query that is currently called directly inside a Server Component must be wrapped:
+Every Payload query that is currently called directly inside a Server Component must be wrapped. **This includes `generateMetadata` functions** — both the page default export and `generateMetadata` must import from the same cached helper in `src/lib/cache/queries.ts`. A `generateMetadata` that calls Payload directly (not via the cached helper) bypasses ISR and hits the database on every metadata generation request.
 
 ```typescript
 import { unstable_cache } from 'next/cache'
@@ -151,13 +151,20 @@ Wrap the `findGlobal` call with `unstable_cache` at module scope (outside the co
 ```typescript
 const getCachedSiteSettings = unstable_cache(
   async () => {
-    const payload = await getPayload({ config: await config })
-    return payload.findGlobal({ slug: 'site-settings', depth: 1 })
+    try {
+      const payload = await getPayload({ config: await config })
+      return await payload.findGlobal({ slug: 'site-settings', depth: 1 })
+    } catch {
+      // SiteSettings not yet saved, or DB unavailable — return null so layout falls back to wordmark
+      return null
+    }
   },
   ['site-settings'],
   { tags: ['site-settings'], revalidate: 86400 }
 )
 ```
+
+The try/catch mirrors the existing layout pattern — if SiteSettings has never been saved (fresh install) or the DB is unavailable on cold start, the function returns `null` rather than throwing. Without this guard, `unstable_cache` would cache the thrown error and every subsequent request would also fail until the 24h TTL expires.
 
 The 24h TTL is a safety net. The `SiteSettings` global hook (Section 2) will clear this cache within seconds of any admin save, so in practice the TTL never expires in normal operation.
 
@@ -169,51 +176,64 @@ The 24h TTL is a safety net. The `SiteSettings` global hook (Section 2) will cle
 
 ### Config change — `next.config.ts`
 
-Add `remotePatterns` for Vercel Blob so `next/image` can serve and optimize externally-hosted images:
+**Add** `remotePatterns` to the existing `images` block. The existing `localPatterns` entry (`/api/media/file/**`) stays as-is — do not modify or replace it. Only add the new `remotePatterns` array:
 
 ```typescript
 images: {
+  // ADD this — new, does not exist today
   remotePatterns: [
     {
       protocol: 'https',
       hostname: '*.public.blob.vercel-storage.com',
     },
   ],
+  // KEEP this exactly as-is — already exists
   localPatterns: [
     {
       pathname: '/api/media/file/**',
-      search: '',
     },
   ],
 },
 ```
 
-Without this, any `next/image` pointing at a Blob URL will throw a runtime error.
+Without the `remotePatterns` entry, any `next/image` pointing at a Vercel Blob URL (`*.public.blob.vercel-storage.com`) will throw a runtime error at the time the image is requested.
 
 ### Scope of `<img>` → `<Image>` migration
 
-Three locations contain raw `<img>` tags rendering actual content (not decorative CSS/SVG):
+Raw `<img>` tags exist in 10 files — one site component and nine block components. All block components are `'use client'`; `next/image` is compatible with client components.
 
-| File | What it renders | Dimensions source |
+| File | `<img>` count | Notes |
 |---|---|---|
-| `src/components/site/Header.tsx` | Site logo (from SiteSettings) | Use `fill` with a sized wrapper |
-| `src/app/(frontend)/expert-transcripts/[slug]/page.tsx` | Transcript cover image | `doc.coverImage.width` / `doc.coverImage.height` |
-| `src/app/(frontend)/earnings-analysis/[slug]/page.tsx` | Report cover image | Same pattern |
+| `src/components/site/Header.tsx` | 2 | Light logo + dark logo variant; both need migration with `priority` |
+| `src/components/blocks/Hero.tsx` | 1 | Above-fold hero visual; use `priority` |
+| `src/components/blocks/Media.tsx` | 4 | ImageBlock, ImageGallery, ImageMasonry, ImageCarousel |
+| `src/components/blocks/Features.tsx` | 3 | Feature card image, tab panel image, richtext image |
+| `src/components/blocks/Conversion.tsx` | 5 | CTA background, split image, two author avatars, form image |
+| `src/components/blocks/Interactive.tsx` | 3 | ScrollPinned, BeforeAfterSlider (before + after) |
+| `src/components/blocks/Trust.tsx` | 1 | Trust logo |
+| `src/components/blocks/Misc.tsx` | 1 | LogosCloud logo |
+| `src/components/blocks/Creative.tsx` | 1 | Attribution avatar |
+| `src/components/blocks/Persona.tsx` | 1 | Active persona image |
 
-**Dimensions strategy:**
-- Payload media documents store `width` and `height` on the uploaded file object (available at `depth: 2`)
-- Use explicit `width`/`height` props when available — prevents layout shift (CLS)
-- Use `fill` + `position: relative` wrapper only for the logo where dimensions aren't reliably stored
-- Apply `priority` prop on above-the-fold images (logo, transcript hero) to avoid LCP penalty
-- All other images (below fold) rely on default lazy loading
+**22 `<img>` tags total.**
 
-**Import:** Replace `<img>` with `import Image from 'next/image'` in each file. The component name is `Image` (capital I) to distinguish from the HTML element.
+**Dimensions strategy — two patterns:**
+
+**Pattern A — `fill` (for `object-cover` containers):** Most block images use `className="h-full w-full object-cover"` inside a sized parent div. Replace `<img>` with `<Image fill …>` and ensure the parent has `position: relative` (add `style={{ position: 'relative' }}` if not already present). The parent's existing height/width CSS controls the rendered size. Most block wrappers already define their dimensions via Tailwind `h-*` / `aspect-*` classes.
+
+**Pattern B — explicit `width`/`height` (for fixed-size elements):** For logos, avatars, and icons with a known display size (e.g., `className="h-8 w-auto"`, `h-10 w-10 rounded-full"`), use explicit `width` and `height` props. Source these from the Payload media object's `width` and `height` fields (available at `depth: 2`), or from the displayed pixel size when the Payload object doesn't expose them (e.g., logos displayed at `h-8` = 32px tall).
+
+**`priority` prop:** Apply to the Header logo (both variants) and `Hero.tsx` image only. All other images are below the fold and should lazy-load (default behavior, no prop needed).
+
+**Header logo special case:** `Header.tsx` renders two `<img>` tags — one light (`.block.dark:hidden`) and one dark (`.hidden.dark:block`). Both need migration. Use `fill` with a sized wrapper `div` styled to match the existing `h-11` height. Both images should have `priority` since they are always above the fold. The `block dark:hidden` / `hidden dark:block` className pattern stays on the wrapper `div`, not the `<Image>` component.
+
+**Import:** Add `import Image from 'next/image'` to each file. The component name is `Image` (capital I).
 
 ### What this does NOT change
 
 - CSS background images — not handled by `next/image`, already served as-is
-- SVG icons — inline or `<img>` with SVG source, format conversion doesn't apply
-- OG images (`opengraph-image.tsx`) — served by Next.js separately, not candidate for `next/image`
+- SVG icons — inline or `<img>` with SVG source; format conversion doesn't apply to SVG
+- OG images (`opengraph-image.tsx`) — served by Next.js separately, not a candidate for `next/image`
 
 ---
 
