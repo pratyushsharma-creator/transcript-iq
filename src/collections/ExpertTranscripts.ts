@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
 import { publishedOnly } from '../access/publishedOnly'
 import { CACHE_TAGS, revalidateOnPublish } from '@/lib/cache/revalidation'
+import { pingCollectionPage } from '@/lib/indexnow'
 
 export const ExpertTranscripts: CollectionConfig = {
   slug: 'expert-transcripts',
@@ -198,6 +199,9 @@ export const ExpertTranscripts: CollectionConfig = {
     afterChange: [
       ({ doc }) => {
         revalidateOnPublish(CACHE_TAGS.expertTranscripts, doc)
+        if (doc._status === 'published' && doc.slug) {
+          pingCollectionPage('/expert-transcripts', doc.slug as string)
+        }
       },
     ],
   },

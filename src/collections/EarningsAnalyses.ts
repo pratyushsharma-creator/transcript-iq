@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
 import { publishedOnly } from '../access/publishedOnly'
 import { CACHE_TAGS, revalidateOnPublish } from '@/lib/cache/revalidation'
+import { pingCollectionPage } from '@/lib/indexnow'
 
 export const EarningsAnalyses: CollectionConfig = {
   slug: 'earnings-analyses',
@@ -187,6 +188,9 @@ export const EarningsAnalyses: CollectionConfig = {
     afterChange: [
       ({ doc }) => {
         revalidateOnPublish(CACHE_TAGS.earningsAnalyses, doc)
+        if (doc._status === 'published' && doc.slug) {
+          pingCollectionPage('/earnings-analysis', doc.slug as string)
+        }
       },
     ],
   },
