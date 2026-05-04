@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { CheckCircle2, ArrowRight, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react'
@@ -104,9 +104,9 @@ function ErrorState({ message }: { message: string }) {
   )
 }
 
-// ── Main page ──────────────────────────────────────────────────────────────────
+// ── Inner content — uses useSearchParams ───────────────────────────────────────
 
-export default function OrderConfirmationPage() {
+function ConfirmationContent() {
   const searchParams = useSearchParams()
   const sessionId = searchParams.get('session_id')
 
@@ -273,5 +273,15 @@ export default function OrderConfirmationPage() {
         </Link>
       </div>
     </div>
+  )
+}
+
+// ── Default export — wraps ConfirmationContent in Suspense ─────────────────────
+
+export default function OrderConfirmationPage() {
+  return (
+    <Suspense fallback={<LoadingState />}>
+      <ConfirmationContent />
+    </Suspense>
   )
 }
