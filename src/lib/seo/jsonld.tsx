@@ -203,8 +203,8 @@ function serializeLd(schema: object): string {
   let result = ''
   for (let i = 0; i < json.length; i++) {
     const code = json.charCodeAt(i)
-    if (code === 0x2028) result += '\u2028'
-    else if (code === 0x2029) result += '\u2029'
+    if (code === 0x2028) result += '\\u2028'
+    else if (code === 0x2029) result += '\\u2029'
     else if (json[i] === '<') result += '\u003c'
     else if (json[i] === '>') result += '\u003e'
     else if (json[i] === '&') result += '\u0026'
