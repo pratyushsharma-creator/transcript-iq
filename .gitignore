@@ -1,0 +1,55 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.pnp.*
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+.next/
+next-env.d.ts
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env
+.env
+.env.*
+!.env.example
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+
+# payload
+/media
+
+# IDE
+.vscode/
+.idea/
+
+.vercel
+
+# claude session files
+.claude/
+CUsers*
+
+# local transcript file storage (uploaded to blob in production)
+/transcript-files
+.claude/

@@ -1,0 +1,412 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@layer base {
+  :root {
+    /* Light mode (default) — verbatim from design system */
+    --bg: #FAFAF9;
+    --surface: #FFFFFF;
+    --surface-2: #F4F4F5;
+    --ink: #09090B;
+    --ink-2: #27272A;
+    --slate: #52525B;
+    --mist: #A1A1AA;
+    --border: #E4E4E7;
+    --border-2: #D4D4D8;
+
+    --accent: #10B981;          /* light mode primary */
+    --accent-deep: #047857;
+    --accent-bright: #34D399;
+    --accent-tint: rgba(16, 185, 129, 0.06);
+    --accent-tint-2: rgba(16, 185, 129, 0.10);
+    --accent-glow: rgba(16, 185, 129, 0.22);
+    --accent-border: rgba(16, 185, 129, 0.30);
+
+    --grid-dot: rgba(16, 185, 129, 0.08);
+    --grid-line: rgba(0, 0, 0, 0.06);
+
+    /* Primary button — light: mint-500 default, mint-400 vibrant hover */
+    --btn-primary: #10B981;
+    --btn-primary-hover: #34D399;
+    --btn-primary-fg: #FFFFFF;
+
+    /* Motion */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-fast: 150ms;
+    --duration-base: 200ms;
+    --duration-slow: 320ms;
+  }
+
+  .dark {
+    /* Dark mode — design upgrade tokens (2026-04-30). Fonts stay Geist. */
+    --bg: #080808;
+    --surface: #0f0f0f;
+    --surface-2: #141414;
+    --ink: #ffffff;
+    --ink-2: #888888;
+    --slate: #555555;
+    --mist: #444444;
+    --border: rgba(255, 255, 255, 0.07);
+    --border-2: rgba(255, 255, 255, 0.14);
+
+    --accent: #0ed98a;          /* dark mode primary — slight teal shift */
+    --accent-deep: #0ab86f;
+    --accent-bright: #3eef9f;
+    --accent-tint: rgba(14, 217, 138, 0.06);
+    --accent-tint-2: rgba(14, 217, 138, 0.12);
+    --accent-glow: rgba(14, 217, 138, 0.25);
+    --accent-border: rgba(14, 217, 138, 0.30);
+
+    --grid-dot: rgba(14, 217, 138, 0.10);
+    --grid-line: rgba(255, 255, 255, 0.055);
+
+    /* Primary button — dark: deep mint-700 default, vibrant accent on hover, white fg */
+    --btn-primary: #047857;
+    --btn-primary-hover: #0ed98a;
+    --btn-primary-fg: #ffffff;
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    color-scheme: dark light;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-geist), 'Geist', system-ui, sans-serif;
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  .mono,
+  .font-mono {
+    font-feature-settings: 'tnum' 1, 'zero' 1;
+  }
+
+  ::selection {
+    background: var(--accent-glow);
+    color: var(--ink);
+  }
+  .theme {
+    --animate-marquee: marquee var(--duration) infinite linear;
+    --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+    --animate-shimmer-slide: shimmer-slide var(--speed) ease-in-out infinite alternate;
+    --animate-spin-around: spin-around calc(var(--speed) * 2) infinite linear;
+  }
+}
+
+@layer utilities {
+  .accent-text {
+    color: var(--accent);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Mint gradient text */
+  .text-mint-gradient {
+    background: linear-gradient(135deg, #10B981 0%, #6EE7B7 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Hairline divider with mint center */
+  .hairline-mint {
+    background: linear-gradient(90deg, transparent, var(--accent) 50%, transparent);
+    height: 1px;
+  }
+
+  /* Hero ambient backgrounds */
+  .bg-hero-grid {
+    background-image: radial-gradient(circle at 1px 1px, var(--grid-dot) 1px, transparent 0);
+    background-size: 32px 32px;
+  }
+
+  .bg-hero-glow {
+    background-image:
+      radial-gradient(ellipse 1200px 600px at 80% 10%, var(--accent-tint-2), transparent 60%),
+      radial-gradient(ellipse 800px 400px at 10% 90%, var(--accent-tint), transparent 60%);
+  }
+
+  /* Shimmer loading line */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--surface-2) 0%,
+      var(--surface) 50%,
+      var(--surface-2) 100%
+    );
+    background-size: 200% 100%;
+  }
+
+  /* Mask gradients */
+  .mask-fade-y {
+    mask-image: linear-gradient(180deg, transparent, black 20%, black 80%, transparent);
+  }
+
+  .mask-fade-x {
+    mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+  }
+
+  .mask-fade-bottom {
+    mask-image: linear-gradient(180deg, black 0%, black 60%, transparent);
+  }
+
+  /* ──────────────────────────────────────────────────────────────────────── */
+  /* Background treatments — applied via backgroundVariant prop on blocks   */
+  /* ──────────────────────────────────────────────────────────────────────── */
+
+  .bg-variant-clean {
+    background: var(--bg);
+  }
+
+  .bg-variant-glow {
+    background-image:
+      radial-gradient(ellipse 1200px 600px at 80% 10%, var(--accent-tint-2), transparent 60%),
+      radial-gradient(ellipse 800px 400px at 10% 90%, var(--accent-tint), transparent 60%);
+    background-color: var(--bg);
+  }
+
+  .bg-variant-grid {
+    background-image: radial-gradient(circle at 1px 1px, var(--grid-dot) 1px, transparent 0);
+    background-size: 32px 32px;
+    background-color: var(--bg);
+  }
+
+  /* Grid lines: thin 1px crossed lines on a repeating 48px grid.
+     A radial vignette fades the grid toward section edges so it
+     dissolves naturally into the dark background. A soft mint glow
+     in the top-right corner adds warmth without dominating. */
+  .bg-variant-mesh {
+    background-color: var(--bg);
+    background-image:
+      /* 1. Vignette — fades grid to solid bg at borders */
+      radial-gradient(ellipse 80% 85% at 50% 50%, transparent 35%, var(--bg) 100%),
+      /* 2. Horizontal lines */
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      /* 3. Vertical lines */
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+      /* 4. Mint accent glow — top-right warmth */
+      radial-gradient(ellipse 55% 55% at 88% 8%, var(--accent-tint), transparent 70%);
+    background-size: 100% 100%, 48px 48px, 48px 48px, 100% 100%;
+    background-repeat: no-repeat, repeat, repeat, no-repeat;
+  }
+
+  .bg-variant-flood {
+    background: var(--accent-tint-2);
+  }
+
+  /* Section spacing utilities — tightened. Was 4/6/9rem, now 2.5/4/6rem. */
+  .section-compact { padding-block: 2.5rem; }
+  .section-default { padding-block: 4rem; }
+  .section-spacious { padding-block: 6rem; }
+  @media (min-width: 1024px) {
+    .section-compact { padding-block: 3rem; }
+    .section-default { padding-block: 5rem; }
+    .section-spacious { padding-block: 7rem; }
+  }
+
+  /* ──────────────────────────────────────────────────────────────────────── */
+  /* Card hover treatments                                                   */
+  /* ──────────────────────────────────────────────────────────────────────── */
+
+  /* Moving border on hover — thin refined stroke rotating around the
+     perimeter only. No internal glow, no blurred halo. The conic-gradient
+     is fully clipped to the 1px border ring via mask-composite. */
+  .card-hover-border {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .card-hover-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(
+      from var(--angle),
+      transparent 0deg,
+      transparent 30deg,
+      var(--accent-bright) 90deg,
+      var(--accent) 110deg,
+      transparent 180deg,
+      transparent 360deg
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.5s var(--ease-out);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .card-hover-border:hover::before {
+    opacity: 1;
+    animation: rotate-border 8s linear infinite;
+  }
+
+  /* Subtle lift hover */
+  .card-hover-lift {
+    transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
+  }
+
+  .card-hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.2);
+    border-color: var(--accent-border);
+  }
+
+  /* Spotlight hover — cursor-following soft glow inside the card */
+  .card-hover-spotlight {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .card-hover-spotlight::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      400px circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
+      var(--accent-tint-2),
+      transparent 40%
+    );
+    opacity: 0;
+    transition: opacity 0.3s var(--ease-out);
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  .card-hover-spotlight:hover::after {
+    opacity: 1;
+  }
+
+  @keyframes rotate-border {
+    to { --angle: 360deg; }
+  }
+
+  /* ──────────────────────────────────────────────────────────────────────── */
+  /* Glassmorphism                                                           */
+  /* ──────────────────────────────────────────────────────────────────────── */
+
+  .glass {
+    background: color-mix(in srgb, var(--surface) 60%, transparent);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+  }
+
+  /* ──────────────────────────────────────────────────────────────────────── */
+  /* Text mask — letterforms filled with image                              */
+  /* ──────────────────────────────────────────────────────────────────────── */
+
+  .text-mask-image {
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* ──────────────────────────────────────────────────────────────────────── */
+  /* Gradient stroke for thin lines (used for tier dividers, accents)       */
+  /* ──────────────────────────────────────────────────────────────────────── */
+
+  .stroke-gradient-mint {
+    background: linear-gradient(90deg, transparent, var(--accent) 50%, transparent);
+  }
+
+  /* ──────────────────────────────────────────────────────────────────────── */
+  /* Logo cloud — grayscale to color on hover                                */
+  /* ──────────────────────────────────────────────────────────────────────── */
+
+  .logo-cloud-item {
+    filter: grayscale(100%) opacity(0.5);
+    transition: filter 0.3s var(--ease-out);
+  }
+
+  .logo-cloud-item:hover {
+    filter: grayscale(0%) opacity(1);
+  }
+
+  /* ──────────────────────────────────────────────────────────────────────── */
+  /* Magnetic button — base styles, JS attaches translate via mousemove     */
+  /* ──────────────────────────────────────────────────────────────────────── */
+
+  .magnetic-target {
+    transition: transform 0.2s var(--ease-out);
+  }
+
+  /* ──────────────────────────────────────────────────────────────────────── */
+  /* Reduced motion — respect user setting                                   */
+  /* ──────────────────────────────────────────────────────────────────────── */
+
+  @media (prefers-reduced-motion: reduce) {
+    .card-hover-border:hover::before,
+    .card-hover-lift:hover,
+    .card-hover-spotlight:hover::after {
+      animation: none;
+      transition: none;
+    }
+  }
+}
+
+@keyframes marquee-loop {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@theme inline {
+  @keyframes marquee {
+  from {
+    transform: translateX(0);
+    }
+  to {
+    transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes marquee-vertical {
+  from {
+    transform: translateY(0);
+    }
+  to {
+    transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes shimmer-slide {
+  to {
+    transform: translate(calc(100cqw - 100%), 0);
+    }
+  }
+  @keyframes spin-around {
+  0% {
+    transform: translateZ(0) rotate(0);
+    }
+  15%, 35% {
+    transform: translateZ(0) rotate(90deg);
+    }
+  65%, 85% {
+    transform: translateZ(0) rotate(270deg);
+    }
+  100% {
+    transform: translateZ(0) rotate(360deg);
+    }
+  }
+}

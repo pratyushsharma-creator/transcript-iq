@@ -1,0 +1,1907 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transcript IQ Design System v1.0 · Synthesis</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root[data-theme="dark"] {
+    --bg: #09090B;
+    --surface: #18181B;
+    --surface-2: #27272A;
+    --ink: #FAFAFA;
+    --ink-2: #E4E4E7;
+    --slate: #A1A1AA;
+    --mist: #71717A;
+    --border: #27272A;
+    --border-2: #3F3F46;
+    --hairline: rgba(255,255,255,0.06);
+
+    --mint-50: #ECFDF5;
+    --mint-100: #D1FAE5;
+    --mint-200: #A7F3D0;
+    --mint-300: #6EE7B7;
+    --mint-400: #34D399;
+    --mint-500: #10B981;
+    --mint-600: #059669;
+    --mint-700: #047857;
+    --mint-800: #065F46;
+    --mint-900: #064E3B;
+
+    --accent: #34D399;
+    --accent-bright: #6EE7B7;
+    --accent-deep: #10B981;
+    --accent-tint: rgba(16,185,129,0.10);
+    --accent-tint-2: rgba(52,211,153,0.18);
+    --accent-glow: rgba(52,211,153,0.32);
+    --accent-border: rgba(16,185,129,0.30);
+
+    --warning: #FBBF24;
+    --error: #F87171;
+
+    --grid-dot: rgba(255,255,255,0.04);
+  }
+  :root[data-theme="light"] {
+    --bg: #FAFAF9;
+    --surface: #FFFFFF;
+    --surface-2: #F4F4F5;
+    --ink: #09090B;
+    --ink-2: #27272A;
+    --slate: #52525B;
+    --mist: #A1A1AA;
+    --border: #E4E4E7;
+    --border-2: #D4D4D8;
+    --hairline: rgba(9,9,11,0.06);
+
+    --mint-50: #ECFDF5;
+    --mint-100: #D1FAE5;
+    --mint-200: #A7F3D0;
+    --mint-300: #6EE7B7;
+    --mint-400: #34D399;
+    --mint-500: #10B981;
+    --mint-600: #059669;
+    --mint-700: #047857;
+    --mint-800: #065F46;
+    --mint-900: #064E3B;
+
+    --accent: #10B981;
+    --accent-bright: #34D399;
+    --accent-deep: #047857;
+    --accent-tint: rgba(16,185,129,0.06);
+    --accent-tint-2: rgba(16,185,129,0.12);
+    --accent-glow: rgba(16,185,129,0.22);
+    --accent-border: rgba(16,185,129,0.30);
+
+    --warning: #D97706;
+    --error: #DC2626;
+
+    --grid-dot: rgba(9,9,11,0.04);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Geist', 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .mono { font-family: 'Geist Mono', 'JetBrains Mono', 'SF Mono', Menlo, monospace; font-feature-settings: 'tnum' 1, 'zero' 1; }
+
+  /* HERO */
+  .hero {
+    background:
+      radial-gradient(ellipse 1200px 600px at 80% 10%, var(--accent-tint-2), transparent 60%),
+      radial-gradient(ellipse 800px 400px at 10% 90%, var(--accent-tint), transparent 60%),
+      var(--bg);
+    padding: 96px 56px 80px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 1px 1px, var(--grid-dot) 1px, transparent 0);
+    background-size: 24px 24px;
+    pointer-events: none;
+    mask-image: linear-gradient(180deg, transparent, black 30%, black 70%, transparent);
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 1240px; }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 32px;
+    padding: 6px 12px;
+    border: 1px solid var(--accent-border);
+    background: var(--accent-tint);
+    border-radius: 999px;
+    font-weight: 500;
+  }
+  .hero-pulse {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 var(--accent-glow);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
+    50% { box-shadow: 0 0 0 8px transparent; }
+  }
+  .hero h1 {
+    font-family: 'Geist', sans-serif;
+    font-weight: 600;
+    font-size: 72px;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    margin-bottom: 24px;
+    max-width: 1100px;
+  }
+  .hero h1 .accent-text {
+    color: var(--accent);
+    font-weight: 500;
+    font-style: italic;
+  }
+  .hero .lede {
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 640px;
+    margin-bottom: 40px;
+    font-weight: 400;
+  }
+  .hero .meta {
+    display: flex;
+    gap: 36px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px;
+    color: var(--mist);
+    flex-wrap: wrap;
+  }
+  .hero .meta-item { display: flex; flex-direction: column; gap: 4px; }
+  .hero .meta-label { color: var(--mist); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; }
+  .hero .meta-value { color: var(--ink); font-weight: 500; font-size: 13px; }
+
+  /* THEME TOGGLE */
+  .theme-toggle {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    z-index: 10;
+    display: flex;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px;
+    gap: 2px;
+  }
+  .theme-toggle button {
+    background: transparent;
+    border: none;
+    color: var(--mist);
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .theme-toggle button.active {
+    background: var(--accent-deep);
+    color: white;
+  }
+
+  /* NAV */
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0 56px;
+    overflow-x: auto;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+  }
+  .nav-tab {
+    padding: 16px 0;
+    margin-right: 32px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--mist);
+    cursor: pointer;
+    border-bottom: 1px solid transparent;
+    white-space: nowrap;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .nav-tab:hover { color: var(--ink-2); }
+  .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .container { max-width: 1240px; margin: 0 auto; padding: 0 56px; }
+  .section { display: none; padding: 72px 0 96px; }
+  .section.active { display: block; }
+
+  h2 {
+    font-family: 'Geist', sans-serif;
+    font-weight: 500;
+    font-size: 44px;
+    color: var(--ink);
+    margin-bottom: 12px;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+  h2 .accent-text { color: var(--accent); font-style: italic; font-weight: 400; }
+  h3 {
+    font-family: 'Geist', sans-serif;
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--ink);
+    margin: 64px 0 20px;
+    letter-spacing: -0.015em;
+  }
+  h3:first-child { margin-top: 0; }
+  h4 {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--mist);
+    margin: 36px 0 14px;
+    font-weight: 500;
+  }
+  .section-desc {
+    font-size: 18px;
+    color: var(--ink-2);
+    max-width: 720px;
+    margin-bottom: 40px;
+    line-height: 1.55;
+    font-weight: 400;
+  }
+
+  /* COLOR */
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .color-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .color-card:hover { border-color: var(--border-2); transform: translateY(-1px); }
+  .color-swatch {
+    height: 92px;
+    display: flex;
+    align-items: flex-end;
+    padding: 12px;
+    position: relative;
+  }
+  .color-swatch span {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.85);
+    color: #09090B;
+    font-weight: 500;
+    backdrop-filter: blur(4px);
+  }
+  .color-swatch.dark span { background: rgba(0,0,0,0.7); color: #FAFAFA; }
+  .color-info { padding: 12px 14px; }
+  .color-name { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 2px; letter-spacing: -0.01em; }
+  .color-token {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    color: var(--mist);
+    letter-spacing: 0.01em;
+  }
+
+  /* RAMP STRIP */
+  .ramp-strip {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    margin: 16px 0 24px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .ramp-stop {
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    padding: 10px 8px;
+    cursor: pointer;
+    position: relative;
+  }
+  .ramp-stop-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .ramp-stop-hex {
+    font-family: 'Geist Mono', monospace;
+    font-size: 9px;
+    opacity: 0.7;
+    margin-top: 2px;
+  }
+
+  /* RATIONALE */
+  .rationale-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 14px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .rationale-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent) 50%, transparent);
+    opacity: 0.4;
+  }
+  .rationale-card h5 {
+    font-family: 'Geist', sans-serif;
+    font-weight: 500;
+    font-size: 17px;
+    color: var(--ink);
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .rationale-card p {
+    font-size: 15px;
+    color: var(--ink-2);
+    line-height: 1.6;
+  }
+  .rationale-card .tag-context {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 4px 10px;
+    background: var(--accent-tint);
+    border-radius: 999px;
+  }
+
+  /* TYPE SPECIMENS */
+  .type-specimen {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin: 16px 0;
+    overflow: hidden;
+  }
+  .type-specimen-header {
+    padding: 18px 24px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .type-specimen-header h5 {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .type-specimen-header .font-meta {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    color: var(--mist);
+    letter-spacing: 0.04em;
+  }
+  .type-specimen-body { padding: 32px 28px; }
+  .type-specimen-footer {
+    background: var(--surface-2);
+    padding: 16px 24px;
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.6;
+    border-top: 1px solid var(--border);
+  }
+  .type-specimen-footer strong { color: var(--ink); font-weight: 500; }
+
+  .scale-row {
+    display: grid;
+    grid-template-columns: 140px 70px 1fr;
+    align-items: baseline;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+  }
+  .scale-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .scale-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    color: var(--mist);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.3;
+  }
+  .scale-size {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* TOKEN TABLE */
+  .token-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    background: var(--surface);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .token-table th {
+    background: var(--surface-2);
+    color: var(--ink);
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 14px 18px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .token-table td {
+    padding: 13px 18px;
+    font-size: 14px;
+    color: var(--ink-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .token-table tr:last-child td { border-bottom: none; }
+  .token-table .mono-cell {
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    background: var(--accent-tint);
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  /* TAGS */
+  .tag-demo { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .tag-sector { background: var(--accent-tint); color: var(--accent); border: 1px solid var(--accent-border); }
+  .tag-geo { background: var(--surface-2); color: var(--ink-2); }
+  .tag-ticker { background: var(--surface); color: var(--ink); border: 1px solid var(--border); }
+  .tag-tier-elite {
+    background: linear-gradient(135deg, var(--mint-500), var(--mint-300));
+    color: #064E3B;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 10px;
+    padding: 4px 10px;
+    font-weight: 600;
+  }
+  .tag-keyword { background: transparent; color: var(--slate); border: 1px dashed var(--border-2); }
+  .tag-live {
+    background: var(--accent-tint);
+    color: var(--accent);
+    border: 1px solid var(--accent-border);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tag-live::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse-mint 1.6s infinite;
+  }
+  @keyframes pulse-mint {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .tag-warning { background: rgba(251,191,36,0.10); color: var(--warning); border: 1px solid rgba(251,191,36,0.3); }
+  .tag-error { background: rgba(248,113,113,0.10); color: var(--error); border: 1px solid rgba(248,113,113,0.3); }
+
+  /* BUTTONS */
+  .btn-row { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0 24px; }
+  .btn {
+    font-family: 'Geist', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: -0.005em;
+    line-height: 1.4;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+  }
+  .btn-primary {
+    background: var(--accent-deep);
+    color: white;
+    box-shadow: 0 1px 0 0 rgba(255,255,255,0.1) inset, 0 0 0 1px var(--mint-700), 0 8px 24px -8px var(--accent-glow);
+  }
+  .btn-primary:hover {
+    background: var(--mint-500);
+    transform: translateY(-1px);
+    box-shadow: 0 1px 0 0 rgba(255,255,255,0.15) inset, 0 0 0 1px var(--mint-600), 0 12px 32px -8px var(--accent-glow);
+  }
+  .btn-secondary {
+    background: var(--ink);
+    color: var(--bg);
+    border: 1px solid var(--ink);
+  }
+  .btn-secondary:hover { transform: translateY(-1px); }
+  .btn-ghost {
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--surface-2); border-color: var(--border-2); }
+  .btn-tertiary {
+    background: transparent;
+    color: var(--accent);
+    padding: 10px 0;
+    border-bottom: 1px solid var(--accent-border);
+    border-radius: 0;
+  }
+  .btn-tertiary:hover { border-bottom-color: var(--accent); }
+
+  /* RULES */
+  .rule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .rule-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+  }
+  .rule-card .rule-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .rule-card.do .rule-label { color: var(--accent); }
+  .rule-card.do .rule-label::before { content: ''; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+  .rule-card.dont .rule-label { color: var(--error); }
+  .rule-card.dont .rule-label::before { content: ''; width: 6px; height: 6px; background: var(--error); border-radius: 50%; }
+  .rule-card h5 {
+    font-family: 'Geist', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--ink);
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .rule-card p {
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.55;
+  }
+
+  /* AI PATTERNS */
+  .source-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 12px 4px 4px;
+    font-size: 12px;
+    color: var(--ink);
+  }
+  .source-chip-avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--mint-500), var(--mint-400));
+    color: #064E3B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Geist Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+  .source-chip-id { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--ink); font-weight: 500; }
+  .source-chip-label { color: var(--mist); font-size: 11px; }
+  .source-chip-confidence {
+    margin-left: 8px;
+    padding-left: 8px;
+    border-left: 1px solid var(--border);
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .confidence-row {
+    display: grid;
+    grid-template-columns: 1fr 60px;
+    gap: 12px;
+    align-items: center;
+    padding: 8px 0;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-2);
+  }
+  .confidence-bar {
+    height: 4px;
+    background: var(--surface-2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .confidence-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--mint-500), var(--mint-300));
+    border-radius: 2px;
+  }
+  .confidence-value {
+    text-align: right;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .cmd-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 600px;
+    margin: 16px 0;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .cmd-bar:hover { border-color: var(--accent-border); }
+  .cmd-bar-prompt {
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px;
+    color: var(--mist);
+    flex: 1;
+  }
+  .cmd-bar-shortcut {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .cmd-key {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-2);
+    font-weight: 500;
+  }
+
+  .ai-panel {
+    background:
+      radial-gradient(ellipse at top right, var(--accent-tint-2), transparent 60%),
+      var(--surface);
+    border: 1px solid var(--accent-border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 16px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .ai-panel-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .ai-panel-eyebrow::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+  .ai-panel-title {
+    font-family: 'Geist', sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--ink);
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .sparkline {
+    height: 32px;
+    width: 80px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  /* TRANSCRIPT CARD */
+  .tc-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 30px 22px;
+    max-width: 720px;
+    margin: 16px 0;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .tc-card:hover {
+    border-color: var(--border-2);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px -12px rgba(0,0,0,0.2);
+  }
+  .tc-card-elite {
+    background:
+      linear-gradient(180deg, var(--accent-tint) 0%, transparent 60%),
+      var(--surface);
+    border: 1px solid var(--accent-border);
+  }
+  .tc-card-elite::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--mint-500) 0%, var(--mint-300) 50%, var(--mint-500) 100%);
+  }
+  .tc-tier {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 14px;
+    padding: 4px 10px;
+    background: var(--accent-tint);
+    border-radius: 999px;
+    border: 1px solid var(--accent-border);
+  }
+  .tc-title {
+    font-family: 'Geist', sans-serif;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1.2;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .tc-summary {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    margin-bottom: 16px;
+  }
+  .tc-meta {
+    display: flex;
+    gap: 16px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    color: var(--mist);
+    margin-bottom: 14px;
+    letter-spacing: 0.02em;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .tc-meta-divider { color: var(--border-2); }
+  .tc-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+  .tc-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    gap: 16px;
+  }
+  .tc-price-block { display: flex; flex-direction: column; gap: 2px; }
+  .tc-price-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--mist);
+  }
+  .tc-price {
+    font-family: 'Geist Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: -0.01em;
+  }
+  .tc-actions { display: flex; gap: 10px; }
+
+  /* PHILOSOPHY */
+  .philosophy {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 48px 52px;
+    margin: 24px 0;
+    max-width: 920px;
+    position: relative;
+    overflow: hidden;
+  }
+  .philosophy::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--accent), transparent);
+  }
+  .philosophy .pull-quote {
+    font-family: 'Geist', sans-serif;
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1.35;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .philosophy .pull-quote em { font-style: italic; color: var(--accent); font-weight: 500; }
+  .philosophy .attribution {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    color: var(--mist);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-top: 24px;
+  }
+
+  /* CODE BLOCK FOR DEV REFERENCE */
+  .code-block {
+    background: #0A0A0B;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-x: auto;
+    margin: 12px 0 16px;
+    color: #E4E4E7;
+  }
+  :root[data-theme="light"] .code-block { background: #18181B; color: #F4F4F5; }
+  .code-block .comment { color: #71717A; font-style: italic; }
+  .code-block .key { color: #67E8F9; }
+  .code-block .val { color: #A7F3D0; }
+  .code-block .punct { color: #71717A; }
+
+  /* TOAST */
+  .copy-toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+    z-index: 200;
+    border: 1px solid var(--border-2);
+  }
+  .copy-toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="theme-toggle">
+  <button class="active" onclick="setTheme('dark')">Dark</button>
+  <button onclick="setTheme('light')">Light</button>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <div class="hero-pulse"></div>
+      Design system v1.0 · Synthesis · Locked
+    </div>
+    <h1>Intelligence at the speed of <span class="accent-text">now</span></h1>
+    <p class="lede">The canonical design system for Transcript IQ. AI-era visual language. Dark-mode native. Single-accent discipline. Built to ship in 2026 — and still ship in 2030.</p>
+    <div class="meta">
+      <div class="meta-item">
+        <span class="meta-label">Aesthetic</span>
+        <span class="meta-value">Synthesis</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Accent</span>
+        <span class="meta-value">Mint #10B981</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Display</span>
+        <span class="meta-value">Geist · Geist Mono</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Mode</span>
+        <span class="meta-value">Dark · Light</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Version</span>
+        <span class="meta-value">1.0 · 2026.04.29</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav-tabs">
+  <div class="nav-tab active" data-tab="philosophy">Philosophy</div>
+  <div class="nav-tab" data-tab="color">Colour</div>
+  <div class="nav-tab" data-tab="typography">Typography</div>
+  <div class="nav-tab" data-tab="tokens">Tokens</div>
+  <div class="nav-tab" data-tab="components">Components</div>
+  <div class="nav-tab" data-tab="ai-patterns">AI patterns</div>
+  <div class="nav-tab" data-tab="cards">Sample cards</div>
+  <div class="nav-tab" data-tab="rules">Usage rules</div>
+  <div class="nav-tab" data-tab="dev">For dev / Claude Code</div>
+</div>
+
+<div class="container">
+
+  <!-- PHILOSOPHY -->
+  <div class="section active" id="philosophy">
+    <h2>Why this <span class="accent-text">direction</span></h2>
+    <p class="section-desc">Transcript IQ is sold to analysts who run six LLM tabs in parallel and read at 2x speed. They expect intelligence products to feel like the tools they already love — Linear, Cursor, Anthropic Console, Claude. Bloomberg's aesthetic dies with Bloomberg. We skate where the puck is going.</p>
+
+    <div class="philosophy">
+      <p class="pull-quote">"We don't dress information up. We make it <em>dense, scannable, fluent</em>. The brand isn't a logo or a colour — it's the velocity of every interaction. Considered. Fast. Native to the workflow."</p>
+      <p class="attribution">Operating principle</p>
+    </div>
+
+    <h3>Six pillars</h3>
+    <div class="rule-grid">
+      <div class="rationale-card">
+        <h5>Single-accent discipline</h5>
+        <p>One brand colour — mint green — used across the entire system at varying intensities. Tier differentiation comes through gradient, glow, and tinted backgrounds — not a second chromatic. The brand reads as confident because it's not trying to do five things at once.</p>
+        <span class="tag-context">One colour, full range</span>
+      </div>
+      <div class="rationale-card">
+        <h5>Dark-mode-first, light-mode-equal</h5>
+        <p>The default state is dark — because that's what your buyers' tools default to in 2026. Light mode is fully designed, never an afterthought. Both modes use the same single accent, calibrated for each context with separate glow and contrast values.</p>
+        <span class="tag-context">Native to their workflow</span>
+      </div>
+      <div class="rationale-card">
+        <h5>Mint green specifically</h5>
+        <p>Distinctive in B2B intelligence (no major competitor uses green — AlphaSense blue, Bloomberg orange, FT pink, Pitchbook red, Tegus dark green but institutional). Modern AI-era brands have converged on this hue (Linear, Vercel accents, Cursor highlights). Coded as "go," "alpha," "growth" — exactly the signals your hedge fund and PE buyers want to see.</p>
+        <span class="tag-context">Category whitespace</span>
+      </div>
+      <div class="rationale-card">
+        <h5>Information density done well</h5>
+        <p>Stripe-grade tables. Linear-grade lists. Cursor-grade panels. We assume the buyer has 3+ products to evaluate per session and wants information dense without cramped. 11px mono labels. 15px body. Tight line-heights on data, generous on prose. Hairline 1px borders, never 2px.</p>
+        <span class="tag-context">Built for power users</span>
+      </div>
+      <div class="rationale-card">
+        <h5>AI-era component primitives</h5>
+        <p>Components that don't exist in heritage intelligence brands: source attribution chips with confidence bars, model attribution badges, command palette baked into navigation, live pulse indicators on fresh content, sparklines on metric cards, glass-morphism on overlays. The UI itself signals "this is AI-era."</p>
+        <span class="tag-context">Native to 2026</span>
+      </div>
+      <div class="rationale-card">
+        <h5>Geometric grotesque typography</h5>
+        <p>Geist for everything. No serif. Serif is a heritage signal — wrong for a brand that wants to read as "now." Geist is what Vercel ships, what Anthropic uses internally, what every modern AI tool is converging on. Variable weight (300–700) carries the entire hierarchy. One typeface family covers all UI surfaces.</p>
+        <span class="tag-context">One typeface, full range</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLOR -->
+  <div class="section" id="color">
+    <h2>Colour <span class="accent-text">system</span></h2>
+    <p class="section-desc">A black-to-white grayscale axis with a single mint accent. Calibrated for both dark and light modes. Toggle the theme top-right to see how each colour shifts. Click any swatch to copy hex.</p>
+
+    <h3>Accent · the full mint ramp</h3>
+    <div class="ramp-strip">
+      <div class="ramp-stop" onclick="cc('#ECFDF5')" style="background:#ECFDF5; color:#065F46;"><span class="ramp-stop-label">50</span><span class="ramp-stop-hex">#ECFDF5</span></div>
+      <div class="ramp-stop" onclick="cc('#D1FAE5')" style="background:#D1FAE5; color:#065F46;"><span class="ramp-stop-label">100</span><span class="ramp-stop-hex">#D1FAE5</span></div>
+      <div class="ramp-stop" onclick="cc('#A7F3D0')" style="background:#A7F3D0; color:#065F46;"><span class="ramp-stop-label">200</span><span class="ramp-stop-hex">#A7F3D0</span></div>
+      <div class="ramp-stop" onclick="cc('#6EE7B7')" style="background:#6EE7B7; color:#065F46;"><span class="ramp-stop-label">300</span><span class="ramp-stop-hex">#6EE7B7</span></div>
+      <div class="ramp-stop" onclick="cc('#34D399')" style="background:#34D399; color:#064E3B;"><span class="ramp-stop-label">400</span><span class="ramp-stop-hex">#34D399</span></div>
+      <div class="ramp-stop" onclick="cc('#10B981')" style="background:#10B981; color:white;"><span class="ramp-stop-label">500</span><span class="ramp-stop-hex">#10B981</span></div>
+      <div class="ramp-stop" onclick="cc('#059669')" style="background:#059669; color:white;"><span class="ramp-stop-label">600</span><span class="ramp-stop-hex">#059669</span></div>
+      <div class="ramp-stop" onclick="cc('#047857')" style="background:#047857; color:white;"><span class="ramp-stop-label">700</span><span class="ramp-stop-hex">#047857</span></div>
+      <div class="ramp-stop" onclick="cc('#065F46')" style="background:#065F46; color:#A7F3D0;"><span class="ramp-stop-label">800</span><span class="ramp-stop-hex">#065F46</span></div>
+      <div class="ramp-stop" onclick="cc('#064E3B')" style="background:#064E3B; color:#A7F3D0;"><span class="ramp-stop-label">900</span><span class="ramp-stop-hex">#064E3B</span></div>
+    </div>
+
+    <h4>Anchor stops · what to use where</h4>
+    <div class="color-grid">
+      <div class="color-card" onclick="cc('#10B981')">
+        <div class="color-swatch dark" style="background:#10B981"><span>#10B981</span></div>
+        <div class="color-info"><div class="color-name">Mint 500 · primary</div><div class="color-token">CTAs (light), prices, brand</div></div>
+      </div>
+      <div class="color-card" onclick="cc('#34D399')">
+        <div class="color-swatch dark" style="background:#34D399"><span>#34D399</span></div>
+        <div class="color-info"><div class="color-name">Mint 400 · dark accent</div><div class="color-token">CTAs (dark), text accents</div></div>
+      </div>
+      <div class="color-card" onclick="cc('#6EE7B7')">
+        <div class="color-swatch" style="background:#6EE7B7"><span>#6EE7B7</span></div>
+        <div class="color-info"><div class="color-name">Mint 300 · bright</div><div class="color-token">Glow targets, highlights</div></div>
+      </div>
+      <div class="color-card" onclick="cc('#047857')">
+        <div class="color-swatch dark" style="background:#047857"><span>#047857</span></div>
+        <div class="color-info"><div class="color-name">Mint 700 · deep</div><div class="color-token">Hover states, deep accents</div></div>
+      </div>
+      <div class="color-card" onclick="cc('#D1FAE5')">
+        <div class="color-swatch" style="background:#D1FAE5"><span>#D1FAE5</span></div>
+        <div class="color-info"><div class="color-name">Mint 100 · light tint</div><div class="color-token">Light mode badge bg</div></div>
+      </div>
+      <div class="color-card" onclick="cc('#064E3B')">
+        <div class="color-swatch dark" style="background:#064E3B"><span>#064E3B</span></div>
+        <div class="color-info"><div class="color-name">Mint 900 · darkest</div><div class="color-token">Text on light mint bg</div></div>
+      </div>
+    </div>
+
+    <h3>Foundation · neutral axis</h3>
+    <div class="color-grid">
+      <div class="color-card" onclick="cc('#09090B')">
+        <div class="color-swatch dark" style="background:#09090B"><span>#09090B</span></div>
+        <div class="color-info"><div class="color-name">Bg · dark</div><div class="color-token">--bg (dark mode)</div></div>
+      </div>
+      <div class="color-card" onclick="cc('#18181B')">
+        <div class="color-swatch dark" style="background:#18181B"><span>#18181B</span></div>
+        <div class="color-info"><div class="color-name">Surface · dark</div><div class="color-token">--surface (dark)</div></div>
+      </div>
+      <div class="color-card" onclick="cc('#27272A')">
+        <div class="color-swatch dark" style="background:#27272A"><span>#27272A</span></div>
+        <div class="color-info"><div class="color-name">Surface 2</div><div class="color-token">--surface-2 (dark)</div></div>
+      </div>
+      <div class="color-card" onclick="cc('#71717A')">
+        <div class="color-swatch dark" style="background:#71717A"><span>#71717A</span></div>
+        <div class="color-info"><div class="color-name">Mist</div><div class="color-token">Muted text</div></div>
+      </div>
+      <div class="color-card" onclick="cc('#A1A1AA')">
+        <div class="color-swatch" style="background:#A1A1AA"><span>#A1A1AA</span></div>
+        <div class="color-info"><div class="color-name">Slate</div><div class="color-token">Body text dark mode</div></div>
+      </div>
+      <div class="color-card" onclick="cc('#E4E4E7')">
+        <div class="color-swatch" style="background:#E4E4E7"><span>#E4E4E7</span></div>
+        <div class="color-info"><div class="color-name">Ink-2</div><div class="color-token">Secondary headings</div></div>
+      </div>
+      <div class="color-card" onclick="cc('#FAFAFA')">
+        <div class="color-swatch" style="background:#FAFAFA;border-bottom:1px solid #E4E4E7"><span>#FAFAFA</span></div>
+        <div class="color-info"><div class="color-name">Ink · dark mode</div><div class="color-token">Primary text on dark</div></div>
+      </div>
+      <div class="color-card" onclick="cc('#FAFAF9')">
+        <div class="color-swatch" style="background:#FAFAF9;border-bottom:1px solid #E4E4E7"><span>#FAFAF9</span></div>
+        <div class="color-info"><div class="color-name">Bg · light</div><div class="color-token">--bg (light mode)</div></div>
+      </div>
+      <div class="color-card" onclick="cc('#FFFFFF')">
+        <div class="color-swatch" style="background:#FFFFFF;border-bottom:1px solid #E4E4E7"><span>#FFFFFF</span></div>
+        <div class="color-info"><div class="color-name">Surface · light</div><div class="color-token">--surface (light)</div></div>
+      </div>
+    </div>
+
+    <h3>Semantic · UI utility only</h3>
+    <p style="font-size:15px; color:var(--ink-2); margin-bottom:16px; max-width:680px;">These colours are reserved for actual UI states only. Never used as decoration. Never used to add visual variety. If you find yourself reaching for amber or red because "the page needs more colour," stop — go back to mint or grayscale.</p>
+    <div class="color-grid">
+      <div class="color-card" onclick="cc('#FBBF24')">
+        <div class="color-swatch" style="background:#FBBF24"><span>#FBBF24</span></div>
+        <div class="color-info"><div class="color-name">Warning</div><div class="color-token">Form warnings, caution states</div></div>
+      </div>
+      <div class="color-card" onclick="cc('#F87171')">
+        <div class="color-swatch" style="background:#F87171"><span>#F87171</span></div>
+        <div class="color-info"><div class="color-name">Error</div><div class="color-token">Form errors, destructive actions</div></div>
+      </div>
+    </div>
+
+    <h3>Why mint green, specifically</h3>
+    <div class="rule-grid">
+      <div class="rationale-card">
+        <h5>Category whitespace</h5>
+        <p>AlphaSense (blue), Bloomberg (orange), FT (pink), Pitchbook (red), Capital IQ (blue), Tegus (dark green/black). Mint at #10B981 is unclaimed in B2B intelligence — instantly recognisable as Transcript IQ.</p>
+        <span class="tag-context">Distinctive</span>
+      </div>
+      <div class="rationale-card">
+        <h5>"Go / growth / alpha"</h5>
+        <p>Green carries strong subconscious association with positive market direction, life, and forward motion. For a hedge fund or PE analyst — buyers literally optimising for alpha — this is the right semantic charge. Reads as confident, not cautious.</p>
+        <span class="tag-context">Buyer psychology</span>
+      </div>
+      <div class="rationale-card">
+        <h5>AI-era native</h5>
+        <p>Linear has shifted toward green. Vercel uses green for success states. Cursor highlights are green-shifted. Modern AI tooling has converged on this hue family. Buyers see this colour and unconsciously code it as "modern intelligence tool."</p>
+        <span class="tag-context">Familiar to power users</span>
+      </div>
+      <div class="rationale-card">
+        <h5>Single-accent strength</h5>
+        <p>Mint at full saturation reads premium without a second tier colour needed. Elite tier comes from gradient + glow + tint, not a separate amber or rose. The system stays unified. Fewer rules for users to learn, fewer rules for the team to maintain.</p>
+        <span class="tag-context">Discipline scales</span>
+      </div>
+      <div class="rationale-card">
+        <h5>Format-agnostic</h5>
+        <p>#10B981 maintains chromatic identity at 11px and 64px. Survives both modes flawlessly. WCAG AA at body sizes. Tested against print, screen, dark mode, light mode, social cards, partner co-brand contexts.</p>
+        <span class="tag-context">Production-grade</span>
+      </div>
+      <div class="rationale-card">
+        <h5>Avoiding the consumer-fintech trap</h5>
+        <p>Robinhood, Cash App, Acorns all use bright lime greens (#7FFF00 territory). We deliberately use mint #10B981 — blue-shifted, not yellow-shifted — paired with deep ink backgrounds and Geist typography. Reads premium institutional, never consumer.</p>
+        <span class="tag-context">Mitigated by execution</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TYPOGRAPHY -->
+  <div class="section" id="typography">
+    <h2>Typography <span class="accent-text">system</span></h2>
+    <p class="section-desc">One sans family. One mono family. No serif. Hierarchy comes from weight contrast and size — not from typeface family. Fewer fonts = faster page loads = the AI-era trade-off you actually want.</p>
+
+    <div class="type-specimen">
+      <div class="type-specimen-header">
+        <h5>Display + UI · Geist</h5>
+        <span class="font-meta">--font-sans · weight 300, 400, 500, 600, 700</span>
+      </div>
+      <div class="type-specimen-body">
+        <div style="font-family:'Geist',sans-serif; font-weight:600; font-size:64px; line-height:1; letter-spacing:-0.04em; color:var(--ink); margin-bottom:8px;">UPI margin compression</div>
+        <div style="font-family:'Geist',sans-serif; font-weight:400; font-style:italic; font-size:32px; line-height:1.1; letter-spacing:-0.02em; color:var(--accent);">— what experts told us</div>
+      </div>
+      <div class="type-specimen-footer">
+        <strong>Where:</strong> Everything text. Display, UI, body, captions, buttons. <strong>Why Geist:</strong> Geometric grotesque designed by Vercel for AI-era products. Variable weight (300–700) carries the entire hierarchy. Italic adds editorial moments without switching family. Free, hosted on Google Fonts. <strong>Loading:</strong> via Google Fonts CDN, swap fallback to system-ui.
+      </div>
+    </div>
+
+    <div class="type-specimen">
+      <div class="type-specimen-header">
+        <h5>Data · Geist Mono</h5>
+        <span class="font-meta">--font-mono · weight 400, 500, 600</span>
+      </div>
+      <div class="type-specimen-body">
+        <div style="display:flex; gap:32px; flex-wrap:wrap;">
+          <div>
+            <div class="mono" style="font-size:11px; color:var(--mist); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">Price</div>
+            <div class="mono" style="font-size:28px; color:var(--accent); font-weight:500; letter-spacing:-0.01em;">$199.00</div>
+          </div>
+          <div>
+            <div class="mono" style="font-size:11px; color:var(--mist); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">Expert</div>
+            <div class="mono" style="font-size:28px; color:var(--ink); font-weight:500; letter-spacing:-0.01em;">EXP-247</div>
+          </div>
+          <div>
+            <div class="mono" style="font-size:11px; color:var(--mist); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">Date</div>
+            <div class="mono" style="font-size:28px; color:var(--ink); font-weight:500; letter-spacing:-0.01em;">2026.03.12</div>
+          </div>
+          <div>
+            <div class="mono" style="font-size:11px; color:var(--mist); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">Length</div>
+            <div class="mono" style="font-size:28px; color:var(--ink); font-weight:500; letter-spacing:-0.01em;">47.5min</div>
+          </div>
+        </div>
+      </div>
+      <div class="type-specimen-footer">
+        <strong>Where:</strong> Every number, every ID, every ticker, every timestamp. Tabular alignment via <strong>font-feature-settings: 'tnum' 1, 'zero' 1</strong>. <strong>Why Geist Mono:</strong> Designed as the companion to Geist sans — perfect optical pairing, slashed zeros, equal x-height.
+      </div>
+    </div>
+
+    <h3>Type scale</h3>
+    <div class="type-specimen">
+      <div class="type-specimen-body" style="padding:24px 28px;">
+        <div class="scale-row"><span class="scale-label">Display XL</span><span class="scale-size">72 / 1.0</span><span style="font-family:'Geist'; font-size:72px; line-height:1; color:var(--ink); font-weight:600; letter-spacing:-0.04em;">Display XL</span></div>
+        <div class="scale-row"><span class="scale-label">Display L</span><span class="scale-size">56 / 1.05</span><span style="font-family:'Geist'; font-size:56px; line-height:1.05; color:var(--ink); font-weight:600; letter-spacing:-0.035em;">Display L</span></div>
+        <div class="scale-row"><span class="scale-label">Display M</span><span class="scale-size">44 / 1.1</span><span style="font-family:'Geist'; font-size:44px; line-height:1.1; color:var(--ink); font-weight:500; letter-spacing:-0.03em;">Display M</span></div>
+        <div class="scale-row"><span class="scale-label">Display S</span><span class="scale-size">32 / 1.15</span><span style="font-family:'Geist'; font-size:32px; line-height:1.15; color:var(--ink); font-weight:500; letter-spacing:-0.025em;">Display S</span></div>
+        <div class="scale-row"><span class="scale-label">Heading L</span><span class="scale-size">22 / 1.25</span><span style="font-family:'Geist'; font-size:22px; line-height:1.25; color:var(--ink); font-weight:500; letter-spacing:-0.015em;">Heading L</span></div>
+        <div class="scale-row"><span class="scale-label">Heading M</span><span class="scale-size">17 / 1.35</span><span style="font-family:'Geist'; font-size:17px; line-height:1.35; color:var(--ink); font-weight:500; letter-spacing:-0.005em;">Heading M</span></div>
+        <div class="scale-row"><span class="scale-label">Body L</span><span class="scale-size">17 / 1.55</span><span style="font-size:17px; line-height:1.55; color:var(--ink); font-weight:400;">Body large · lede</span></div>
+        <div class="scale-row"><span class="scale-label">Body M</span><span class="scale-size">15 / 1.55</span><span style="font-size:15px; line-height:1.55; color:var(--ink); font-weight:400;">Body medium · default</span></div>
+        <div class="scale-row"><span class="scale-label">Body S</span><span class="scale-size">13 / 1.5</span><span style="font-size:13px; line-height:1.5; color:var(--slate); font-weight:400;">Body small · captions</span></div>
+        <div class="scale-row"><span class="scale-label">Mono S</span><span class="scale-size">12 / 1.4</span><span class="mono" style="font-size:12px; line-height:1.4; color:var(--ink);">$199.00 · EXP-247</span></div>
+        <div class="scale-row"><span class="scale-label">Mono XS</span><span class="scale-size">11 / 1.4</span><span class="mono" style="font-size:11px; line-height:1.4; color:var(--mist); text-transform:uppercase; letter-spacing:0.1em;">Eyebrow · live</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOKENS -->
+  <div class="section" id="tokens">
+    <h2>Design <span class="accent-text">tokens</span></h2>
+    <p class="section-desc">Spacing, radius, borders, motion, shadows. The full token table — every value used anywhere in the system. CSS variable names listed first; use these in your code, never raw hex.</p>
+
+    <h3>Border radius</h3>
+    <table class="token-table">
+      <thead><tr><th>Token</th><th>Value</th><th>Usage</th></tr></thead>
+      <tbody>
+        <tr><td><span class="mono-cell">--radius-xs</span></td><td>4px</td><td>Tags, inline labels, ticker pills</td></tr>
+        <tr><td><span class="mono-cell">--radius-sm</span></td><td>6px</td><td>Inputs, small buttons</td></tr>
+        <tr><td><span class="mono-cell">--radius-md</span></td><td>8px</td><td>Default · cards, buttons, panels</td></tr>
+        <tr><td><span class="mono-cell">--radius-lg</span></td><td>12px</td><td>Featured cards, modals</td></tr>
+        <tr><td><span class="mono-cell">--radius-xl</span></td><td>16px</td><td>Hero containers, major surfaces</td></tr>
+        <tr><td><span class="mono-cell">--radius-full</span></td><td>9999px</td><td>Pills, avatars, source chips</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Spacing scale (4px base)</h3>
+    <table class="token-table">
+      <thead><tr><th>Token</th><th>Value</th><th>Usage</th></tr></thead>
+      <tbody>
+        <tr><td><span class="mono-cell">--space-1</span></td><td>4px</td><td>Tightest gap · between letters in shortcuts</td></tr>
+        <tr><td><span class="mono-cell">--space-2</span></td><td>8px</td><td>Tag gap, icon-to-label</td></tr>
+        <tr><td><span class="mono-cell">--space-3</span></td><td>12px</td><td>Inline element gap</td></tr>
+        <tr><td><span class="mono-cell">--space-4</span></td><td>16px</td><td>Card internal default</td></tr>
+        <tr><td><span class="mono-cell">--space-6</span></td><td>24px</td><td>Card padding, section gap</td></tr>
+        <tr><td><span class="mono-cell">--space-8</span></td><td>32px</td><td>Major component spacing</td></tr>
+        <tr><td><span class="mono-cell">--space-12</span></td><td>48px</td><td>Section vertical rhythm</td></tr>
+        <tr><td><span class="mono-cell">--space-16</span></td><td>64px</td><td>Page section divider</td></tr>
+        <tr><td><span class="mono-cell">--space-24</span></td><td>96px</td><td>Hero / page top spacing</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Motion</h3>
+    <table class="token-table">
+      <thead><tr><th>Token</th><th>Value</th><th>Usage</th></tr></thead>
+      <tbody>
+        <tr><td><span class="mono-cell">--ease-out</span></td><td>cubic-bezier(0.16, 1, 0.3, 1)</td><td>Default easing curve</td></tr>
+        <tr><td><span class="mono-cell">--duration-fast</span></td><td>150ms</td><td>Hover, focus, micro-interactions</td></tr>
+        <tr><td><span class="mono-cell">--duration-base</span></td><td>200ms</td><td>Default · panel transitions</td></tr>
+        <tr><td><span class="mono-cell">--duration-slow</span></td><td>320ms</td><td>Modal entry, route changes</td></tr>
+        <tr><td><span class="mono-cell">--pulse</span></td><td>2s infinite</td><td>Live indicator, fresh content</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Shadows · functional only</h3>
+    <table class="token-table">
+      <thead><tr><th>Token</th><th>Value</th><th>Usage</th></tr></thead>
+      <tbody>
+        <tr><td><span class="mono-cell">--shadow-card-hover</span></td><td>0 12px 40px -12px rgba(0,0,0,0.2)</td><td>Card hover lift</td></tr>
+        <tr><td><span class="mono-cell">--shadow-modal</span></td><td>0 24px 64px -16px rgba(0,0,0,0.4)</td><td>Modals only</td></tr>
+        <tr><td><span class="mono-cell">--shadow-cta</span></td><td>0 8px 24px -8px var(--accent-glow)</td><td>Primary CTA accent glow</td></tr>
+        <tr><td><span class="mono-cell">--shadow-focus</span></td><td>0 0 0 3px var(--accent-glow)</td><td>Focus rings on inputs</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- COMPONENTS -->
+  <div class="section" id="components">
+    <h2>Components</h2>
+    <p class="section-desc">Buttons, tags, inputs. Each has one canonical form and clear rules for when to deviate.</p>
+
+    <h3>Buttons</h3>
+    <h4>Primary · mint with glow</h4>
+    <div class="btn-row">
+      <button class="btn btn-primary">Buy transcript</button>
+      <button class="btn btn-primary">Subscribe</button>
+      <button class="btn btn-primary">Buy · $199</button>
+    </div>
+
+    <h4>Secondary · ink fill</h4>
+    <div class="btn-row">
+      <button class="btn btn-secondary">Read summary</button>
+      <button class="btn btn-secondary">Continue</button>
+    </div>
+
+    <h4>Ghost · neutral surface</h4>
+    <div class="btn-row">
+      <button class="btn btn-ghost">Filter</button>
+      <button class="btn btn-ghost">Cancel</button>
+      <button class="btn btn-ghost">View details</button>
+    </div>
+
+    <h4>Tertiary · mint underline</h4>
+    <div class="btn-row">
+      <button class="btn btn-tertiary">Read methodology →</button>
+      <button class="btn btn-tertiary">Browse all transcripts</button>
+    </div>
+
+    <h3>Tags</h3>
+    <h4>Sector · mint tint with border</h4>
+    <div class="tag-demo">
+      <span class="tag tag-sector">Fintech</span>
+      <span class="tag tag-sector">Healthcare</span>
+      <span class="tag tag-sector">Enterprise software</span>
+      <span class="tag tag-sector">Consumer</span>
+    </div>
+
+    <h4>Geography · neutral fill</h4>
+    <div class="tag-demo">
+      <span class="tag tag-geo">India</span>
+      <span class="tag tag-geo">APAC</span>
+      <span class="tag tag-geo">Americas</span>
+      <span class="tag tag-geo">Europe</span>
+    </div>
+
+    <h4>Tickers · outline</h4>
+    <div class="tag-demo">
+      <span class="tag tag-ticker">$NVDA</span>
+      <span class="tag tag-ticker">$LLY</span>
+      <span class="tag tag-ticker">$MSFT</span>
+      <span class="tag tag-ticker">$RELIANCE</span>
+    </div>
+
+    <h4>Tier · mint gradient (Elite only)</h4>
+    <div class="tag-demo">
+      <span class="tag tag-tier-elite">Elite</span>
+    </div>
+
+    <h4>Live · pulse indicator</h4>
+    <div class="tag-demo">
+      <span class="tag tag-live">Live · 4 days ago</span>
+      <span class="tag tag-live">Recent</span>
+    </div>
+
+    <h4>Keywords · subtle dashed</h4>
+    <div class="tag-demo">
+      <span class="tag tag-keyword">Q2 Earnings</span>
+      <span class="tag tag-keyword">Margin compression</span>
+      <span class="tag tag-keyword">Regulation</span>
+    </div>
+
+    <h4>Semantic · UI states only</h4>
+    <div class="tag-demo">
+      <span class="tag tag-warning">Warning</span>
+      <span class="tag tag-error">Error</span>
+    </div>
+    <p style="font-size:13px; color:var(--mist); font-style:italic; margin-top:-6px;">Use only for actual UI states (form warnings, errors). Never decorative.</p>
+  </div>
+
+  <!-- AI PATTERNS -->
+  <div class="section" id="ai-patterns">
+    <h2>AI-era <span class="accent-text">patterns</span></h2>
+    <p class="section-desc">Components that don't exist in heritage intelligence brands. Each one signals "this is built for the AI era" — visible affordances for the workflow your buyers actually have.</p>
+
+    <h3>Source attribution chip</h3>
+    <p style="font-size:15px; color:var(--ink-2); margin-bottom:16px;">Used inline within summaries to attribute claims to specific experts. The avatar gradient signals the expert. The confidence percentage tells the reader how strongly the claim is supported.</p>
+    <div style="display:flex; gap:12px; flex-wrap:wrap; margin: 16px 0;">
+      <span class="source-chip">
+        <span class="source-chip-avatar">P</span>
+        <span class="source-chip-id">EXP-247</span>
+        <span class="source-chip-label">· Payments</span>
+        <span class="source-chip-confidence">92%</span>
+      </span>
+      <span class="source-chip">
+        <span class="source-chip-avatar">H</span>
+        <span class="source-chip-id">EXP-118</span>
+        <span class="source-chip-label">· Healthcare</span>
+        <span class="source-chip-confidence">87%</span>
+      </span>
+      <span class="source-chip">
+        <span class="source-chip-avatar">G</span>
+        <span class="source-chip-id">EXP-302</span>
+        <span class="source-chip-label">· Tech</span>
+        <span class="source-chip-confidence">94%</span>
+      </span>
+    </div>
+
+    <h3>Confidence bars</h3>
+    <p style="font-size:15px; color:var(--ink-2); margin-bottom:16px;">Used on AI-generated summaries to show how strongly each claim is grounded. Mint gradient indicates strength.</p>
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px; max-width:520px;">
+      <div class="confidence-row">
+        <div>
+          <div style="margin-bottom:6px; color:var(--ink); font-size:13px;">UPI margin pressure</div>
+          <div class="confidence-bar"><div class="confidence-fill" style="width:92%"></div></div>
+        </div>
+        <span class="confidence-value">92%</span>
+      </div>
+      <div class="confidence-row">
+        <div>
+          <div style="margin-bottom:6px; color:var(--ink); font-size:13px;">Regulatory timeline 2027</div>
+          <div class="confidence-bar"><div class="confidence-fill" style="width:78%"></div></div>
+        </div>
+        <span class="confidence-value">78%</span>
+      </div>
+      <div class="confidence-row">
+        <div>
+          <div style="margin-bottom:6px; color:var(--ink); font-size:13px;">Merchant economics shift</div>
+          <div class="confidence-bar"><div class="confidence-fill" style="width:65%"></div></div>
+        </div>
+        <span class="confidence-value">65%</span>
+      </div>
+    </div>
+
+    <h3>Command palette · cmd+K</h3>
+    <p style="font-size:15px; color:var(--ink-2); margin-bottom:16px;">Always-accessible search, baked into the navigation. Semantic search across all transcripts via vector similarity. Standard now in every AI-era product.</p>
+    <div class="cmd-bar">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--mist);"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <span class="cmd-bar-prompt">Search transcripts, briefs, experts...</span>
+      <span class="cmd-bar-shortcut">
+        <span class="cmd-key">⌘</span>
+        <span class="cmd-key">K</span>
+      </span>
+    </div>
+
+    <h3>AI insight panel</h3>
+    <p style="font-size:15px; color:var(--ink-2); margin-bottom:16px;">A signature pattern — when AI synthesises content, the surface visually signals "this was machine-generated, here's how, with citations."</p>
+    <div class="ai-panel">
+      <div class="ai-panel-eyebrow">AI synthesis · Claude · 4 sources</div>
+      <div class="ai-panel-title">Three forces converging on Indian payment networks</div>
+      <p style="font-size:15px; color:var(--ink-2); line-height:1.6; margin-bottom:16px;">UPI is hitting structural margin compression as the RBI's 2025 zero-MDR mandate fully takes effect. Top-3 networks are pivoting to merchant lending and value-added services, while smaller players face acquisition or exit. The consolidation timeline is 18–24 months.</p>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <span class="source-chip">
+          <span class="source-chip-avatar">P</span>
+          <span class="source-chip-id">EXP-247</span>
+        </span>
+        <span class="source-chip">
+          <span class="source-chip-avatar">P</span>
+          <span class="source-chip-id">EXP-251</span>
+        </span>
+        <span class="source-chip">
+          <span class="source-chip-avatar">P</span>
+          <span class="source-chip-id">EXP-289</span>
+        </span>
+        <span class="source-chip">
+          <span class="source-chip-avatar">P</span>
+          <span class="source-chip-id">EXP-301</span>
+        </span>
+      </div>
+    </div>
+
+    <h3>Sparklines on metric cards</h3>
+    <p style="font-size:15px; color:var(--ink-2); margin-bottom:16px;">Embedded mini-charts give immediate trend context without needing a separate chart view. Standard in modern analytics UIs.</p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:12px; margin: 16px 0;">
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px;">
+        <div class="mono" style="font-size:11px; color:var(--mist); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;">Active experts</div>
+        <div style="display:flex; align-items:end; justify-content:space-between; gap:12px;">
+          <div class="mono" style="font-size:32px; color:var(--ink); font-weight:500; letter-spacing:-0.02em;">34,247</div>
+          <svg class="sparkline" viewBox="0 0 80 32"><polyline points="0,28 10,24 20,26 30,18 40,20 50,12 60,14 70,8 80,4" fill="none" stroke="var(--accent)" stroke-width="1.5"/></svg>
+        </div>
+        <div class="mono" style="font-size:11px; color:var(--accent); margin-top:6px;">+8.4% / 30d</div>
+      </div>
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px;">
+        <div class="mono" style="font-size:11px; color:var(--mist); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;">Avg call price</div>
+        <div style="display:flex; align-items:end; justify-content:space-between; gap:12px;">
+          <div class="mono" style="font-size:32px; color:var(--ink); font-weight:500; letter-spacing:-0.02em;">$247</div>
+          <svg class="sparkline" viewBox="0 0 80 32"><polyline points="0,18 10,16 20,12 30,14 40,10 50,8 60,12 70,6 80,8" fill="none" stroke="var(--accent)" stroke-width="1.5"/></svg>
+        </div>
+        <div class="mono" style="font-size:11px; color:var(--accent); margin-top:6px;">+12% / 30d</div>
+      </div>
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px;">
+        <div class="mono" style="font-size:11px; color:var(--mist); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;">Calls · 30d</div>
+        <div style="display:flex; align-items:end; justify-content:space-between; gap:12px;">
+          <div class="mono" style="font-size:32px; color:var(--ink); font-weight:500; letter-spacing:-0.02em;">487</div>
+          <svg class="sparkline" viewBox="0 0 80 32"><polyline points="0,20 10,24 20,18 30,22 40,16 50,20 60,14 70,18 80,12" fill="none" stroke="var(--accent)" stroke-width="1.5"/></svg>
+        </div>
+        <div class="mono" style="font-size:11px; color:var(--accent); margin-top:6px;">+24% / 30d</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAMPLE CARDS -->
+  <div class="section" id="cards">
+    <h2>Sample <span class="accent-text">transcript cards</span></h2>
+    <p class="section-desc">Two tiers, two treatments. Standard tier is clean and dense. Elite tier gets a mint top-bar and tinted background — same accent, more presence. Single-accent discipline.</p>
+
+    <h3>Standard tier</h3>
+    <div class="tc-card">
+      <div class="tc-meta" style="margin-bottom:14px;">
+        <span class="tag tag-live">Live · 2 days ago</span>
+      </div>
+      <div class="tc-title">UPI margin compression and the path to monetisation for India's payment majors</div>
+      <div class="tc-summary">Former senior product lead at a top-three Indian payments network on the RBI rule change, merchant economics, and what comes after the zero-MDR era.</div>
+      <div class="tc-meta">
+        <span>2026.03.12</span><span class="tc-meta-divider">·</span>
+        <span>47min</span><span class="tc-meta-divider">·</span>
+        <span class="source-chip" style="padding:2px 8px 2px 2px;"><span class="source-chip-avatar" style="width:18px; height:18px; font-size:8px;">P</span><span class="source-chip-id">EXP-247</span></span>
+      </div>
+      <div class="tc-tags">
+        <span class="tag tag-sector">Fintech</span>
+        <span class="tag tag-geo">India</span>
+        <span class="tag tag-ticker">$PAYTM</span>
+        <span class="tag tag-keyword">UPI</span>
+        <span class="tag tag-keyword">Zero-MDR</span>
+      </div>
+      <div class="tc-footer">
+        <div class="tc-price-block">
+          <div class="tc-price-label">From</div>
+          <div class="tc-price">$199</div>
+        </div>
+        <div class="tc-actions">
+          <button class="btn btn-ghost" style="padding:8px 14px; font-size:13px;">Free summary</button>
+          <button class="btn btn-primary" style="padding:8px 16px; font-size:13px;">Buy transcript</button>
+        </div>
+      </div>
+    </div>
+
+    <h3>Elite tier · mint top-bar + tint</h3>
+    <div class="tc-card tc-card-elite">
+      <span class="tc-tier">Elite · C-suite</span>
+      <div class="tc-title">GLP-1 market dynamics — why big pharma's pricing power is under threat</div>
+      <div class="tc-summary">Former chief commercial officer of a top-10 pharma company breaks down competitive dynamics of the obesity drug market, payer pushback, and what the next eighteen months look like.</div>
+      <div class="tc-meta">
+        <span>2026.03.12</span><span class="tc-meta-divider">·</span>
+        <span>61min</span><span class="tc-meta-divider">·</span>
+        <span class="source-chip" style="padding:2px 8px 2px 2px;"><span class="source-chip-avatar" style="width:18px; height:18px; font-size:8px;">H</span><span class="source-chip-id">EXP-118</span></span>
+      </div>
+      <div class="tc-tags">
+        <span class="tag tag-sector">Healthcare</span>
+        <span class="tag tag-geo">Americas</span>
+        <span class="tag tag-geo">Europe</span>
+        <span class="tag tag-tier-elite">Elite</span>
+        <span class="tag tag-ticker">$LLY</span>
+        <span class="tag tag-ticker">$NVO</span>
+        <span class="tag tag-keyword">GLP-1</span>
+      </div>
+      <div class="tc-footer">
+        <div class="tc-price-block">
+          <div class="tc-price-label">From</div>
+          <div class="tc-price">$499</div>
+        </div>
+        <div class="tc-actions">
+          <button class="btn btn-ghost" style="padding:8px 14px; font-size:13px;">Free summary</button>
+          <button class="btn btn-primary" style="padding:8px 16px; font-size:13px;">Buy transcript</button>
+        </div>
+      </div>
+    </div>
+
+    <h3>Compact list view · density</h3>
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; max-width:760px; overflow:hidden;">
+      <div style="display:grid; grid-template-columns:auto 1fr auto; gap:16px; padding:16px 22px; border-bottom:1px solid var(--border); align-items:center;">
+        <span class="source-chip" style="padding:2px 10px 2px 2px;"><span class="source-chip-avatar" style="width:20px; height:20px; font-size:8px;">T</span><span class="source-chip-id">EXP-302</span></span>
+        <div>
+          <div style="font-size:15px; line-height:1.3; color:var(--ink); margin-bottom:2px; font-weight:500;">Apple Q2 2026 — services margin pressure</div>
+          <div class="mono" style="font-size:11px; color:var(--mist);">2026.04.28 · 38min · Former senior, Major iOS Co</div>
+        </div>
+        <div class="mono" style="font-size:15px; color:var(--accent); font-weight:500;">$199</div>
+      </div>
+      <div style="display:grid; grid-template-columns:auto 1fr auto; gap:16px; padding:16px 22px; border-bottom:1px solid var(--border); align-items:center;">
+        <span class="source-chip" style="padding:2px 10px 2px 2px;"><span class="source-chip-avatar" style="width:20px; height:20px; font-size:8px;">G</span><span class="source-chip-id">EXP-189</span></span>
+        <div>
+          <div style="font-size:15px; line-height:1.3; color:var(--ink); margin-bottom:2px; font-weight:500;">Nvidia GPU supply constraints into 2027</div>
+          <div class="mono" style="font-size:11px; color:var(--mist);">2026.04.22 · 52min · Former director, Major GPU Maker</div>
+        </div>
+        <div class="mono" style="font-size:15px; color:var(--accent); font-weight:500;">$199</div>
+      </div>
+      <div style="display:grid; grid-template-columns:auto 1fr auto; gap:16px; padding:16px 22px; align-items:center; background:var(--accent-tint);">
+        <span class="source-chip" style="padding:2px 10px 2px 2px; background:var(--surface);"><span class="source-chip-avatar" style="width:20px; height:20px; font-size:8px;">S</span><span class="source-chip-id">EXP-044</span></span>
+        <div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:2px;">
+            <span class="tag tag-tier-elite" style="padding:2px 8px; font-size:9px;">Elite</span>
+            <div style="font-size:15px; line-height:1.3; color:var(--ink); font-weight:500;">Sovereign wealth allocation shifts post-tariffs</div>
+          </div>
+          <div class="mono" style="font-size:11px; color:var(--mist);">2026.04.19 · 71min · Former MD, Major SWF</div>
+        </div>
+        <div class="mono" style="font-size:15px; color:var(--accent); font-weight:500;">$499</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- USAGE RULES -->
+  <div class="section" id="rules">
+    <h2>Usage <span class="accent-text">rules</span></h2>
+    <p class="section-desc">Discipline keeps the brand. Every rule below has a reason.</p>
+
+    <h3>Colour rules</h3>
+    <div class="rule-grid">
+      <div class="rule-card do"><div class="rule-label">Do</div><h5>Mint only for accent moments</h5><p>Prices, primary CTAs, AI panels, links, single highlight per view.</p></div>
+      <div class="rule-card do"><div class="rule-label">Do</div><h5>Both modes equally maintained</h5><p>Every component must look intentional in both dark and light. No "compromise" mode.</p></div>
+      <div class="rule-card do"><div class="rule-label">Do</div><h5>Hairline 1px borders</h5><p>2px reads as utility/Bootstrap. 1px reads as considered.</p></div>
+      <div class="rule-card do"><div class="rule-label">Do</div><h5>Glass-morphism on overlays only</h5><p>Modals, dropdowns, popovers. Never on inline content surfaces.</p></div>
+      <div class="rule-card dont"><div class="rule-label">Don't</div><h5>Never two accent colours</h5><p>Mint handles every accent moment. Tier through intensity, not new hue. No amber, no rose, no purple.</p></div>
+      <div class="rule-card dont"><div class="rule-label">Don't</div><h5>Never decorative gradients</h5><p>Mint gradient on Elite tier and AI panels only. Never as page background or hero overlay.</p></div>
+      <div class="rule-card dont"><div class="rule-label">Don't</div><h5>Never neon/glow on body text</h5><p>Glow on CTAs and pulses only. Glow on text reads as 2010s consumer app.</p></div>
+      <div class="rule-card dont"><div class="rule-label">Don't</div><h5>Never lime green</h5><p>Reads as Robinhood / cash-app. Stay in mint family — blue-shifted, not yellow-shifted. Never #7FFF00 territory.</p></div>
+    </div>
+
+    <h3>Typography rules</h3>
+    <div class="rule-grid">
+      <div class="rule-card do"><div class="rule-label">Do</div><h5>Geist for everything</h5><p>One sans family. Hierarchy from weight (300–700) and size, not from new families.</p></div>
+      <div class="rule-card do"><div class="rule-label">Do</div><h5>Geist Mono for every number</h5><p>Tabular figures via font-feature-settings. Slashed zero. Aligned vertically in lists.</p></div>
+      <div class="rule-card do"><div class="rule-label">Do</div><h5>Tight letter-spacing on display</h5><p>-0.04em at Display XL. -0.02em at body. Modern grotesque needs this.</p></div>
+      <div class="rule-card do"><div class="rule-label">Do</div><h5>Sentence case everywhere</h5><p>"Buy transcript", not "Buy Transcript" or "BUY TRANSCRIPT". Title case is dated, all caps is shouting. Mono labels can use uppercase eyebrow style.</p></div>
+      <div class="rule-card dont"><div class="rule-label">Don't</div><h5>Never use serif</h5><p>Serif is a heritage signal. Wrong era for this brand. Including for blog post body.</p></div>
+      <div class="rule-card dont"><div class="rule-label">Don't</div><h5>Never below 13px body</h5><p>Below 13 it stops being readable. Mono can go to 11 with letter-spacing.</p></div>
+      <div class="rule-card dont"><div class="rule-label">Don't</div><h5>Never weight 700+ on display</h5><p>500–600 maximum. Heavier reads as advertising, not editorial.</p></div>
+      <div class="rule-card dont"><div class="rule-label">Don't</div><h5>Never system fonts in production</h5><p>Always load Geist + Geist Mono explicitly via Google Fonts. System font fallback only during initial load.</p></div>
+    </div>
+
+    <h3>Motion rules</h3>
+    <div class="rule-grid">
+      <div class="rule-card do"><div class="rule-label">Do</div><h5>Use motion to communicate state</h5><p>Pulse on live · fade on load · scale on press · slide on overlay.</p></div>
+      <div class="rule-card do"><div class="rule-label">Do</div><h5>Cap at 320ms</h5><p>Anything over 320ms feels slow. Page transitions snap, never cross-fade.</p></div>
+      <div class="rule-card dont"><div class="rule-label">Don't</div><h5>Never decorative animation</h5><p>Floating particles, animated gradients, scroll-jacked sections — all banned.</p></div>
+      <div class="rule-card dont"><div class="rule-label">Don't</div><h5>Never spring physics on UI</h5><p>Ease-out only. Springs read consumer-app, ease-out reads professional-tool.</p></div>
+    </div>
+  </div>
+
+  <!-- DEV / CLAUDE CODE -->
+  <div class="section" id="dev">
+    <h2>For dev · <span class="accent-text">Claude Code reference</span></h2>
+    <p class="section-desc">This section is the implementation hand-off. Paste the snippets below directly into your Next.js + Tailwind project. Every value here matches the design system above exactly. When Claude Code asks "what should this colour be?" — point it here.</p>
+
+    <h3>Tailwind config · tailwind.config.ts</h3>
+    <p style="font-size:14px; color:var(--ink-2); margin-bottom:8px;">Drop this into your tailwind.config.ts theme.extend block. Maps every design token to Tailwind utilities.</p>
+    <div class="code-block"><span class="comment">// tailwind.config.ts</span>
+import type { Config } from 'tailwindcss'
+
+const config: Config = {
+  darkMode: <span class="val">'class'</span>,
+  content: [<span class="val">'./src/**/*.&#123;ts,tsx,mdx&#125;'</span>],
+  theme: {
+    extend: {
+      colors: {
+        <span class="key">mint</span>: {
+          <span class="key">50</span>: <span class="val">'#ECFDF5'</span>, <span class="key">100</span>: <span class="val">'#D1FAE5'</span>, <span class="key">200</span>: <span class="val">'#A7F3D0'</span>,
+          <span class="key">300</span>: <span class="val">'#6EE7B7'</span>, <span class="key">400</span>: <span class="val">'#34D399'</span>, <span class="key">500</span>: <span class="val">'#10B981'</span>,
+          <span class="key">600</span>: <span class="val">'#059669'</span>, <span class="key">700</span>: <span class="val">'#047857'</span>, <span class="key">800</span>: <span class="val">'#065F46'</span>, <span class="key">900</span>: <span class="val">'#064E3B'</span>,
+        },
+        <span class="key">ink</span>: { DEFAULT: <span class="val">'#09090B'</span>, <span class="key">2</span>: <span class="val">'#27272A'</span> },
+        <span class="key">paper</span>: { DEFAULT: <span class="val">'#FAFAF9'</span>, <span class="key">2</span>: <span class="val">'#F4F4F5'</span> },
+        <span class="key">slate</span>: { DEFAULT: <span class="val">'#A1A1AA'</span>, <span class="key">2</span>: <span class="val">'#52525B'</span> },
+        <span class="key">mist</span>: <span class="val">'#71717A'</span>,
+      },
+      fontFamily: {
+        <span class="key">sans</span>: [<span class="val">'Geist'</span>, <span class="val">'system-ui'</span>, <span class="val">'sans-serif'</span>],
+        <span class="key">mono</span>: [<span class="val">'Geist Mono'</span>, <span class="val">'JetBrains Mono'</span>, <span class="val">'Menlo'</span>, <span class="val">'monospace'</span>],
+      },
+      fontSize: {
+        <span class="comment">/* display scale */</span>
+        <span class="key">'display-xl'</span>: [<span class="val">'72px'</span>, &#123; lineHeight: <span class="val">'1'</span>, letterSpacing: <span class="val">'-0.04em'</span>, fontWeight: <span class="val">'600'</span> &#125;],
+        <span class="key">'display-l'</span>: [<span class="val">'56px'</span>, &#123; lineHeight: <span class="val">'1.05'</span>, letterSpacing: <span class="val">'-0.035em'</span>, fontWeight: <span class="val">'600'</span> &#125;],
+        <span class="key">'display-m'</span>: [<span class="val">'44px'</span>, &#123; lineHeight: <span class="val">'1.1'</span>, letterSpacing: <span class="val">'-0.03em'</span>, fontWeight: <span class="val">'500'</span> &#125;],
+        <span class="key">'display-s'</span>: [<span class="val">'32px'</span>, &#123; lineHeight: <span class="val">'1.15'</span>, letterSpacing: <span class="val">'-0.025em'</span>, fontWeight: <span class="val">'500'</span> &#125;],
+      },
+      borderRadius: {
+        <span class="key">DEFAULT</span>: <span class="val">'8px'</span>, <span class="key">xs</span>: <span class="val">'4px'</span>, <span class="key">sm</span>: <span class="val">'6px'</span>,
+        <span class="key">md</span>: <span class="val">'8px'</span>, <span class="key">lg</span>: <span class="val">'12px'</span>, <span class="key">xl</span>: <span class="val">'16px'</span>,
+      },
+      boxShadow: {
+        <span class="key">'cta'</span>: <span class="val">'0 8px 24px -8px rgba(52, 211, 153, 0.32)'</span>,
+        <span class="key">'card-hover'</span>: <span class="val">'0 12px 40px -12px rgba(0, 0, 0, 0.2)'</span>,
+        <span class="key">'modal'</span>: <span class="val">'0 24px 64px -16px rgba(0, 0, 0, 0.4)'</span>,
+      },
+      transitionTimingFunction: {
+        <span class="key">'out'</span>: <span class="val">'cubic-bezier(0.16, 1, 0.3, 1)'</span>,
+      },
+    },
+  },
+  plugins: [],
+}
+
+export default config</div>
+
+    <h3>CSS variables · globals.css</h3>
+    <p style="font-size:14px; color:var(--ink-2); margin-bottom:8px;">For semantic tokens that change between dark and light mode. Drop into globals.css after the @tailwind directives.</p>
+    <div class="code-block"><span class="comment">/* globals.css */</span>
+
+@import url(<span class="val">'https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap'</span>);
+
+@layer base {
+  :root {
+    <span class="comment">/* Light mode (default) */</span>
+    --bg: <span class="val">#FAFAF9</span>;
+    --surface: <span class="val">#FFFFFF</span>;
+    --surface-2: <span class="val">#F4F4F5</span>;
+    --ink: <span class="val">#09090B</span>;
+    --ink-2: <span class="val">#27272A</span>;
+    --slate: <span class="val">#52525B</span>;
+    --mist: <span class="val">#A1A1AA</span>;
+    --border: <span class="val">#E4E4E7</span>;
+    --border-2: <span class="val">#D4D4D8</span>;
+
+    --accent: <span class="val">#10B981</span>;          <span class="comment">/* light mode primary */</span>
+    --accent-deep: <span class="val">#047857</span>;
+    --accent-bright: <span class="val">#34D399</span>;
+    --accent-tint: <span class="val">rgba(16,185,129,0.06)</span>;
+    --accent-glow: <span class="val">rgba(16,185,129,0.22)</span>;
+    --accent-border: <span class="val">rgba(16,185,129,0.30)</span>;
+  }
+
+  .dark {
+    <span class="comment">/* Dark mode override */</span>
+    --bg: <span class="val">#09090B</span>;
+    --surface: <span class="val">#18181B</span>;
+    --surface-2: <span class="val">#27272A</span>;
+    --ink: <span class="val">#FAFAFA</span>;
+    --ink-2: <span class="val">#E4E4E7</span>;
+    --slate: <span class="val">#A1A1AA</span>;
+    --mist: <span class="val">#71717A</span>;
+    --border: <span class="val">#27272A</span>;
+    --border-2: <span class="val">#3F3F46</span>;
+
+    --accent: <span class="val">#34D399</span>;          <span class="comment">/* dark mode primary, brighter */</span>
+    --accent-deep: <span class="val">#10B981</span>;
+    --accent-bright: <span class="val">#6EE7B7</span>;
+    --accent-tint: <span class="val">rgba(16,185,129,0.10)</span>;
+    --accent-glow: <span class="val">rgba(52,211,153,0.32)</span>;
+    --accent-border: <span class="val">rgba(16,185,129,0.30)</span>;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: <span class="val">'Geist'</span>, system-ui, sans-serif;
+    font-feature-settings: <span class="val">'cv11'</span>, <span class="val">'ss01'</span>;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .mono { font-feature-settings: <span class="val">'tnum'</span> 1, <span class="val">'zero'</span> 1; }
+}</div>
+
+    <h3>Component snippets · ready to paste</h3>
+
+    <h4>Primary button</h4>
+    <div class="code-block">&lt;button className=<span class="val">"bg-mint-500 hover:bg-mint-400 text-white px-5 py-2.5 rounded-md font-medium text-sm shadow-cta transition hover:-translate-y-px"</span>&gt;
+  Buy transcript
+&lt;/button&gt;</div>
+
+    <h4>Sector tag</h4>
+    <div class="code-block">&lt;span className=<span class="val">"inline-flex items-center px-2.5 py-1 rounded-md text-xs font-mono font-medium bg-mint-500/10 text-mint-500 border border-mint-500/30"</span>&gt;
+  Fintech
+&lt;/span&gt;</div>
+
+    <h4>Live indicator</h4>
+    <div class="code-block">&lt;span className=<span class="val">"inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono font-medium bg-mint-500/10 text-mint-500 border border-mint-500/30"</span>&gt;
+  &lt;span className=<span class="val">"w-1.5 h-1.5 bg-mint-500 rounded-full animate-pulse"</span> /&gt;
+  Live · 2 days ago
+&lt;/span&gt;</div>
+
+    <h4>Source attribution chip</h4>
+    <div class="code-block">&lt;span className=<span class="val">"inline-flex items-center gap-2 bg-surface border border-border rounded-full pl-1 pr-3 py-1"</span>&gt;
+  &lt;span className=<span class="val">"w-5 h-5 rounded-full bg-gradient-to-br from-mint-500 to-mint-400 text-mint-900 flex items-center justify-center font-mono text-[8px] font-semibold"</span>&gt;
+    P
+  &lt;/span&gt;
+  &lt;span className=<span class="val">"font-mono text-[11px] font-medium"</span>&gt;EXP-247&lt;/span&gt;
+  &lt;span className=<span class="val">"text-mist text-[11px]"</span>&gt;· Payments&lt;/span&gt;
+&lt;/span&gt;</div>
+
+    <h3>Implementation rules · for Claude Code</h3>
+    <div class="rule-grid">
+      <div class="rule-card do">
+        <div class="rule-label">Implementation rule</div>
+        <h5>Use Tailwind utilities, not custom CSS</h5>
+        <p>Every component should be expressible in Tailwind classes. Custom CSS only for animations, gradients, and CSS variables.</p>
+      </div>
+      <div class="rule-card do">
+        <div class="rule-label">Implementation rule</div>
+        <h5>Use shadcn/ui as base</h5>
+        <p>Install shadcn components, then customise the color tokens to match this system. Don't roll your own primitive components.</p>
+      </div>
+      <div class="rule-card do">
+        <div class="rule-label">Implementation rule</div>
+        <h5>Always font-display: swap</h5>
+        <p>Geist loads from Google Fonts CDN. Always set font-display: swap to avoid FOIT. System fallback is system-ui.</p>
+      </div>
+      <div class="rule-card do">
+        <div class="rule-label">Implementation rule</div>
+        <h5>Default to dark mode</h5>
+        <p>Use next-themes with defaultTheme='dark'. Light mode is selectable but dark is the brand default.</p>
+      </div>
+      <div class="rule-card dont">
+        <div class="rule-label">Implementation rule</div>
+        <h5>Never hardcode colours outside this file</h5>
+        <p>Every colour reference goes through Tailwind tokens (mint-500, ink, accent) or CSS variables (var(--accent)). No raw hex in component files.</p>
+      </div>
+      <div class="rule-card dont">
+        <div class="rule-label">Implementation rule</div>
+        <h5>Never use Inter, Roboto, or DM Sans</h5>
+        <p>Even if Geist fails to load. Fall back to system-ui only. Other "modern" sans typefaces will subtly drift the aesthetic.</p>
+      </div>
+    </div>
+
+    <h3>Loading the fonts</h3>
+    <p style="font-size:14px; color:var(--ink-2); margin-bottom:8px;">Use next/font in layout.tsx for optimal loading:</p>
+    <div class="code-block"><span class="comment">// app/layout.tsx</span>
+import &#123; Geist, Geist_Mono &#125; from <span class="val">'next/font/google'</span>
+
+const geist = Geist(&#123;
+  subsets: [<span class="val">'latin'</span>],
+  weight: [<span class="val">'300'</span>, <span class="val">'400'</span>, <span class="val">'500'</span>, <span class="val">'600'</span>, <span class="val">'700'</span>],
+  variable: <span class="val">'--font-geist'</span>,
+  display: <span class="val">'swap'</span>,
+&#125;)
+
+const geistMono = Geist_Mono(&#123;
+  subsets: [<span class="val">'latin'</span>],
+  weight: [<span class="val">'400'</span>, <span class="val">'500'</span>, <span class="val">'600'</span>],
+  variable: <span class="val">'--font-geist-mono'</span>,
+  display: <span class="val">'swap'</span>,
+&#125;)
+
+export default function RootLayout(&#123; children &#125;) &#123;
+  return (
+    &lt;html lang=<span class="val">"en"</span> className=&#123;<span class="val">`</span>$&#123;geist.variable&#125; $&#123;geistMono.variable&#125;<span class="val">`</span>&#125; data-theme=<span class="val">"dark"</span>&gt;
+      &lt;body className=<span class="val">"font-sans antialiased"</span>&gt;&#123;children&#125;&lt;/body&gt;
+    &lt;/html&gt;
+  )
+&#125;</div>
+
+    <p style="font-size:15px; color:var(--ink-2); padding:24px; background:var(--accent-tint); border:1px solid var(--accent-border); border-radius:12px; margin-top:32px;"><strong style="color:var(--accent);">Hand-off note for Claude Code:</strong> This document is the source of truth for all visual decisions. When generating components, always reference these tokens. When in doubt about a colour, default to <code style="font-family:'Geist Mono',monospace; background:var(--surface); padding:2px 6px; border-radius:4px;">mint-500</code> for accents or <code style="font-family:'Geist Mono',monospace; background:var(--surface); padding:2px 6px; border-radius:4px;">ink</code> for primary text. When in doubt about typography, default to Geist sans. When in doubt about layout, default to dark mode with hairline borders, generous whitespace, sentence case.</p>
+  </div>
+
+</div>
+
+<div class="copy-toast" id="copyToast">Copied</div>
+<script>
+function setTheme(mode) {
+  document.documentElement.setAttribute('data-theme', mode);
+  document.querySelectorAll('.theme-toggle button').forEach(b => b.classList.remove('active'));
+  document.querySelector('.theme-toggle button[onclick*="' + mode + '"]').classList.add('active');
+}
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.tab).classList.add('active');
+    window.scrollTo({ top: document.querySelector('.nav-tabs').offsetTop - 1, behavior: 'smooth' });
+  });
+});
+function cc(hex) {
+  navigator.clipboard.writeText(hex).then(() => {
+    const t = document.getElementById('copyToast');
+    t.textContent = 'Copied ' + hex;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 1500);
+  });
+}
+</script>
+</body>
+</html>

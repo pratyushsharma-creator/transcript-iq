@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transcript IQ — Cart & Checkout Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080808; --surface:#0f0f0f; --s2:#141414; --s3:#1a1a1a; --s4:#222;
+  --ink:#ffffff; --ink-2:#888888; --ink-3:rgba(255,255,255,.35); --ink-4:rgba(255,255,255,.15);
+  --border:rgba(255,255,255,.07); --border-2:rgba(255,255,255,.13);
+  --G:#0ed98a; --G2:#0ab86f; --Gt:rgba(14,217,138,.08); --Gb:rgba(14,217,138,.28);
+  --amber:#FBBF24; --red:#F87171;
+  --sans:'Geist',system-ui,sans-serif; --mono:'Geist Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* ── DEMO SWITCHER ── */
+.demo-bar{position:fixed;top:0;left:0;right:0;z-index:999;height:48px;background:#111;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;padding:0 20px}
+.demo-bar-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-right:8px;white-space:nowrap}
+.demo-btn{font-family:var(--mono);font-size:11px;padding:5px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--ink-2);cursor:pointer;transition:all .15s;white-space:nowrap}
+.demo-btn.active,.demo-btn:hover{border-color:var(--Gb);color:var(--G);background:var(--Gt)}
+
+/* ── SCREENS ── */
+.screen{display:none;padding-top:48px;min-height:100vh}
+.screen.active{display:block}
+
+/* ── PAGE CHROME ── */
+nav{height:54px;background:rgba(8,8,8,.92);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 48px;position:sticky;top:48px;z-index:50;backdrop-filter:blur(20px)}
+.logo{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--ink)}
+.logo em{color:var(--G);font-style:normal}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-cart-btn{position:relative;width:36px;height:36px;border-radius:8px;background:var(--surface);border:1px solid var(--border-2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;color:var(--ink-2)}
+.nav-cart-btn:hover{border-color:var(--Gb);color:var(--G)}
+.nav-cart-btn svg{width:15px;height:15px}
+.cart-badge{position:absolute;top:-5px;right:-5px;width:16px;height:16px;border-radius:50%;background:var(--G);font-family:var(--mono);font-size:9px;font-weight:600;color:#052A18;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg)}
+
+/* ══════════════════════════════════════
+   SCREEN 1 — SHOP PAGE (abbreviated)
+══════════════════════════════════════ */
+.shop-page{max-width:1280px;margin:0 auto;padding:48px}
+.shop-hero-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--G);margin-bottom:14px}
+.shop-hero-h{font-size:clamp(28px,4vw,48px);font-weight:700;letter-spacing:-.04em;line-height:1.05;margin-bottom:8px}
+.shop-hero-sub{font-size:15px;color:var(--ink-2);line-height:1.65;margin-bottom:40px;max-width:520px}
+.product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pcard{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;position:relative;overflow:hidden;transition:border-color .2s}
+.pcard:hover{border-color:var(--border-2)}
+.pcard-tier{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--G);margin-bottom:8px}
+.pcard-title{font-size:14px;font-weight:500;line-height:1.35;color:var(--ink);margin-bottom:10px}
+.pcard-meta{font-family:var(--mono);font-size:9px;color:var(--ink-3);margin-bottom:14px}
+.pcard-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px}
+.tag{font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:3px;background:var(--s3);border:1px solid var(--border);color:rgba(255,255,255,.3)}
+.pcard-foot{border-top:1px solid var(--border);padding-top:14px;display:flex;align-items:center;justify-content:space-between}
+.pcard-price{font-family:var(--mono);font-size:20px;font-weight:500;letter-spacing:-.03em;color:var(--G)}
+.pcard-orig{font-family:var(--mono);font-size:11px;color:var(--ink-3);text-decoration:line-through;margin-left:6px}
+.pcard-btns{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}
+.btn-buy{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:600;padding:9px 0;border-radius:8px;border:none;cursor:pointer;transition:all .15s;background:var(--G);color:#052A18}
+.btn-buy:hover{background:var(--G2)}
+.btn-cart{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:500;padding:9px 0;border-radius:8px;border:1px solid var(--border-2);background:transparent;color:var(--ink-2);cursor:pointer;transition:all .15s}
+.btn-cart:hover{border-color:var(--Gb);color:var(--G)}
+.btn-cart svg,.btn-buy svg{width:11px;height:11px;flex-shrink:0}
+
+/* ══════════════════════════════════════
+   CART DRAWER OVERLAY
+══════════════════════════════════════ */
+.drawer-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);animation:overlay-in .2s ease}
+.drawer-overlay.open{display:block}
+@keyframes overlay-in{from{opacity:0}to{opacity:1}}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:420px;z-index:201;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.drawer.open{transform:translateX(0)}
+
+/* Drawer header */
+.drawer-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.drawer-title{font-size:15px;font-weight:600;letter-spacing:-.01em;color:var(--ink)}
+.drawer-count{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-left:6px}
+.drawer-close{width:30px;height:30px;border-radius:7px;border:1px solid var(--border);background:var(--s2);color:var(--ink-2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s}
+.drawer-close:hover{border-color:var(--border-2);color:var(--ink)}
+.drawer-close svg{width:13px;height:13px}
+
+/* Cart items */
+.drawer-items{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:14px}
+.drawer-items::-webkit-scrollbar{width:4px}
+.drawer-items::-webkit-scrollbar-track{background:transparent}
+.drawer-items::-webkit-scrollbar-thumb{background:var(--s4);border-radius:2px}
+
+.cart-item{display:flex;gap:14px;padding:14px;background:var(--s2);border:1px solid var(--border);border-radius:10px;position:relative}
+.cart-item-icon{width:42px;height:42px;border-radius:8px;background:var(--Gt);border:1px solid var(--Gb);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;font-weight:600;color:var(--G);letter-spacing:.06em}
+.cart-item-body{flex:1;min-width:0}
+.cart-item-type{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:3px}
+.cart-item-name{font-size:12px;font-weight:500;line-height:1.35;color:var(--ink);margin-bottom:6px}
+.cart-item-meta{font-family:var(--mono);font-size:9px;color:var(--ink-3);display:flex;gap:8px;flex-wrap:wrap}
+.cart-item-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.cart-item-price{font-family:var(--mono);font-size:15px;font-weight:500;color:var(--G)}
+.cart-item-remove{font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--ink-3);background:none;border:none;cursor:pointer;padding:0;transition:color .15s}
+.cart-item-remove:hover{color:var(--red)}
+
+/* Promo code */
+.drawer-promo{padding:0 24px 16px;flex-shrink:0}
+.promo-row{display:flex;gap:8px}
+.promo-input{flex:1;height:36px;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:0 12px;font-family:var(--mono);font-size:12px;color:var(--ink);outline:none;transition:border-color .15s}
+.promo-input:focus{border-color:var(--Gb)}
+.promo-input::placeholder{color:var(--ink-3)}
+.promo-apply{height:36px;padding:0 16px;background:transparent;border:1px solid var(--border-2);border-radius:8px;font-family:var(--mono);font-size:11px;color:var(--ink-2);cursor:pointer;transition:all .15s;white-space:nowrap}
+.promo-apply:hover{border-color:var(--Gb);color:var(--G)}
+
+/* Cart footer */
+.drawer-foot{padding:20px 24px;border-top:1px solid var(--border);flex-shrink:0}
+.drawer-subtotal{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.drawer-subtotal-label{font-size:13px;color:var(--ink-2)}
+.drawer-subtotal-val{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--ink);letter-spacing:-.02em}
+.drawer-tax-note{font-family:var(--mono);font-size:10px;color:var(--ink-3);margin-bottom:16px}
+.btn-checkout{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;height:48px;border-radius:10px;background:var(--G);border:none;font-size:14px;font-weight:600;color:#052A18;cursor:pointer;transition:all .2s;letter-spacing:-.01em;box-shadow:0 4px 20px -4px var(--Gb)}
+.btn-checkout:hover{background:var(--G2);transform:translateY(-1px)}
+.btn-checkout svg{width:14px;height:14px}
+.btn-continue{width:100%;display:flex;align-items:center;justify-content:center;height:36px;background:none;border:none;font-size:12px;color:var(--ink-3);cursor:pointer;margin-top:10px;transition:color .15s;letter-spacing:-.005em}
+.btn-continue:hover{color:var(--ink-2)}
+.drawer-compliance{margin-top:14px;padding:10px 12px;background:var(--Gt);border:1px solid var(--Gb);border-radius:8px;font-family:var(--mono);font-size:9px;color:var(--G);line-height:1.6;display:flex;gap:8px;align-items:flex-start}
+.drawer-compliance svg{width:11px;height:11px;flex-shrink:0;margin-top:1px}
+
+/* ══════════════════════════════════════
+   SCREEN 2 — CHECKOUT
+══════════════════════════════════════ */
+.checkout-page{max-width:1140px;margin:0 auto;padding:48px}
+
+/* Progress steps */
+.checkout-steps{display:flex;align-items:center;gap:0;margin-bottom:44px}
+.step{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.06em}
+.step-num{width:24px;height:24px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--ink-3);flex-shrink:0;transition:all .3s}
+.step.done .step-num{background:var(--G);border-color:var(--G);color:#052A18}
+.step.active .step-num{background:transparent;border-color:var(--G);color:var(--G)}
+.step-label{color:var(--ink-3);transition:color .3s}
+.step.done .step-label,.step.active .step-label{color:var(--ink-2)}
+.step-sep{flex:1;height:1px;background:var(--border);margin:0 12px;max-width:60px}
+
+/* Checkout layout */
+.checkout-grid{display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:start}
+
+/* Left form */
+.checkout-form{display:flex;flex-direction:column;gap:32px}
+.form-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px}
+.form-section-head{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.form-section-num{width:22px;height:22px;border-radius:50%;background:var(--Gt);border:1px solid var(--Gb);font-family:var(--mono);font-size:9px;font-weight:600;color:var(--G);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.form-section-title{font-size:13px;font-weight:600;letter-spacing:-.01em;color:var(--ink)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid.single{grid-template-columns:1fr}
+.form-field{display:flex;flex-direction:column;gap:5px}
+.form-field.span-2{grid-column:span 2}
+.form-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.form-label em{color:var(--G);font-style:normal;margin-left:2px}
+.form-input{height:40px;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:0 12px;font-family:var(--sans);font-size:13px;color:var(--ink);outline:none;transition:border-color .15s;width:100%}
+.form-input:focus{border-color:var(--Gb)}
+.form-input::placeholder{color:var(--ink-3)}
+.form-input.error{border-color:rgba(248,113,113,.5)}
+.form-error{font-family:var(--mono);font-size:9px;color:var(--red);margin-top:2px}
+
+/* Payment card field */
+.card-field{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:0 12px;height:40px;display:flex;align-items:center;gap:8px;transition:border-color .15s;cursor:text}
+.card-field:focus-within{border-color:var(--Gb)}
+.card-field svg{width:24px;height:16px;flex-shrink:0;opacity:.5}
+.card-input{flex:1;background:transparent;border:none;outline:none;font-family:var(--mono);font-size:13px;color:var(--ink);letter-spacing:.08em}
+.card-input::placeholder{color:var(--ink-3);letter-spacing:0}
+.card-extra{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.cvv-row{display:flex;align-items:center;gap:8px}
+.cvv-help{font-family:var(--mono);font-size:9px;color:var(--ink-3);white-space:nowrap}
+
+/* Stripe lock note */
+.stripe-note{display:flex;align-items:center;gap:8px;margin-top:14px;font-family:var(--mono);font-size:9px;color:var(--ink-3)}
+.stripe-note svg{width:10px;height:10px;flex-shrink:0}
+
+/* Billing toggle */
+.billing-toggle{display:flex;align-items:center;gap:8px;margin-bottom:16px;cursor:pointer}
+.toggle-check{width:16px;height:16px;border-radius:4px;border:1px solid var(--Gb);background:var(--Gt);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toggle-check svg{width:10px;height:10px;color:var(--G)}
+.toggle-label{font-size:13px;color:var(--ink-2)}
+
+/* Right summary */
+.checkout-summary{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;position:sticky;top:calc(54px + 48px + 16px)}
+.summary-title{font-size:13px;font-weight:600;letter-spacing:-.01em;color:var(--ink);margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.summary-items{display:flex;flex-direction:column;gap:12px;margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--border)}
+.sum-item{display:flex;gap:12px;align-items:start}
+.sum-item-icon{width:36px;height:36px;border-radius:7px;background:var(--Gt);border:1px solid var(--Gb);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8px;font-weight:600;color:var(--G)}
+.sum-item-body{flex:1;min-width:0}
+.sum-item-type{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);margin-bottom:2px}
+.sum-item-name{font-size:12px;line-height:1.35;color:var(--ink);margin-bottom:4px}
+.sum-item-price{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--G)}
+.sum-line{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2);margin-bottom:8px}
+.sum-line.total{font-size:15px;font-weight:600;color:var(--ink);margin-top:4px;padding-top:12px;border-top:1px solid var(--border)}
+.sum-line-val{font-family:var(--mono)}
+.sum-line.total .sum-line-val{color:var(--G)}
+.btn-place-order{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;height:48px;border-radius:10px;background:var(--G);border:none;font-size:14px;font-weight:600;color:#052A18;cursor:pointer;transition:all .2s;margin-top:16px;letter-spacing:-.01em;box-shadow:0 4px 20px -4px var(--Gb)}
+.btn-place-order:hover{background:var(--G2);transform:translateY(-1px)}
+.summary-guarantee{margin-top:14px;padding:10px 12px;background:var(--Gt);border:1px solid var(--Gb);border-radius:8px;font-family:var(--mono);font-size:9px;color:var(--G);line-height:1.6;display:flex;gap:7px;align-items:flex-start}
+.summary-guarantee svg{width:10px;height:10px;flex-shrink:0;margin-top:1px}
+
+/* ══════════════════════════════════════
+   SCREEN 3 — CONFIRMATION
+══════════════════════════════════════ */
+.confirm-page{max-width:680px;margin:0 auto;padding:72px 48px;text-align:center}
+.confirm-icon{width:72px;height:72px;border-radius:50%;background:var(--Gt);border:2px solid var(--Gb);display:flex;align-items:center;justify-content:center;margin:0 auto 28px;box-shadow:0 0 40px -8px var(--Gb)}
+.confirm-icon svg{width:32px;height:32px;color:var(--G)}
+.confirm-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--G);margin-bottom:10px}
+.confirm-h{font-size:clamp(24px,4vw,38px);font-weight:700;letter-spacing:-.04em;line-height:1.1;color:var(--ink);margin-bottom:12px}
+.confirm-sub{font-size:15px;color:var(--ink-2);line-height:1.65;max-width:440px;margin:0 auto 36px}
+.confirm-order-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:left;margin-bottom:24px}
+.confirm-order-num{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px}
+.confirm-order-id{font-family:var(--mono);font-size:14px;font-weight:500;color:var(--G);letter-spacing:.04em}
+.confirm-divider{height:1px;background:var(--border);margin:16px 0}
+.confirm-items{display:flex;flex-direction:column;gap:12px}
+.confirm-item{display:flex;align-items:center;gap:12px;justify-content:space-between}
+.confirm-item-left{display:flex;align-items:center;gap:10px}
+.confirm-item-icon{width:34px;height:34px;border-radius:7px;background:var(--Gt);border:1px solid var(--Gb);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8px;font-weight:600;color:var(--G)}
+.confirm-item-name{font-size:12px;line-height:1.3;color:var(--ink);max-width:280px}
+.confirm-item-price{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--G);flex-shrink:0}
+.confirm-total-row{display:flex;justify-content:space-between;font-size:15px;font-weight:600;color:var(--ink);padding-top:12px;border-top:1px solid var(--border);margin-top:4px}
+.confirm-total-val{font-family:var(--mono);color:var(--G)}
+.confirm-downloads{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:24px;text-align:left}
+.confirm-dl-title{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:12px}
+.confirm-dl-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.confirm-dl-item:last-child{border-bottom:none;padding-bottom:0}
+.confirm-dl-name{font-size:12px;color:var(--ink-2)}
+.btn-download{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--G);background:var(--Gt);border:1px solid var(--Gb);border-radius:6px;padding:5px 12px;cursor:pointer;transition:all .15s}
+.btn-download:hover{background:rgba(14,217,138,.14)}
+.confirm-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;padding:13px 26px;border-radius:10px;color:#052A18;background:var(--G);border:none;cursor:pointer;transition:all .2s;letter-spacing:-.01em;box-shadow:0 4px 20px -4px var(--Gb)}
+.btn-primary:hover{background:var(--G2);transform:translateY(-1px)}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:500;padding:13px 22px;border-radius:10px;color:var(--ink-2);background:transparent;border:1px solid var(--border-2);cursor:pointer;transition:all .2s;letter-spacing:-.01em}
+.btn-secondary:hover{border-color:var(--Gb);color:var(--G)}
+
+/* ══════════════════════════════════════
+   ANNOTATION CALLOUTS
+══════════════════════════════════════ */
+.note{position:absolute;font-family:var(--mono);font-size:9px;background:#FBBF24;color:#1a1000;padding:4px 10px;border-radius:4px;pointer-events:none;z-index:300;white-space:nowrap;font-weight:600;letter-spacing:.04em}
+.note::after{content:'';position:absolute;width:6px;height:6px;background:#FBBF24;transform:rotate(45deg)}
+.note.right::after{left:-3px;top:50%;margin-top:-3px}
+.note.left::after{right:-3px;top:50%;margin-top:-3px}
+.note.bottom::after{top:-3px;left:50%;margin-left:-3px}
+.note.top::after{bottom:-3px;left:50%;margin-left:-3px}
+
+</style>
+</head>
+<body>
+
+<!-- Demo switcher bar -->
+<div class="demo-bar">
+  <span class="demo-bar-label">Prototype state:</span>
+  <button class="demo-btn active" onclick="show('shop')">① Shop Page + Cart Drawer</button>
+  <button class="demo-btn" onclick="show('checkout')">② Checkout Form</button>
+  <button class="demo-btn" onclick="show('confirm')">③ Order Confirmation</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SCREEN 1 — SHOP + CART DRAWER
+══════════════════════════════════════════ -->
+<div class="screen active" id="screen-shop">
+  <nav>
+    <div class="logo">Transcript<em>IQ</em></div>
+    <div class="nav-right">
+      <button class="nav-cart-btn" onclick="openDrawer()" title="Open cart">
+        <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 1h2l2 7h7l1-4.5H4.5"/><circle cx="6.5" cy="12.5" r=".8" fill="currentColor"/><circle cx="11" cy="12.5" r=".8" fill="currentColor"/></svg>
+        <span class="cart-badge">2</span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="shop-page">
+    <div class="shop-hero-label">Transcript Library</div>
+    <h1 class="shop-hero-h">Expert Call Transcripts</h1>
+    <p class="shop-hero-sub">MNPI-screened, buy-side ready. Purchase individually from $349 — no subscription.</p>
+
+    <div class="product-grid">
+      <!-- Card 1 -->
+      <div class="pcard" style="border-color:rgba(14,217,138,.22);background-image:linear-gradient(180deg,rgba(14,217,138,.04) 0%,var(--surface) 60%)">
+        <div class="pcard-tier">Elite · Technology / SaaS</div>
+        <div class="pcard-title">AI Compute Migration in ASEAN: Shift to AI Infrastructure and the Rise of Sovereign Data Strategies</div>
+        <div class="pcard-meta">Apr 21, 2026 · 41 min · APAC · Former VP Infrastructure</div>
+        <div class="pcard-tags">
+          <span class="tag">$GOOGL</span><span class="tag">$AMZN</span><span class="tag">$AMD</span><span class="tag">+5</span>
+        </div>
+        <div class="pcard-foot">
+          <div><span class="pcard-price">$349</span><span class="pcard-orig">$499</span></div>
+          <span style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:rgba(14,217,138,.7)">30% off</span>
+        </div>
+        <div class="pcard-btns">
+          <button class="btn-buy" onclick="show('checkout')">
+            <svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 1h1.5l1.5 5.5h5l.8-3.5H3"/><circle cx="4.5" cy="9.5" r=".7" fill="currentColor"/><circle cx="8" cy="9.5" r=".7" fill="currentColor"/></svg>
+            Buy Now
+          </button>
+          <button class="btn-cart" onclick="openDrawer()">
+            <svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5.5 1.5v8M1.5 5.5h8"/></svg>
+            Add to Cart
+          </button>
+        </div>
+      </div>
+      <!-- Card 2 -->
+      <div class="pcard">
+        <div class="pcard-tier">Premium · Financial Services</div>
+        <div class="pcard-title">India Fintech Regulatory Tightening: Impact on UPI Economics and MDR Outlook for FY27</div>
+        <div class="pcard-meta">Mar 14, 2026 · 53 min · India · Former Director, RBI Policy</div>
+        <div class="pcard-tags">
+          <span class="tag">$PAYM</span><span class="tag">$RAZP</span><span class="tag">$INFY</span>
+        </div>
+        <div class="pcard-foot">
+          <div><span class="pcard-price">$449</span></div>
+        </div>
+        <div class="pcard-btns">
+          <button class="btn-buy" onclick="show('checkout')">
+            <svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 1h1.5l1.5 5.5h5l.8-3.5H3"/><circle cx="4.5" cy="9.5" r=".7" fill="currentColor"/><circle cx="8" cy="9.5" r=".7" fill="currentColor"/></svg>
+            Buy Now
+          </button>
+          <button class="btn-cart" onclick="openDrawer()">
+            <svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5.5 1.5v8M1.5 5.5h8"/></svg>
+            Add to Cart
+          </button>
+        </div>
+      </div>
+      <!-- Card 3 -->
+      <div class="pcard">
+        <div class="pcard-tier">Standard · Energy</div>
+        <div class="pcard-title">Offshore Wind Decommissioning Economics: Hidden Costs and Supply Chain Bottlenecks in North Sea</div>
+        <div class="pcard-meta">Feb 28, 2026 · 38 min · EMEA · Former VP Operations, Equinor</div>
+        <div class="pcard-tags">
+          <span class="tag">$EQNR</span><span class="tag">$BP</span><span class="tag">$SHEL</span>
+        </div>
+        <div class="pcard-foot">
+          <div><span class="pcard-price">$349</span></div>
+        </div>
+        <div class="pcard-btns">
+          <button class="btn-buy" onclick="show('checkout')">
+            <svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 1h1.5l1.5 5.5h5l.8-3.5H3"/><circle cx="4.5" cy="9.5" r=".7" fill="currentColor"/><circle cx="8" cy="9.5" r=".7" fill="currentColor"/></svg>
+            Buy Now
+          </button>
+          <button class="btn-cart" onclick="openDrawer()">
+            <svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5.5 1.5v8M1.5 5.5h8"/></svg>
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Click cart icon note -->
+    <div style="margin-top:32px;padding:14px 20px;background:var(--Gt);border:1px solid var(--Gb);border-radius:10px;font-family:var(--mono);font-size:11px;color:var(--G);display:flex;align-items:center;gap:10px">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5.5"/><path d="M7 4.5v3M7 9h.01"/></svg>
+      Prototype: Click the cart icon (top-right) or "Add to Cart" to open the cart drawer. Click "Buy Now" to jump to checkout.
+    </div>
+  </div>
+
+  <!-- ─── CART DRAWER OVERLAY ─── -->
+  <div class="drawer-overlay" id="overlay" onclick="closeDrawer()"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-head">
+      <div>
+        <span class="drawer-title">Your Cart</span>
+        <span class="drawer-count">2 items</span>
+      </div>
+      <button class="drawer-close" onclick="closeDrawer()">
+        <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 2l9 9M11 2l-9 9"/></svg>
+      </button>
+    </div>
+
+    <div class="drawer-items">
+      <!-- Item 1 -->
+      <div class="cart-item">
+        <div class="cart-item-icon">EXP</div>
+        <div class="cart-item-body">
+          <div class="cart-item-type">Expert Transcript · Elite</div>
+          <div class="cart-item-name">AI Compute Migration in ASEAN: Shift to AI Infrastructure and Sovereign Data</div>
+          <div class="cart-item-meta">
+            <span>Apr 21, 2026</span>
+            <span>·</span>
+            <span>41 min</span>
+            <span>·</span>
+            <span>APAC</span>
+          </div>
+          <div class="cart-item-foot">
+            <span class="cart-item-price">$349</span>
+            <button class="cart-item-remove">Remove</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 2 -->
+      <div class="cart-item">
+        <div class="cart-item-icon" style="background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.28);color:#FBBF24">EPS</div>
+        <div class="cart-item-body">
+          <div class="cart-item-type">Earnings Analysis · $NVDA</div>
+          <div class="cart-item-name">NVDA Q1 FY2026 — EPS Beat, Revenue Beat, Blackwell Ramp Analysis</div>
+          <div class="cart-item-meta">
+            <span>Q1 FY2026</span>
+            <span>·</span>
+            <span>Instant PDF</span>
+          </div>
+          <div class="cart-item-foot">
+            <span class="cart-item-price">$99</span>
+            <button class="cart-item-remove">Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer-promo">
+      <div class="promo-row">
+        <input class="promo-input" type="text" placeholder="Promo code">
+        <button class="promo-apply">Apply</button>
+      </div>
+    </div>
+
+    <div class="drawer-foot">
+      <div class="drawer-subtotal">
+        <span class="drawer-subtotal-label">Subtotal</span>
+        <span class="drawer-subtotal-val">$448</span>
+      </div>
+      <div class="drawer-tax-note">Taxes calculated at checkout · Instant PDF delivery</div>
+      <button class="btn-checkout" onclick="closeDrawer();show('checkout')">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 7h10M8 3l4 4-4 4"/></svg>
+        Proceed to Checkout
+      </button>
+      <button class="btn-continue" onclick="closeDrawer()">← Continue Shopping</button>
+      <div class="drawer-compliance">
+        <svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1.5 5.5l2.5 2.5 5.5-5.5"/></svg>
+        Every transcript is MNPI-screened and PII-redacted. Compliant with SEC §10b-5 and FCA guidelines.
+      </div>
+    </div>
+  </div>
+</div><!-- end screen-shop -->
+
+
+<!-- ══════════════════════════════════════════
+     SCREEN 2 — CHECKOUT
+══════════════════════════════════════════ -->
+<div class="screen" id="screen-checkout">
+  <nav>
+    <div class="logo">Transcript<em>IQ</em></div>
+    <div class="nav-right">
+      <div class="nav-cart-btn">
+        <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 1h2l2 7h7l1-4.5H4.5"/><circle cx="6.5" cy="12.5" r=".8" fill="currentColor"/><circle cx="11" cy="12.5" r=".8" fill="currentColor"/></svg>
+        <span class="cart-badge">2</span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="checkout-page">
+    <!-- Steps -->
+    <div class="checkout-steps">
+      <div class="step done">
+        <div class="step-num"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></div>
+        <span class="step-label">Cart</span>
+      </div>
+      <div class="step-sep"></div>
+      <div class="step active">
+        <div class="step-num">2</div>
+        <span class="step-label">Checkout</span>
+      </div>
+      <div class="step-sep"></div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <span class="step-label">Confirmation</span>
+      </div>
+    </div>
+
+    <div class="checkout-grid">
+      <!-- LEFT FORM -->
+      <div class="checkout-form">
+
+        <!-- Section 1: Contact -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <div class="form-section-num">1</div>
+            <div class="form-section-title">Contact Information</div>
+          </div>
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="form-label">First name <em>*</em></label>
+              <input class="form-input" type="text" placeholder="Pratyush" value="Pratyush">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Last name <em>*</em></label>
+              <input class="form-input" type="text" placeholder="Sharma" value="Sharma">
+            </div>
+            <div class="form-field span-2">
+              <label class="form-label">Corporate email <em>*</em></label>
+              <input class="form-input" type="email" placeholder="you@company.com" value="pratyush@nextyn.com">
+              <span style="font-family:var(--mono);font-size:9px;color:var(--ink-3);margin-top:4px">Personal email addresses (Gmail, Yahoo, etc.) are not accepted.</span>
+            </div>
+            <div class="form-field span-2">
+              <label class="form-label">Organisation <em>*</em></label>
+              <input class="form-input" type="text" placeholder="Hedge fund, asset manager, corp dev..." value="Nextyn Advisory">
+            </div>
+            <div class="form-field span-2">
+              <label class="form-label">Role / title</label>
+              <input class="form-input" type="text" placeholder="e.g. Portfolio Manager, Research Analyst">
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Billing -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <div class="form-section-num">2</div>
+            <div class="form-section-title">Billing Details</div>
+          </div>
+          <label class="billing-toggle">
+            <div class="toggle-check"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></div>
+            <span class="toggle-label">Same as company address</span>
+          </label>
+          <div class="form-grid">
+            <div class="form-field span-2">
+              <label class="form-label">Company / Billing name <em>*</em></label>
+              <input class="form-input" type="text" placeholder="Nextyn Advisory Pte. Ltd." value="Nextyn Advisory Pte. Ltd.">
+            </div>
+            <div class="form-field span-2">
+              <label class="form-label">Address line 1 <em>*</em></label>
+              <input class="form-input" type="text" placeholder="Street address">
+            </div>
+            <div class="form-field">
+              <label class="form-label">City <em>*</em></label>
+              <input class="form-input" type="text" placeholder="Singapore">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Country <em>*</em></label>
+              <input class="form-input" type="text" placeholder="Singapore">
+            </div>
+            <div class="form-field">
+              <label class="form-label">GST / VAT number</label>
+              <input class="form-input" type="text" placeholder="Optional — for tax receipts">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Postal code</label>
+              <input class="form-input" type="text" placeholder="123456">
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Payment -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <div class="form-section-num">3</div>
+            <div class="form-section-title">Payment</div>
+          </div>
+
+          <!-- Payment method tabs -->
+          <div style="display:flex;gap:6px;margin-bottom:18px">
+            <button style="flex:1;height:36px;border-radius:8px;border:1px solid var(--Gb);background:var(--Gt);font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--G);cursor:pointer">
+              Credit / Debit Card
+            </button>
+            <button style="flex:1;height:36px;border-radius:8px;border:1px solid var(--border);background:transparent;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--ink-3);cursor:pointer">
+              Bank Transfer
+            </button>
+            <button style="flex:1;height:36px;border-radius:8px;border:1px solid var(--border);background:transparent;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--ink-3);cursor:pointer">
+              Invoice
+            </button>
+          </div>
+
+          <div class="form-grid single">
+            <div class="form-field">
+              <label class="form-label">Card number <em>*</em></label>
+              <div class="card-field">
+                <svg viewBox="0 0 24 16" fill="none"><rect width="24" height="16" rx="2" fill="rgba(255,255,255,.1)"/><rect x="0" y="5" width="24" height="4" fill="rgba(255,255,255,.15)"/></svg>
+                <input class="card-input" type="text" placeholder="4242  4242  4242  4242">
+              </div>
+            </div>
+          </div>
+          <div class="card-extra">
+            <div class="form-field">
+              <label class="form-label">Expiry <em>*</em></label>
+              <input class="form-input" type="text" placeholder="MM / YY">
+            </div>
+            <div class="form-field">
+              <label class="form-label">CVC <em>*</em></label>
+              <div class="cvv-row">
+                <input class="form-input" type="text" placeholder="123" style="flex:1">
+                <span class="cvv-help">3–4 digits</span>
+              </div>
+            </div>
+          </div>
+          <div class="stripe-note">
+            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1.5" y="4.5" width="7" height="5" rx=".8"/><path d="M3 4.5V3.5a2 2 0 1 1 4 0v1"/></svg>
+            Secured by Stripe · PCI DSS compliant · Your card data never touches our servers
+          </div>
+        </div>
+
+      </div><!-- end left form -->
+
+      <!-- RIGHT SUMMARY -->
+      <div class="checkout-summary">
+        <div class="summary-title">Order Summary (2 items)</div>
+        <div class="summary-items">
+          <div class="sum-item">
+            <div class="sum-item-icon">EXP</div>
+            <div class="sum-item-body">
+              <div class="sum-item-type">Expert Transcript</div>
+              <div class="sum-item-name">AI Compute Migration in ASEAN — Elite, APAC, 41 min</div>
+              <div class="sum-item-price">$349</div>
+            </div>
+          </div>
+          <div class="sum-item">
+            <div class="sum-item-icon" style="background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.28);color:#FBBF24">EPS</div>
+            <div class="sum-item-body">
+              <div class="sum-item-type">Earnings Analysis</div>
+              <div class="sum-item-name">NVDA Q1 FY2026 — Blackwell Ramp, Export Controls</div>
+              <div class="sum-item-price">$99</div>
+            </div>
+          </div>
+        </div>
+        <div class="sum-line"><span>Subtotal</span><span class="sum-line-val">$448.00</span></div>
+        <div class="sum-line"><span>Discount</span><span class="sum-line-val" style="color:var(--G)">–$150.00</span></div>
+        <div class="sum-line"><span>Tax (GST 9%)</span><span class="sum-line-val">$26.82</span></div>
+        <div class="sum-line total">
+          <span>Total due</span>
+          <span class="sum-line-val">$324.82</span>
+        </div>
+        <button class="btn-place-order" onclick="show('confirm')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1.5 5l2.5 2.5 5.5-5.5"/><rect x="1" y="1" width="12" height="12" rx="2" stroke-width="1.3"/></svg>
+          Place Order — $324.82
+        </button>
+        <div class="summary-guarantee">
+          <svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1.5 5.5l2.5 2.5 5.5-5.5"/></svg>
+          Instant PDF delivery to your email. Every document is MNPI-screened and PII-redacted. Refunds available within 24hr if content is materially mis-described.
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- end screen-checkout -->
+
+
+<!-- ══════════════════════════════════════════
+     SCREEN 3 — CONFIRMATION
+══════════════════════════════════════════ -->
+<div class="screen" id="screen-confirm">
+  <nav>
+    <div class="logo">Transcript<em>IQ</em></div>
+  </nav>
+
+  <div class="confirm-page">
+    <div class="confirm-icon">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <path d="M5 16l7 8 15-16"/>
+      </svg>
+    </div>
+    <div class="confirm-eyebrow">Order confirmed</div>
+    <h1 class="confirm-h">Your research is ready.</h1>
+    <p class="confirm-sub">
+      Your PDFs have been sent to <strong style="color:var(--ink)">pratyush@nextyn.com</strong>. You can also download them directly below.
+    </p>
+
+    <div class="confirm-order-box">
+      <div class="confirm-order-num">Order reference</div>
+      <div class="confirm-order-id">TIQ-2026-04892</div>
+      <div class="confirm-divider"></div>
+      <div class="confirm-items">
+        <div class="confirm-item">
+          <div class="confirm-item-left">
+            <div class="confirm-item-icon">EXP</div>
+            <div class="confirm-item-name">AI Compute Migration in ASEAN — Elite Expert Transcript</div>
+          </div>
+          <div class="confirm-item-price">$349</div>
+        </div>
+        <div class="confirm-item">
+          <div class="confirm-item-left">
+            <div class="confirm-item-icon" style="background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.28);color:#FBBF24">EPS</div>
+            <div class="confirm-item-name">NVDA Q1 FY2026 Earnings Analysis</div>
+          </div>
+          <div class="confirm-item-price">$99</div>
+        </div>
+      </div>
+      <div class="confirm-total-row">
+        <span>Total charged</span>
+        <span class="confirm-total-val">$324.82</span>
+      </div>
+    </div>
+
+    <!-- Downloads -->
+    <div class="confirm-downloads">
+      <div class="confirm-dl-title">Download your PDFs</div>
+      <div class="confirm-dl-item">
+        <span class="confirm-dl-name">AI Compute Migration in ASEAN — Expert Transcript.pdf</span>
+        <button class="btn-download">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 1.5v6M2 7l3 3 3-3"/></svg>
+          Download
+        </button>
+      </div>
+      <div class="confirm-dl-item">
+        <span class="confirm-dl-name">NVDA Q1 FY2026 Earnings Analysis.pdf</span>
+        <button class="btn-download">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 1.5v6M2 7l3 3 3-3"/></svg>
+          Download
+        </button>
+      </div>
+    </div>
+
+    <!-- Compliance note -->
+    <div style="margin-bottom:24px;padding:14px 16px;background:var(--Gt);border:1px solid var(--Gb);border-radius:10px;font-family:var(--mono);font-size:10px;color:var(--G);line-height:1.65;text-align:left">
+      <strong style="display:block;margin-bottom:4px;letter-spacing:.06em">Compliance note</strong>
+      All transcripts include an MNPI screening certificate. Cite as: "Expert call, [Sector], via Transcript-IQ, [Date]" in IC memos and research notes. Aligned with SEC §10b-5 and FCA expert network guidelines.
+    </div>
+
+    <div class="confirm-actions">
+      <button class="btn-primary" onclick="show('shop')">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 6.5h9M7.5 2.5l4 4-4 4"/></svg>
+        Continue Shopping
+      </button>
+      <button class="btn-secondary">View Order History</button>
+    </div>
+  </div>
+</div><!-- end screen-confirm -->
+
+
+<script>
+// ── Screen switcher ──
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'))
+  document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'))
+  document.getElementById('screen-' + id).classList.add('active')
+  const idx = {shop:0, checkout:1, confirm:2}[id]
+  document.querySelectorAll('.demo-btn')[idx].classList.add('active')
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+// ── Cart drawer ──
+function openDrawer() {
+  document.getElementById('overlay').classList.add('open')
+  setTimeout(() => document.getElementById('drawer').classList.add('open'), 10)
+  document.body.style.overflow = 'hidden'
+}
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open')
+  document.getElementById('overlay').classList.remove('open')
+  document.body.style.overflow = ''
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer() })
+</script>
+</body>
+</html>

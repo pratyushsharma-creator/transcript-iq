@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transcript Card Prototype</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #07090A;
+    --surface: #0E1210;
+    --surface-2: #141A16;
+    --border: rgba(255,255,255,0.08);
+    --accent: #34D399;
+    --accent-tint: rgba(52,211,153,0.07);
+    --accent-border: rgba(52,211,153,0.22);
+    --ink: #F0F4F2;
+    --ink-2: #8FA89B;
+    --ink-3: #4A5E54;
+    --mist: #4A5E54;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    padding: 48px 32px;
+  }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+  }
+
+  .section-sub {
+    font-size: 14px;
+    color: var(--ink-2);
+    margin-bottom: 32px;
+  }
+
+  /* ── Grid ─────────────────────────────────────────── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  /* ── Card shell — the whole thing is a click target ── */
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 18px;
+    cursor: pointer;
+    transition: border-color 0.18s, transform 0.18s, box-shadow 0.18s;
+    overflow: hidden;
+  }
+  .card:hover {
+    border-color: rgba(255,255,255,0.14);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px -12px rgba(0,0,0,0.5);
+  }
+  .card.elite {
+    border-color: var(--accent-border);
+    background: linear-gradient(180deg, rgba(52,211,153,0.04) 0%, var(--surface) 60%);
+  }
+  .card.elite:hover {
+    border-color: rgba(52,211,153,0.4);
+  }
+
+  /* Invisible full-card link — sits behind everything */
+  .card-link {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  /* All content above the card link */
+  .card-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  /* ── Top row ──────────────────────────────────────── */
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .tier-badge {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mist);
+  }
+  .tier-badge.elite-badge {
+    background: linear-gradient(90deg, #34D399, #6EE7B7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 600;
+  }
+
+  .date {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--mist);
+  }
+
+  /* ── Title — FIXED HEIGHT, line-clamp ─────────────── */
+  .card-title {
+    /* 3 lines × 1.35 line-height × 16px = 64.8px ≈ 65px */
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    /* Fixed height = 3 lines exactly */
+    height: calc(15px * 1.35 * 3);   /* 60.75px */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    margin-bottom: 10px;
+  }
+
+  /* ── Summary — FIXED HEIGHT, line-clamp ──────────── */
+  .card-summary {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    /* Fixed height = 2 lines exactly */
+    height: calc(12px * 1.6 * 2);    /* 38.4px */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    margin-bottom: 12px;
+  }
+
+  /* ── Expert row — REPLACES EXP-189 ───────────────── */
+  .expert-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--mist);
+  }
+
+  .expert-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 2px 8px 2px 3px;
+    background: var(--surface-2);
+  }
+
+  .expert-avatar {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #34D399, #10B981);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .expert-avatar svg {
+    width: 8px;
+    height: 8px;
+    color: #052A18;
+  }
+
+  .expert-title {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+  }
+
+  .expert-duration {
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  /* ── Tags ─────────────────────────────────────────── */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 14px;
+  }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    border-radius: 5px;
+    padding: 2px 7px;
+  }
+  .tag-sector {
+    border: 1px solid var(--accent-border);
+    background: var(--accent-tint);
+    color: var(--accent);
+  }
+  .tag-geo {
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--ink-2);
+  }
+  .tag-ticker {
+    border: 1px solid var(--border);
+    color: var(--ink-2);
+  }
+
+  /* ── Price + actions — PUSHED TO BOTTOM ──────────── */
+  .card-footer {
+    margin-top: auto;
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+  }
+
+  .price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .price-original {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--mist);
+    text-decoration: line-through;
+  }
+
+  .price-current {
+    font-family: var(--font-mono);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+
+  .price-badge {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: #052A18;
+    border-radius: 4px;
+    padding: 2px 6px;
+  }
+
+  /* ── Action buttons ───────────────────────────────── */
+  .btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+    position: relative;
+    z-index: 2;   /* above the card-link */
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    border-radius: 8px;
+    padding: 9px 10px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #052A18;
+    box-shadow: 0 0 0 1px var(--accent-border), 0 4px 16px -4px rgba(52,211,153,0.35);
+  }
+  .btn-primary:hover {
+    background: #10B981;
+    transform: translateY(-1px);
+  }
+  .btn-primary svg { width: 11px; height: 11px; }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink-2);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover {
+    background: var(--surface-2);
+    color: var(--ink);
+    border-color: rgba(255,255,255,0.14);
+  }
+  .btn-secondary svg { width: 11px; height: 11px; }
+
+  /* ── Engagement copy ──────────────────────────────── */
+  .engagement {
+    margin-top: 10px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--mist);
+  }
+
+  /* ── Elite top glow line ─────────────────────────── */
+  .elite-glow {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 8%, rgba(52,211,153,0.55) 50%, transparent 92%);
+  }
+
+  /* ── Annotation callouts for the prototype ────────── */
+  .annotation {
+    position: absolute;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: #FBBF24;
+    background: rgba(251,191,36,0.12);
+    border: 1px solid rgba(251,191,36,0.3);
+    border-radius: 4px;
+    padding: 2px 6px;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .ann-right { right: -8px; transform: translateX(100%); }
+  .ann-left { left: -8px; transform: translateX(-100%); }
+</style>
+</head>
+<body>
+
+<div class="label">prototype · transcript card redesign</div>
+<h1 class="section-title">Latest Transcripts</h1>
+<p class="section-sub">New expert call transcripts published in the last week. <span style="color:#FBBF24;font-size:12px;font-family:monospace">← Prototype: annotations in yellow</span></p>
+
+<div class="grid">
+
+  <!-- ── CARD 1 (Premium, long title) ───────────────── -->
+  <div class="card elite" style="position:relative">
+    <div class="elite-glow"></div>
+    <a href="#" class="card-link" tabindex="-1" aria-hidden="true"></a>
+    <div class="card-content">
+
+      <div class="card-top">
+        <span class="tier-badge elite-badge">Premium</span>
+        <span class="date">2026.04.20</span>
+      </div>
+
+      <!-- FIXED 3-line height regardless of actual line count -->
+      <h3 class="card-title">
+        Enterprise ERP Transformation Insights: Navigating the 2027 SAP Support Deadline, Legacy Migration Realities, and the Strategic Role of GCCs in Capturing OPEX Savings
+      </h3>
+
+      <p class="card-summary">
+        Analyses ERP transformation, highlighting slow cloud migration, hybrid architectures, data complexity, and AI-led automation driving efficiency gains and long-term competitive positioning.
+      </p>
+
+      <!-- Expert row: designation instead of EXP-189 -->
+      <div class="expert-row">
+        <div class="expert-pill">
+          <div class="expert-avatar">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="6" cy="4.5" r="2.5"/>
+              <path d="M1.5 11c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5"/>
+            </svg>
+          </div>
+          <span class="expert-title">Former VP, Enterprise Software</span>
+        </div>
+        <span class="expert-duration" style="margin-left:auto">49 min</span>
+      </div>
+
+      <div class="tags">
+        <span class="tag tag-sector">Technology / SaaS</span>
+        <span class="tag tag-geo">apac</span>
+        <span class="tag tag-ticker">$ACN</span>
+        <span class="tag tag-ticker">$CAP</span>
+        <span class="tag tag-ticker">$MSFT</span>
+      </div>
+
+      <div class="card-footer">
+        <div class="price-row">
+          <span class="price-original">$599</span>
+          <span class="price-current">$449</span>
+          <span class="price-badge">25% Off</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="event.stopPropagation()">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+              <path d="M1 1h1.5l1.5 6h6l1-4H4"/>
+              <circle cx="5.5" cy="10" r="1"/>
+              <circle cx="9.5" cy="10" r="1"/>
+            </svg>
+            Buy Now
+          </button>
+          <button class="btn btn-secondary" onclick="event.stopPropagation()">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+              <rect x="1" y="1" width="10" height="10" rx="1.5"/>
+              <path d="M4 6h4M6 4v4"/>
+            </svg>
+            Add to Cart
+          </button>
+        </div>
+        <div class="engagement">100+ buyers last 30 days · Popular among enterprise IT and ERP leaders</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── CARD 2 (Standard, medium title) ───────────── -->
+  <div class="card">
+    <a href="#" class="card-link" tabindex="-1" aria-hidden="true"></a>
+    <div class="card-content">
+
+      <div class="card-top">
+        <span class="tier-badge">Standard</span>
+        <span class="date">2026.04.21</span>
+      </div>
+
+      <h3 class="card-title">
+        AI Compute Migration in ASEAN: Shift to AI Infrastructure and the Rise of Sovereign Data Strategies
+      </h3>
+
+      <p class="card-summary">
+        Analyses ASEAN AI data center expansion, highlighting China-driven demand shift, power constraints, Singapore vs Malaysia trade-offs, and rising dominance of AI-first infrastructure.
+      </p>
+
+      <div class="expert-row">
+        <div class="expert-pill">
+          <div class="expert-avatar">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="6" cy="4.5" r="2.5"/>
+              <path d="M1.5 11c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5"/>
+            </svg>
+          </div>
+          <span class="expert-title">Former Director, ASEAN Data Infrastructure</span>
+        </div>
+        <span class="expert-duration">41 min</span>
+      </div>
+
+      <div class="tags">
+        <span class="tag tag-sector">Technology / SaaS</span>
+        <span class="tag tag-geo">apac</span>
+        <span class="tag tag-ticker">$GOOGL</span>
+        <span class="tag tag-ticker">$AMZN</span>
+        <span class="tag tag-ticker">$AMD</span>
+      </div>
+
+      <div class="card-footer">
+        <div class="price-row">
+          <span class="price-original">$499</span>
+          <span class="price-current">$349</span>
+          <span class="price-badge">30% Off</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="event.stopPropagation()">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+              <path d="M1 1h1.5l1.5 6h6l1-4H4"/>
+              <circle cx="5.5" cy="10" r="1"/>
+              <circle cx="9.5" cy="10" r="1"/>
+            </svg>
+            Buy Now
+          </button>
+          <button class="btn btn-secondary" onclick="event.stopPropagation()">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+              <rect x="1" y="1" width="10" height="10" rx="1.5"/>
+              <path d="M4 6h4M6 4v4"/>
+            </svg>
+            Add to Cart
+          </button>
+        </div>
+        <div class="engagement">100+ buyers last 30 days · Popular among data center and AI infrastructure investors</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── CARD 3 (Premium, medium title) ────────────── -->
+  <div class="card elite">
+    <div class="elite-glow"></div>
+    <a href="#" class="card-link" tabindex="-1" aria-hidden="true"></a>
+    <div class="card-content">
+
+      <div class="card-top">
+        <span class="tier-badge elite-badge">Premium</span>
+        <span class="date">2026.04.27</span>
+      </div>
+
+      <h3 class="card-title">
+        AI-Era Semiconductor Sourcing: 3nm & CoWoS Bottlenecks, Taiwan Risk, Foundry Partnerships
+      </h3>
+
+      <p class="card-summary">
+        Analyses advanced-node semiconductor sourcing, highlighting TSMC concentration, AI-driven CoWoS bottlenecks, export-control constraints, and limited near-term alternatives.
+      </p>
+
+      <div class="expert-row">
+        <div class="expert-pill">
+          <div class="expert-avatar">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="6" cy="4.5" r="2.5"/>
+              <path d="M1.5 11c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5"/>
+            </svg>
+          </div>
+          <span class="expert-title">Former VP, Semiconductor Supply Chain</span>
+        </div>
+        <span class="expert-duration">52 min</span>
+      </div>
+
+      <div class="tags">
+        <span class="tag tag-sector">Technology / SaaS</span>
+        <span class="tag tag-geo">apac</span>
+        <span class="tag tag-ticker">$AMD</span>
+        <span class="tag tag-ticker">$MKR</span>
+        <span class="tag tag-ticker">$AAPL</span>
+      </div>
+
+      <div class="card-footer">
+        <div class="price-row">
+          <span class="price-original">$599</span>
+          <span class="price-current">$449</span>
+          <span class="price-badge">25% Off</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="event.stopPropagation()">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+              <path d="M1 1h1.5l1.5 6h6l1-4H4"/>
+              <circle cx="5.5" cy="10" r="1"/>
+              <circle cx="9.5" cy="10" r="1"/>
+            </svg>
+            Buy Now
+          </button>
+          <button class="btn btn-secondary" onclick="event.stopPropagation()">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+              <rect x="1" y="1" width="10" height="10" rx="1.5"/>
+              <path d="M4 6h4M6 4v4"/>
+            </svg>
+            Add to Cart
+          </button>
+        </div>
+        <div class="engagement">Gaining traction among institutional investors and research teams</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Changelog / what changed ─────────────────────── -->
+<div style="margin-top:48px;padding:20px;border:1px solid rgba(251,191,36,0.25);border-radius:10px;background:rgba(251,191,36,0.04)">
+  <p style="font-family:monospace;font-size:11px;color:#FBBF24;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px">Changes from current → prototype</p>
+  <ul style="font-size:13px;color:#CBD5E1;line-height:2;list-style:none;padding:0">
+    <li>✅ <strong>Title</strong> — fixed 3-line height on all cards, <code>line-clamp-3</code>. All descriptions start at the same Y position regardless of title length.</li>
+    <li>✅ <strong>Summary</strong> — fixed 2-line height, <code>line-clamp-2</code>. Tags and price always at same vertical position.</li>
+    <li>✅ <strong>Expert</strong> — "EXP-189" pill replaced with "Former VP, Enterprise Software" designation. Avatar icon retained. Duration moved to end of the same row.</li>
+    <li>✅ <strong>Whole card is a link</strong> — invisible <code>&lt;a&gt;</code> stretches across the entire card. Clicking anywhere on the card goes to the transcript detail page.</li>
+    <li>✅ <strong>Buy Now</strong> — primary green CTA, goes to checkout/payment.</li>
+    <li>✅ <strong>Add to Cart</strong> — ghost secondary button, adds to cart without navigating. Both buttons use <code>stopPropagation()</code> so they don't trigger the card link.</li>
+    <li>✅ <strong>"Read more →" link removed</strong> — replaced by the card-as-link pattern above.</li>
+    <li>✅ <strong>Engagement copy</strong> — still shown at bottom as social proof.</li>
+  </ul>
+</div>
+
+<script>
+  // Simulate card click → transcript page
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', function(e) {
+      if (e.target.closest('button')) return // let buttons handle themselves
+      // In real implementation this would be Link navigation
+      console.log('Card clicked → navigate to transcript page')
+    })
+  })
+</script>
+
+</body>
+</html>
