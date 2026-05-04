@@ -59,8 +59,8 @@ export async function GET() {
     lines.push(`URL: ${BASE_URL}/expert-transcripts/${t.slug}`)
     if (t.tier) lines.push(`Tier: ${t.tier}`)
     if (sectorName) lines.push(`Sector: ${sectorName}`)
-    if (t.executiveSummaryPreview) {
-      lines.push(`Summary: ${(t.executiveSummaryPreview as string).slice(0, 300)}`)
+    if (typeof t.executiveSummaryPreview === 'string') {
+      lines.push(`Summary: ${t.executiveSummaryPreview.slice(0, 300)}`)
     }
     lines.push('')
   }
@@ -77,8 +77,8 @@ export async function GET() {
   for (const a of analyses.docs) {
     lines.push(`### ${a.title}`)
     lines.push(`URL: ${BASE_URL}/earnings-analysis/${a.slug}`)
-    if (a.executiveSummaryPreview) {
-      lines.push(`Summary: ${(a.executiveSummaryPreview as string).slice(0, 300)}`)
+    if (typeof a.executiveSummaryPreview === 'string') {
+      lines.push(`Summary: ${a.executiveSummaryPreview.slice(0, 300)}`)
     }
     lines.push('')
   }

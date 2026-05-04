@@ -32,7 +32,7 @@ export const HOME_FAQS: FaqItem[] = [
   {
     question: 'What sectors are covered?',
     answer:
-      '12 sectors: Technology & SaaS, Healthcare & Pharma, Financial Services, Energy & Utilities, Industrials & Manufacturing, Telecommunications, Chemicals, Metals & Mining, Professional Services, Space Economy, Transportation & Logistics, and Real Estate & Infrastructure.',
+      '12 sectors: Technology & Software, Healthcare & Life Sciences, Financial Services, Energy & Utilities, Industrials & Manufacturing, Telecommunications, Chemicals, Metals & Mining, Professional Services, Space Economy, Transportation & Logistics, and Real Estate & Infrastructure.',
   },
   {
     question: 'How is Transcript IQ different from Tegus or Third Bridge?',
