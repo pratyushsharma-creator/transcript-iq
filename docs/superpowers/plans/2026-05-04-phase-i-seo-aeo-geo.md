@@ -1619,7 +1619,7 @@ git commit -m "feat(seo): add OG image templates (global, transcript, blog post)
 
 ## Task 8: Homepage — Organization + WebSite + FAQPage Schemas
 
-> ⚠️ **Ordering note:** This task adds `<FaqAccordion>` to the homepage. `FaqAccordion` is created in **Task 9**. Complete Task 9 first, then return here to add the `FaqAccordion` import and usage. The compile check at Step 2 will fail with a missing module error until Task 9 is done.
+> 🔴 **PREREQUISITE: Complete Task 9 before starting this task.** Task 9 creates `src/components/seo/FaqAccordion.tsx`. This task imports `FaqAccordion` — the Step 2 compile check will fail with a missing module error if Task 9 has not been done first. **Recommended execution order: Task 1 → Task 2 → Task 3 → Task 4 → Task 5 → Task 6 → Task 7 → Task 9 → Task 8 → Task 10 → ...**
 
 **Files:**
 - Modify: `src/app/(frontend)/page.tsx`
@@ -2122,7 +2122,9 @@ return (
 
 - [ ] **Step 2: Earnings Analysis detail page**
 
-Add to `generateMetadata` return:
+> **Before writing code:** Read the existing `src/app/(frontend)/earnings-analysis/[slug]/page.tsx`. Confirm the field names used for the analysis object (title, summary/description, slug) and whether the page uses `generateMetadata` or a static `metadata` export. Adjust the snippet below to match the actual field names.
+
+Add to `generateMetadata` return (adjust field names to match existing code):
 ```typescript
 return {
   // ... existing title/description ...
