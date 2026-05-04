@@ -2,19 +2,15 @@ import type { Metadata } from 'next'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { RenderBlocks } from '@/components/blocks/RenderBlocks'
+import { canonical } from '@/lib/seo/metadata'
 
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Commission a Custom Expert Call Transcript — Transcript IQ',
+  title: 'Custom Expert Network Research',
   description:
-    'Commission a bespoke expert call on any topic. $599 flat fee. We source the expert, moderate the call, transcribe it, and deliver an MNPI-screened PDF tailored to your thesis.',
-  openGraph: {
-    title: 'Commission a Custom Expert Call Transcript | Transcript IQ',
-    description:
-      'Commission a bespoke expert call on any topic. $599 flat fee, 36hr turnaround, MNPI screened.',
-    type: 'website',
-  },
+    'Commission bespoke expert call research through the Nextyn network. Sector specialists, former executives, C-suite. Delivered within 3–5 business days.',
+  alternates: { canonical: canonical('/custom-reports') },
 }
 
 export default async function CustomReportsRoute() {

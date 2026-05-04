@@ -2,17 +2,22 @@ import type { Metadata } from 'next'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { RenderBlocks } from '@/components/blocks/RenderBlocks'
+import { faqPageSchema, breadcrumbSchema, JsonLd } from '@/lib/seo/jsonld'
+import { FREE_TRANSCRIPT_FAQS } from '@/lib/seo/faq-data'
+import { FaqAccordion } from '@/components/seo/FaqAccordion'
+import { canonical } from '@/lib/seo/metadata'
 
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Get Your Free Expert Call Transcript — Transcript IQ',
+  title: 'Get a Free Expert Call Transcript',
   description:
-    'Get one MNPI-screened expert call transcript delivered to your inbox — matched to your sector. No subscription, no billing details. Just the research.',
+    'Get one MNPI-screened expert call transcript matched to your sector. No credit card, no subscription. Work email only. Delivered within one business day.',
+  alternates: { canonical: canonical('/free-transcript') },
   openGraph: {
-    title: 'Get Your Free Expert Call Transcript | Transcript IQ',
-    description:
-      'Free expert call transcript matched to your sector. No credit card. No subscription. Delivered within 24 hours.',
+    title: 'Get a Free Expert Call Transcript | Transcript IQ',
+    description: 'Free full transcript matched to your sector. No credit card. No subscription.',
+    url: canonical('/free-transcript'),
     type: 'website',
   },
 }
@@ -53,5 +58,15 @@ export default async function FreeTranscriptRoute() {
   }
 
   const blocks = (page.layout ?? []) as Array<{ blockType: string } & Record<string, unknown>>
-  return <RenderBlocks blocks={blocks} />
+  return (
+    <>
+      <JsonLd schema={faqPageSchema(FREE_TRANSCRIPT_FAQS)} />
+      <JsonLd schema={breadcrumbSchema([
+        { name: 'Home', url: 'https://transcript-iq.com' },
+        { name: 'Free Transcript', url: 'https://transcript-iq.com/free-transcript' },
+      ])} />
+      <RenderBlocks blocks={blocks} />
+      <FaqAccordion faqs={FREE_TRANSCRIPT_FAQS} />
+    </>
+  )
 }

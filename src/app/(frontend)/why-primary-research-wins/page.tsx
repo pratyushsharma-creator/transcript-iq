@@ -1,11 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, Clock, Calendar } from 'lucide-react'
+import { canonical } from '@/lib/seo/metadata'
 
 export const metadata: Metadata = {
-  title: 'Why Primary Research Wins',
+  title: 'Why Primary Research Beats Public Sources',
   description:
-    'Secondary research tells you what happened. Primary research tells you why — and what happens next. The investment edge that comes from talking directly to people who were in the room.',
+    'Public research is a shared starting point. Expert call transcripts capture the practitioner knowledge layer between public data and regulated insider information.',
+  alternates: { canonical: canonical('/why-primary-research-wins') },
 }
 
 const PUBLISHED = 'April 2026'

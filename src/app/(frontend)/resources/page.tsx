@@ -2,17 +2,19 @@ import type { Metadata } from 'next'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { RenderBlocks } from '@/components/blocks/RenderBlocks'
+import { canonical } from '@/lib/seo/metadata'
 
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Research Hub — Expert Network Insights | Transcript IQ',
+  title: 'Expert Network Research & Insights',
   description:
-    'Guides, frameworks, and analysis for institutional research teams. Expert network workflows, MNPI compliance, and primary research strategy from the Nextyn research desk.',
+    'Practical guides on expert call transcripts, MNPI compliance, primary research workflows, and institutional research practices.',
+  alternates: { canonical: canonical('/resources') },
   openGraph: {
-    title: 'Research Hub | Expert Network Insights | Transcript IQ',
-    description:
-      'Guides, frameworks, and analysis for institutional research teams on expert networks, compliance, and primary research.',
+    title: 'Expert Network Research & Insights | Transcript IQ',
+    description: 'Research guides for analysts, portfolio managers, and deal teams.',
+    url: canonical('/resources'),
     type: 'website',
   },
 }

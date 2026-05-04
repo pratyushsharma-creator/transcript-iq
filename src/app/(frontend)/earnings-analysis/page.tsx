@@ -3,17 +3,20 @@ import type { Where } from 'payload'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { EarningsLibrary } from '@/components/library/EarningsLibrary'
+import { canonical } from '@/lib/seo/metadata'
+import { breadcrumbSchema, JsonLd } from '@/lib/seo/jsonld'
 
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Earnings Analysis Library',
+  title: 'Earnings Analysis Briefs — Institutional-Grade',
   description:
-    'Comprehensive earnings analysis reports for public companies. EPS beat/miss, revenue performance, management commentary, and 12–15 key metrics. $99 flat — same-day delivery.',
+    'Deep-dive earnings analysis briefs for institutional researchers. Sector-by-sector. MNPI-screened. Buy per brief, no subscription.',
+  alternates: { canonical: canonical('/earnings-analysis') },
   openGraph: {
-    title: 'Earnings Analysis Library | Transcript IQ',
-    description:
-      'Same-day earnings analysis at $99 flat. EPS beats, revenue performance, buy-side ready PDFs.',
+    title: 'Earnings Analysis Briefs | Transcript IQ',
+    description: 'Institutional-grade earnings analysis. MNPI-screened. Buy per document.',
+    url: canonical('/earnings-analysis'),
     type: 'website',
   },
 }
@@ -72,6 +75,14 @@ export default async function EarningsAnalysisPage({ searchParams }: { searchPar
     }),
   ])
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return <EarningsLibrary initialDocs={docs as any} totalDocs={totalDocs} industries={industries as any} />
+  return (
+    <>
+      <JsonLd schema={breadcrumbSchema([
+        { name: 'Home', url: 'https://transcript-iq.com' },
+        { name: 'Earnings Analysis', url: 'https://transcript-iq.com/earnings-analysis' },
+      ])} />
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      <EarningsLibrary initialDocs={docs as any} totalDocs={totalDocs} industries={industries as any} />
+    </>
+  )
 }

@@ -2,14 +2,62 @@ import type { Metadata } from 'next'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { RenderBlocks } from '@/components/blocks/RenderBlocks'
+import { howToSchema, breadcrumbSchema, JsonLd } from '@/lib/seo/jsonld'
+import { canonical } from '@/lib/seo/metadata'
 
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'How to Use Expert Call Transcripts',
+  title: 'How to Use Expert Transcripts for Research',
   description:
-    'From PDF download to investment memo. A practical guide for analysts, portfolio managers, and consultants who want to extract maximum value from every transcript they purchase.',
+    'From PDF download to investment memo. A 6-step guide for analysts, portfolio managers, and consultants to extract maximum value from expert call transcripts.',
+  alternates: { canonical: canonical('/how-to-use') },
+  openGraph: {
+    title: 'How to Use Expert Call Transcripts | Transcript IQ',
+    description: 'Step-by-step workflow guide for integrating transcripts into research.',
+    url: canonical('/how-to-use'),
+    type: 'website',
+  },
 }
+
+const HOW_TO = howToSchema({
+  name: 'How to Use Expert Call Transcripts for Investment Research',
+  description:
+    'A step-by-step guide to integrating expert call transcripts into an investment research or deal diligence workflow.',
+  totalTime: 'PT30M',
+  steps: [
+    {
+      position: 1,
+      name: 'Define your research question',
+      text: 'Before searching the library, write down the specific question your transcript needs to answer — about competitive dynamics, pricing, management quality, or customer behaviour.',
+    },
+    {
+      position: 2,
+      name: 'Filter by sector and expert level',
+      text: 'Use the sector, geography, and tier filters to narrow to transcripts relevant to your company or industry. Elite (C-suite) transcripts are best for strategic questions; Standard (Director) for operational detail.',
+    },
+    {
+      position: 3,
+      name: 'Read the executive summary',
+      text: 'Each transcript includes a moderator-written executive summary. Read this first to assess relevance before committing to the full document.',
+    },
+    {
+      position: 4,
+      name: 'Purchase and download',
+      text: 'Buy the transcript as a one-time purchase ($349–$599). Instant PDF download. No subscription. The compliance certificate is included in the download.',
+    },
+    {
+      position: 5,
+      name: 'Annotate and synthesise',
+      text: "Read the transcript twice: first for orientation, second for annotation. Tag passages as Confirms, Challenges, or New Information relative to your thesis. Synthesise — write what the expert's view means for your investment case, not what they said.",
+    },
+    {
+      position: 6,
+      name: 'Cite in your deliverable',
+      text: 'Cite as: Expert call, [Sector], via Transcript IQ, [Date]. File the compliance certificate with your institutional compliance team before use in a regulated investment process.',
+    },
+  ],
+})
 
 export default async function HowToUseRoute() {
   const payload = await getPayload({ config: await config })
@@ -44,5 +92,14 @@ export default async function HowToUseRoute() {
 
   const blocks = (page.layout ?? []) as Array<{ blockType: string } & Record<string, unknown>>
 
-  return <RenderBlocks blocks={blocks} />
+  return (
+    <>
+      <JsonLd schema={HOW_TO} />
+      <JsonLd schema={breadcrumbSchema([
+        { name: 'Home', url: 'https://transcript-iq.com' },
+        { name: 'How to Use', url: 'https://transcript-iq.com/how-to-use' },
+      ])} />
+      <RenderBlocks blocks={blocks} />
+    </>
+  )
 }
