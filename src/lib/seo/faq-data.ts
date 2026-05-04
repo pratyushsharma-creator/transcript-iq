@@ -87,7 +87,7 @@ export const TRANSCRIPTS_INDEX_FAQS: FaqItem[] = [
   {
     question: 'Do you offer bulk or team pricing?',
     answer:
-      'Custom pricing is available for teams purchasing five or more transcripts. Contact us at the link below to discuss volume pricing and team access arrangements.',
+      'Custom pricing is available for teams purchasing five or more transcripts. Contact us at support@transcript-iq.com to discuss volume pricing and team access arrangements.',
   },
 ]
 
