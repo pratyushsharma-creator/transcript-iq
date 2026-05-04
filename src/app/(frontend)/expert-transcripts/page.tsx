@@ -1,14 +1,12 @@
 import type { Metadata } from 'next'
-import type { Where } from 'payload'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
 import { TranscriptLibrary } from '@/components/library/TranscriptLibrary'
 import { SECTOR_META, canonical } from '@/lib/seo/metadata'
 import { itemListSchema, faqPageSchema, JsonLd, breadcrumbSchema } from '@/lib/seo/jsonld'
 import { TRANSCRIPTS_INDEX_FAQS } from '@/lib/seo/faq-data'
 import { FaqAccordion } from '@/components/seo/FaqAccordion'
+import { getTranscriptList, getIndustries } from '@/lib/cache/queries'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 
@@ -59,48 +57,9 @@ export default async function ExpertTranscriptsPage({ searchParams }: { searchPa
   const level = typeof sp.level === 'string' ? sp.level : undefined
   const tier = typeof sp.tier === 'string' ? sp.tier : undefined
 
-  const payload = await getPayload({ config: await config })
-
-  const andConditions: Where[] = []
-  if (industry) {
-    const slugs = industry.split(',').filter(Boolean)
-    andConditions.push(slugs.length === 1
-      ? { 'sectors.slug': { equals: slugs[0] } }
-      : { 'sectors.slug': { in: slugs } })
-  }
-  if (geography) {
-    const vals = geography.split(',').filter(Boolean)
-    andConditions.push(vals.length === 1
-      ? { geography: { equals: vals[0] } }
-      : { geography: { in: vals } })
-  }
-  if (level) {
-    const vals = level.split(',').filter(Boolean)
-    andConditions.push(vals.length === 1
-      ? { expertLevel: { equals: vals[0] } }
-      : { expertLevel: { in: vals } })
-  }
-  if (tier) {
-    const vals = tier.split(',').filter(Boolean)
-    andConditions.push(vals.length === 1
-      ? { tier: { equals: vals[0] } }
-      : { tier: { in: vals } })
-  }
-
-  const [{ docs, totalDocs }, { docs: industries }] = await Promise.all([
-    payload.find({
-      collection: 'expert-transcripts',
-      where: andConditions.length > 0 ? { and: andConditions } : undefined,
-      limit: 24,
-      page: 1,
-      sort: '-dateConducted',
-      depth: 2,
-    }),
-    payload.find({
-      collection: 'industries',
-      limit: 50,
-      sort: 'name',
-    }),
+  const [{ docs, totalDocs }, industries] = await Promise.all([
+    getTranscriptList({ industry, geography, level, tier }),
+    getIndustries(),
   ])
 
   return (
