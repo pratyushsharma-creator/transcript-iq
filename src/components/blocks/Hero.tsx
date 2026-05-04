@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion, useScroll, useTransform } from 'motion/react'
 import { useRef } from 'react'
 import Link from 'next/link'
@@ -454,7 +455,7 @@ function HeroVisual({
   if (variant === 'mockup') return <GenericMockup label={visual.mockupType ?? 'transcriptPreview'} />
   if (variant === 'animated' || variant === 'split') {
     if (visual.image?.url) {
-      return <img src={visual.image.url} alt={visual.image.alt ?? ''} className="h-full w-full object-cover" />
+      return <Image src={visual.image.url} alt={visual.image.alt ?? ''} fill className="object-cover" priority />
     }
     return <AbstractGraphic />
   }

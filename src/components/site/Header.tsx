@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
@@ -47,17 +48,27 @@ export function Header({ logoUrl, logoDarkUrl }: HeaderProps) {
         <Link href="/" className="group flex items-center gap-2.5">
           {logoUrl ? (
             <>
-              <img
-                src={logoUrl}
-                alt="Transcript IQ"
-                className={`h-11 w-auto object-contain transition-opacity duration-fast group-hover:opacity-90${logoDarkUrl ? ' block dark:hidden' : ''}`}
-              />
-              {logoDarkUrl && (
-                <img
-                  src={logoDarkUrl}
+              <div
+                className={`relative h-11 w-48${logoDarkUrl ? ' block dark:hidden' : ''}`}
+              >
+                <Image
+                  src={logoUrl}
                   alt="Transcript IQ"
-                  className="hidden dark:block h-11 w-auto object-contain transition-opacity duration-fast group-hover:opacity-90"
+                  fill
+                  className="object-contain transition-opacity duration-fast group-hover:opacity-90"
+                  priority
                 />
+              </div>
+              {logoDarkUrl && (
+                <div className="relative h-11 w-48 hidden dark:block">
+                  <Image
+                    src={logoDarkUrl}
+                    alt="Transcript IQ"
+                    fill
+                    className="object-contain transition-opacity duration-fast group-hover:opacity-90"
+                    priority
+                  />
+                </div>
               )}
             </>
           ) : (
