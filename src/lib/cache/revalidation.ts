@@ -20,5 +20,5 @@ export function revalidateOnPublish(
   doc: { _status?: string },
 ): void {
   if (doc._status !== 'published') return
-  revalidateTag(tag)
+  revalidateTag(tag, 'default')
 }
