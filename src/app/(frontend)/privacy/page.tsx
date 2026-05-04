@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: 'Privacy & Cookie Policy',
   description:
     'How Transcript IQ (Nextyn Advisory Private Limited) collects, uses, and protects your personal data. GDPR and PDPA compliant.',
-  robots: { index: false, follow: false },
+  robots: { index: false, follow: true },
 }
 
 const LAST_UPDATED = '1 May 2026'

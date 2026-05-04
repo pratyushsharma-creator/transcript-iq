@@ -16,18 +16,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       where: { _status: { equals: 'published' } },
       limit: 500,
       depth: 0,
+      select: { slug: true, updatedAt: true },
     }),
     payload.find({
       collection: 'earnings-analyses',
       where: { _status: { equals: 'published' } },
       limit: 500,
       depth: 0,
+      select: { slug: true, updatedAt: true },
     }),
     payload.find({
       collection: 'blog-posts',
       where: { _status: { equals: 'published' } },
       limit: 200,
       depth: 0,
+      select: { slug: true, updatedAt: true },
     }),
   ])
 
