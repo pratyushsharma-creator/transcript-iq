@@ -5,6 +5,10 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { ReadingProgress } from './ReadingProgress'
 import { ArticleSidebar } from './ArticleSidebar'
+import { blogPostingSchema, breadcrumbSchema, faqPageSchema, JsonLd } from '@/lib/seo/jsonld'
+import { canonical, truncate } from '@/lib/seo/metadata'
+import { ARTICLE_FAQS } from '@/lib/seo/faq-data'
+import { FaqAccordion } from '@/components/seo/FaqAccordion'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,14 +28,19 @@ export async function generateMetadata({
     depth: 1,
   })
   const post = res.docs[0]
-  if (!post) return {}
+  if (!post) return { title: 'Article Not Found', robots: { index: false } }
+
   return {
-    title: `${post.title} — Transcript IQ`,
-    description: post.excerpt ?? '',
+    title: post.title,
+    description: truncate(post.excerpt, 155),
+    alternates: { canonical: canonical(`/resources/${slug}`) },
     openGraph: {
       title: post.title,
-      description: post.excerpt ?? '',
+      description: truncate(post.excerpt, 155) || undefined,
+      url: canonical(`/resources/${slug}`),
       type: 'article',
+      publishedTime: post.publishedAt ?? undefined,
+      authors: (typeof post.author === 'object' && post.author?.name) ? [post.author.name] : ['Pratyush Sharma'],
     },
   }
 }
@@ -117,8 +126,18 @@ export default async function ResourceArticlePage({
   // Extract h2 headings from body for TOC
   const headings = extractBodyHeadings(post.body)
 
+  const articleFaqs = ARTICLE_FAQS[slug] ?? []
+
   return (
     <>
+      <JsonLd schema={blogPostingSchema(post as any)} />
+      <JsonLd schema={breadcrumbSchema([
+        { name: 'Home', url: 'https://transcript-iq.com' },
+        { name: 'Resources', url: 'https://transcript-iq.com/resources' },
+        { name: post.title, url: `https://transcript-iq.com/resources/${slug}` },
+      ])} />
+      {articleFaqs.length > 0 && <JsonLd schema={faqPageSchema(articleFaqs)} />}
+
       {/* Reading progress bar */}
       <ReadingProgress />
 
@@ -467,6 +486,12 @@ export default async function ResourceArticlePage({
               </div>
             </Link>
           </div>
+        </div>
+      )}
+
+      {articleFaqs.length > 0 && (
+        <div style={{ maxWidth: 760, margin: '0 auto', padding: '0 48px' }}>
+          <FaqAccordion faqs={articleFaqs} />
         </div>
       )}
     </>
