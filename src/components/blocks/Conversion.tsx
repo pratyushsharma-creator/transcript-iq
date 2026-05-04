@@ -3,6 +3,7 @@
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { ArrowRight } from 'lucide-react'
+import Image from 'next/image'
 import { SectionShell, SectionHeader, MintGradientHeading } from './SectionShell'
 import { CTAButtons } from './CTAButtons'
 import { BackgroundBeams } from '@/components/ui/background-beams'
@@ -54,7 +55,7 @@ export function CTABlockRenderer({ block }: { block: CTABlockData }) {
         {bgTreatment === 'mesh' && <div aria-hidden className="absolute inset-0 -z-10 bg-variant-mesh" />}
         {bgTreatment === 'image' && block.image?.url && (
           <>
-            <img src={block.image.url} alt="" className="absolute inset-0 -z-10 h-full w-full object-cover" />
+            <Image src={block.image.url} alt="" fill className="-z-10 object-cover" />
             <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[var(--bg)] via-[var(--bg)]/60 to-transparent" />
           </>
         )}
@@ -199,7 +200,9 @@ export function CTASplitRenderer({ block }: { block: CTASplitBlock }) {
         </div>
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
           {right === 'image' && block.image?.url ? (
-            <img src={block.image.url} alt="" className="aspect-[4/3] w-full rounded-xl object-cover" />
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl">
+              <Image src={block.image.url} alt="" fill className="object-cover" />
+            </div>
           ) : right !== 'image' ? (
             <SimpleSignupForm proof={block.formProof} type={right} />
           ) : null}
@@ -481,7 +484,7 @@ export function TestimonialRenderer({ block }: { block: TestimonialBlockData }) 
           </p>
           <div className="mt-6 flex items-center justify-center gap-3">
             {items[0].authorImage?.url && (
-              <img src={items[0].authorImage.url} alt="" className="h-10 w-10 rounded-full border border-[var(--border)] object-cover" />
+              <Image src={items[0].authorImage.url} alt="" width={40} height={40} className="rounded-full border border-[var(--border)] object-cover" />
             )}
             <div className="text-left">
               <div className="text-[14px] font-medium text-[var(--ink)]">{items[0].authorName}</div>
@@ -506,7 +509,7 @@ export function TestimonialRenderer({ block }: { block: TestimonialBlockData }) 
               <p className="text-[15px] leading-relaxed text-[var(--ink)]">“{t.quote}”</p>
               <div className="mt-4 flex items-center gap-3">
                 {t.authorImage?.url && (
-                  <img src={t.authorImage.url} alt="" className="h-9 w-9 rounded-full border border-[var(--border)] object-cover" />
+                  <Image src={t.authorImage.url} alt="" width={36} height={36} className="rounded-full border border-[var(--border)] object-cover" />
                 )}
                 <div>
                   <div className="text-[13px] font-medium text-[var(--ink)]">{t.authorName}</div>
@@ -606,8 +609,8 @@ export function CaseStudyHighlightRenderer({ block }: { block: CaseStudyBlock })
             </div>
           )}
         </div>
-        <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-[var(--border)] bg-variant-mesh">
-          {block.image?.url && <img src={block.image.url} alt="" className="h-full w-full object-cover" />}
+        <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-[var(--border)] bg-variant-mesh">
+          {block.image?.url && <Image src={block.image.url} alt="" fill className="object-cover" />}
         </div>
       </div>
     </SectionShell>

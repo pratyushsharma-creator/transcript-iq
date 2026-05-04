@@ -3,6 +3,7 @@
 import { motion } from 'motion/react'
 import * as Lucide from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState, useRef, useEffect } from 'react'
 import { SectionShell, SectionHeader, MintGradientHeading } from './SectionShell'
 import { CTAButtons } from './CTAButtons'
@@ -244,9 +245,9 @@ export function FeatureSplitRenderer({ block }: { block: FeatureSplitBlock }) {
                 )}
               </div>
               <div className={`${imageRight ? 'order-2' : 'order-2 lg:order-1'}`}>
-                <div className="aspect-[4/3] w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+                <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]">
                   {r.image?.url ? (
-                    <img src={r.image.url} alt={r.image.alt ?? ''} className="h-full w-full object-cover" />
+                    <Image src={r.image.url} alt={r.image.alt ?? ''} fill className="object-cover" />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-variant-mesh">
                       <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--mist)]">[Image]</span>
@@ -321,7 +322,7 @@ export function FeatureBentoRenderer({ block }: { block: FeatureBentoBlock }) {
             <>
               {t.image?.url && (
                 <div className="absolute inset-0 -z-10">
-                  <img src={t.image.url} alt={t.image.alt ?? ''} className="h-full w-full object-cover opacity-90" />
+                  <Image src={t.image.url} alt={t.image.alt ?? ''} fill className="object-cover opacity-90" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg)]/80 via-transparent to-transparent" />
                 </div>
               )}
@@ -576,9 +577,9 @@ export function FeatureTabsRenderer({ block }: { block: FeatureTabsBlock }) {
                 </div>
               )}
             </div>
-            <div className="aspect-[4/3] overflow-hidden rounded-xl border border-[var(--border)] bg-variant-mesh">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-[var(--border)] bg-variant-mesh">
               {tabs[active].panelImage?.url && (
-                <img src={tabs[active].panelImage!.url} alt="" className="h-full w-full object-cover" />
+                <Image src={tabs[active].panelImage!.url} alt="" fill className="object-cover" />
               )}
             </div>
           </motion.div>
