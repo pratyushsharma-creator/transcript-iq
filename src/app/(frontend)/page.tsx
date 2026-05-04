@@ -1,6 +1,5 @@
 import { getPayload } from 'payload'
 import config from '@/payload.config'
-import { notFound } from 'next/navigation'
 import { RenderBlocks } from '@/components/blocks/RenderBlocks'
 import { organizationSchema, websiteSchema, faqPageSchema, JsonLd } from '@/lib/seo/jsonld'
 import { HOME_FAQS } from '@/lib/seo/faq-data'
