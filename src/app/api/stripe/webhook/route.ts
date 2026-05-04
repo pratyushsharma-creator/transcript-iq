@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { sendReceipt } from '@/lib/resend'
 import { generateDownloadToken } from '@/lib/downloadToken'
+import { getPayload } from 'payload'
+import config from '@/payload.config'
 import type Stripe from 'stripe'
 
 // ── Disable body parsing — Stripe requires the raw request body ───────────────
@@ -136,19 +138,12 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
 
   const orderRef = generateOrderRef()
 
-  // ── Create Order in Payload ────────────────────────────────────────────────
-  // We use the REST API to avoid importing the full Payload config on the edge
+  // ── Create Order in Payload (local API — no HTTP round-trip) ─────────────────
   try {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://transcript-iq.com'
-    const payloadSecret = process.env.PAYLOAD_SECRET ?? ''
-
-    await fetch(`${siteUrl}/api/orders`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `JWT ${payloadSecret}`, // Admin token — set up properly in Phase F
-      },
-      body: JSON.stringify({
+    const payload = await getPayload({ config: await config })
+    await payload.create({
+      collection: 'orders',
+      data: {
         customerEmail,
         customerName,
         organisation,
@@ -158,9 +153,11 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
         status: 'paid',
         paymentProvider: 'stripe',
         stripeCheckoutId: session.id,
-        stripePaymentIntentId: typeof session.payment_intent === 'string'
-          ? session.payment_intent
-          : session.payment_intent?.id ?? '',
+        stripePaymentIntentId:
+          typeof session.payment_intent === 'string'
+            ? session.payment_intent
+            : (session.payment_intent as Stripe.PaymentIntent | null)?.id ?? '',
+        orderRef,
         billingAddress: {
           name: meta.billingName,
           line1: meta.billingAddress,
@@ -169,7 +166,8 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
           postal: meta.billingPostal,
           vatNumber: meta.vatNumber,
         },
-      }),
+      },
+      overrideAccess: true, // bypass access control for server-side creation
     })
   } catch (err) {
     console.error('[webhook] Failed to create Payload order:', err)

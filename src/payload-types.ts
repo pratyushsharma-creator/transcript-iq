@@ -3064,6 +3064,10 @@ export interface Order {
   currency: 'usd' | 'inr';
   status: 'pending' | 'paid' | 'refunded' | 'failed';
   paymentProvider?: ('stripe' | 'razorpay') | null;
+  /**
+   * Human-readable order reference, e.g. TIQ-2026-12345.
+   */
+  orderRef?: string | null;
   stripeCheckoutId?: string | null;
   stripePaymentIntentId?: string | null;
   razorpayOrderId?: string | null;
@@ -5286,6 +5290,7 @@ export interface OrdersSelect<T extends boolean = true> {
   currency?: T;
   status?: T;
   paymentProvider?: T;
+  orderRef?: T;
   stripeCheckoutId?: T;
   stripePaymentIntentId?: T;
   razorpayOrderId?: T;

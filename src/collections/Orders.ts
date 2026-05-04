@@ -81,6 +81,7 @@ export const Orders: CollectionConfig = {
       options: ['stripe', 'razorpay'],
       defaultValue: 'stripe',
     },
+    { name: 'orderRef', type: 'text', admin: { readOnly: true, description: 'Human-readable order reference, e.g. TIQ-2026-12345.' } },
     { name: 'stripeCheckoutId', type: 'text', admin: { readOnly: true } },
     { name: 'stripePaymentIntentId', type: 'text', admin: { readOnly: true } },
     { name: 'razorpayOrderId', type: 'text', admin: { readOnly: true } },
