@@ -24,6 +24,7 @@ export default async function Image({ params }: Props) {
     where: { slug: { equals: slug } },
     limit: 1,
     depth: 1,
+    select: { title: true, tier: true, sectors: true },
   })
   const t = docs[0]
 

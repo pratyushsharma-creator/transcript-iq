@@ -28,6 +28,7 @@ export default async function Image({ params }: Props) {
     where: { slug: { equals: slug } },
     limit: 1,
     depth: 1,
+    select: { title: true, contentType: true, author: true, publishedAt: true },
   })
   const post = docs[0]
 
@@ -36,7 +37,7 @@ export default async function Image({ params }: Props) {
     ? CATEGORY_LABELS[post.contentType as string] ?? post.contentType
     : 'Article'
   const authorName =
-    ((post?.author as unknown) as Record<string, unknown> | null)?.name as string ?? 'Pratyush Sharma'
+    (post?.author as { name?: string } | null)?.name ?? 'Pratyush Sharma'
   const publishedAt = post?.publishedAt
     ? new Date(post.publishedAt as string).toLocaleDateString('en-US', {
         year: 'numeric',
