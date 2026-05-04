@@ -2,8 +2,28 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { notFound } from 'next/navigation'
 import { RenderBlocks } from '@/components/blocks/RenderBlocks'
+import { organizationSchema, websiteSchema, faqPageSchema, JsonLd } from '@/lib/seo/jsonld'
+import { HOME_FAQS } from '@/lib/seo/faq-data'
+import { canonical } from '@/lib/seo/metadata'
+import { FaqAccordion } from '@/components/seo/FaqAccordion'
 
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata() {
+  return {
+    title: 'Expert Call Transcripts Without the Subscription',
+    description:
+      'Buy individual MNPI-screened expert call transcripts from $349. 77+ transcripts across 12 sectors. No subscription. Compliance certified.',
+    alternates: { canonical: canonical('/') },
+    openGraph: {
+      title: 'Expert Call Transcripts Without the Subscription | Transcript IQ',
+      description:
+        'Institutional primary research. Buy per transcript — no subscription, no platform fee. MNPI-screened, compliance certified.',
+      url: canonical('/'),
+      type: 'website',
+    },
+  }
+}
 
 export default async function HomePage() {
   const payload = await getPayload({ config: await config })
@@ -35,5 +55,13 @@ export default async function HomePage() {
 
   const blocks = (page.layout ?? []) as Array<{ blockType: string } & Record<string, unknown>>
 
-  return <RenderBlocks blocks={blocks} />
+  return (
+    <>
+      <JsonLd schema={organizationSchema()} />
+      <JsonLd schema={websiteSchema()} />
+      <JsonLd schema={faqPageSchema(HOME_FAQS)} />
+      <RenderBlocks blocks={blocks} />
+      <FaqAccordion faqs={HOME_FAQS} />
+    </>
+  )
 }
