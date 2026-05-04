@@ -1,12 +1,11 @@
-import { getPayload } from 'payload'
-import config from '@/payload.config'
+import { getPageBySlug } from '@/lib/cache/queries'
 import { RenderBlocks } from '@/components/blocks/RenderBlocks'
 import { organizationSchema, websiteSchema, faqPageSchema, JsonLd } from '@/lib/seo/jsonld'
 import { HOME_FAQS } from '@/lib/seo/faq-data'
 import { canonical } from '@/lib/seo/metadata'
 import { FaqAccordion } from '@/components/seo/FaqAccordion'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 export async function generateMetadata() {
   return {
@@ -25,14 +24,7 @@ export async function generateMetadata() {
 }
 
 export default async function HomePage() {
-  const payload = await getPayload({ config: await config })
-  const res = await payload.find({
-    collection: 'pages',
-    where: { slug: { equals: 'home' } },
-    limit: 1,
-    depth: 2,
-  })
-  const page = res.docs[0]
+  const page = await getPageBySlug('home')
 
   if (!page) {
     return (

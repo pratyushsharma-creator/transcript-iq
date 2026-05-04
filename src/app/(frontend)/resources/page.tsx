@@ -1,10 +1,9 @@
 import type { Metadata } from 'next'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
+import { getPageBySlug } from '@/lib/cache/queries'
 import { RenderBlocks } from '@/components/blocks/RenderBlocks'
 import { canonical } from '@/lib/seo/metadata'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'Expert Network Research & Insights',
@@ -20,14 +19,7 @@ export const metadata: Metadata = {
 }
 
 export default async function ResourcesRoute() {
-  const payload = await getPayload({ config: await config })
-  const res = await payload.find({
-    collection: 'pages',
-    where: { slug: { equals: 'resources' } },
-    limit: 1,
-    depth: 2,
-  })
-  const page = res.docs[0]
+  const page = await getPageBySlug('resources')
 
   if (!page) {
     return (

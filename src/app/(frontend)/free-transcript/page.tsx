@@ -1,13 +1,12 @@
 import type { Metadata } from 'next'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
+import { getPageBySlug } from '@/lib/cache/queries'
 import { RenderBlocks } from '@/components/blocks/RenderBlocks'
 import { faqPageSchema, breadcrumbSchema, JsonLd } from '@/lib/seo/jsonld'
 import { FREE_TRANSCRIPT_FAQS } from '@/lib/seo/faq-data'
 import { FaqAccordion } from '@/components/seo/FaqAccordion'
 import { canonical } from '@/lib/seo/metadata'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: 'Get a Free Expert Call Transcript',
@@ -23,14 +22,7 @@ export const metadata: Metadata = {
 }
 
 export default async function FreeTranscriptRoute() {
-  const payload = await getPayload({ config: await config })
-  const res = await payload.find({
-    collection: 'pages',
-    where: { slug: { equals: 'free-transcript' } },
-    limit: 1,
-    depth: 2,
-  })
-  const page = res.docs[0]
+  const page = await getPageBySlug('free-transcript')
 
   if (!page) {
     return (

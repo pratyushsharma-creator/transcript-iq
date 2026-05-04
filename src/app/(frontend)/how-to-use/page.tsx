@@ -1,11 +1,10 @@
 import type { Metadata } from 'next'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
+import { getPageBySlug } from '@/lib/cache/queries'
 import { RenderBlocks } from '@/components/blocks/RenderBlocks'
 import { howToSchema, breadcrumbSchema, JsonLd } from '@/lib/seo/jsonld'
 import { canonical } from '@/lib/seo/metadata'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: 'How to Use Expert Transcripts for Research',
@@ -60,14 +59,7 @@ const HOW_TO = howToSchema({
 })
 
 export default async function HowToUseRoute() {
-  const payload = await getPayload({ config: await config })
-  const res = await payload.find({
-    collection: 'pages',
-    where: { slug: { equals: 'how-to-use' } },
-    limit: 1,
-    depth: 2,
-  })
-  const page = res.docs[0]
+  const page = await getPageBySlug('how-to-use')
 
   if (!page) {
     return (
