@@ -1,31 +1,18 @@
 import type { Metadata } from 'next'
-import type { Where } from 'payload'
-import { getPayload } from 'payload'
 import { notFound } from 'next/navigation'
-import config from '@/payload.config'
 import { EarningsProductPage } from '@/components/product/EarningsProductPage'
 import type { RelatedEarnings } from '@/components/product/EarningsProductPage'
 import { canonical, truncate } from '@/lib/seo/metadata'
 import { breadcrumbSchema, JsonLd } from '@/lib/seo/jsonld'
+import { getEarningsAnalysisBySlug, getRelatedEarningsAnalyses } from '@/lib/cache/queries'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 86400
 
 type Params = Promise<{ slug: string }>
 
-async function getAnalysis(slug: string) {
-  const payload = await getPayload({ config: await config })
-  const { docs } = await payload.find({
-    collection: 'earnings-analyses',
-    where: { slug: { equals: slug } },
-    limit: 1,
-    depth: 2,
-  })
-  return docs[0] ?? null
-}
-
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params
-  const analysis = await getAnalysis(slug)
+  const analysis = await getEarningsAnalysisBySlug(slug)
   if (!analysis) return { title: 'Analysis Not Found', robots: { index: false } }
 
   const quarterLabel = `${analysis.quarter} FY${analysis.fiscalYear}`
@@ -46,7 +33,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
 export default async function EarningsAnalysisDetailPage({ params }: { params: Params }) {
   const { slug } = await params
-  const analysis = await getAnalysis(slug)
+  const analysis = await getEarningsAnalysisBySlug(slug)
   if (!analysis) notFound()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -55,18 +42,7 @@ export default async function EarningsAnalysisDetailPage({ params }: { params: P
   ) as Array<{ id: string; name: string; slug: string }>
   const sectorSlugs = sectors.map(s => s.slug)
 
-  const payload = await getPayload({ config: await config })
-  const relatedWhere: Where = sectorSlugs.length > 0
-    ? { and: [{ slug: { not_equals: slug } }, { 'sectors.slug': { in: sectorSlugs } }] }
-    : { slug: { not_equals: slug } }
-
-  const { docs: relatedDocs } = await payload.find({
-    collection: 'earnings-analyses',
-    where: relatedWhere,
-    limit: 3,
-    sort: '-reportDate',
-    depth: 0,
-  })
+  const relatedDocs = await getRelatedEarningsAnalyses(slug, sectorSlugs)
 
   const related: RelatedEarnings[] = relatedDocs.map(r => ({
     id: String(r.id),
