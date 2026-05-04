@@ -342,6 +342,21 @@
             "version": 1
           },
           {
+            "type": "quote",
+            "children": [
+              {
+                "type": "text",
+                "text": "An expert call transcript is not a research shortcut. It is a structured record of practitioner knowledge that does not appear anywhere in the public domain. That is why institutional researchers pay what they pay for it.",
+                "format": 0,
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "version": 1
+          },
+          {
             "type": "paragraph",
             "children": [
               {
@@ -1208,6 +1223,21 @@
             "version": 1
           },
           {
+            "type": "quote",
+            "children": [
+              {
+                "type": "text",
+                "text": "A summary tells you what the expert said. A synthesis tells you what it means for your thesis. The difference between those two outputs is the difference between notes and research.",
+                "format": 0,
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "version": 1
+          },
+          {
             "type": "paragraph",
             "children": [
               {
@@ -1581,6 +1611,21 @@
               {
                 "type": "text",
                 "text": "The best questions on an earnings call are the ones that reference specific operational details management didn't expect you to know. Transcripts are one of the best sources for those details.",
+                "format": 0,
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "version": 1
+          },
+          {
+            "type": "quote",
+            "children": [
+              {
+                "type": "text",
+                "text": "The best questions on an earnings call are the ones that reference specific operational details management didn't expect you to know. Transcripts give you those details.",
                 "format": 0,
                 "version": 1
               }
@@ -2049,6 +2094,21 @@
             "format": "",
             "indent": 0,
             "version": 1
+          },
+          {
+            "type": "quote",
+            "children": [
+              {
+                "type": "text",
+                "text": "No external platform can fully insulate you from MNPI risk. Expert networks and transcript providers screen against what is known and declared. They cannot screen against what experts choose not to disclose.",
+                "format": 0,
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "version": 1
           }
         ],
         "direction": "ltr",
@@ -2457,6 +2517,21 @@
             "version": 1
           },
           {
+            "type": "quote",
+            "children": [
+              {
+                "type": "text",
+                "text": "The break-even point sits at roughly 25 to 30 transcripts per user per year. Below that, the subscription model is almost never cost-efficient, regardless of which platform you choose.",
+                "format": 0,
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "version": 1
+          },
+          {
             "type": "heading",
             "tag": "h2",
             "children": [
@@ -2830,6 +2905,21 @@
               {
                 "type": "text",
                 "text": "It's a hybrid model — library plus commission — and it consistently produces better research at lower total cost than either approach alone.",
+                "format": 0,
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "version": 1
+          },
+          {
+            "type": "quote",
+            "children": [
+              {
+                "type": "text",
+                "text": "A hybrid model — library plus commission — consistently produces better research at lower total cost than either approach alone. That is the direction institutional diligence is moving.",
                 "format": 0,
                 "version": 1
               }
