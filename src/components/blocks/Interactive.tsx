@@ -200,7 +200,7 @@ export function ImageRevealRenderer({ block }: { block: ImageRevealBlock }) {
       <div ref={ref} className="relative mx-auto aspect-[16/9] w-full max-w-5xl overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
         {block.image.url ? (
           <motion.div
-            style={style === 'iris' ? { clipPath: clipValue as never } : { clipPath: clipValue as never }}
+            style={{ clipPath: clipValue as never }}
             className="absolute inset-0"
           >
             <Image src={block.image.url} alt={block.image.alt ?? ''} fill className="object-cover" />
