@@ -13,6 +13,7 @@ import { Footer } from '@/components/site/Footer'
 import { CartProvider } from '@/context/CartContext'
 import { CartDrawer } from '@/components/site/CartDrawer'
 import { CookieBanner } from '@/components/site/CookieBanner'
+import { Analytics } from '@/components/site/Analytics'
 
 const geist = Geist({
   subsets: ['latin'],
@@ -87,6 +88,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Header logoUrl={logoUrl} logoDarkUrl={logoDarkUrl} />
             <CartDrawer />
             <CookieBanner />
+            <Analytics />
             <main className="flex-1">{children}</main>
             <Footer />
           </CartProvider>
