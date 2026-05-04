@@ -3,8 +3,10 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import React from 'react'
 import '../globals.css'
 
+import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+import { CACHE_TAGS } from '@/lib/cache/revalidation'
 import { ThemeProvider } from '@/components/site/ThemeProvider'
 import { Header } from '@/components/site/Header'
 import { Footer } from '@/components/site/Footer'
@@ -25,6 +27,20 @@ const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   display: 'swap',
 })
+
+const getCachedSiteSettings = unstable_cache(
+  async () => {
+    try {
+      const payload = await getPayload({ config: await config })
+      return await payload.findGlobal({ slug: 'site-settings', depth: 1 })
+    } catch {
+      // SiteSettings not yet saved, or DB unavailable — return null so layout falls back to wordmark
+      return null
+    }
+  },
+  ['site-settings'],
+  { tags: [CACHE_TAGS.siteSettings], revalidate: 86400 },
+)
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://transcript-iq.com'),
@@ -53,16 +69,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   let logoUrl: string | null = null
   let logoDarkUrl: string | null = null
 
-  try {
-    const payload = await getPayload({ config: await config })
-    const settings = await payload.findGlobal({ slug: 'site-settings', depth: 1 })
-    const logo = settings?.logo
-    const logoDark = settings?.logoDark
-    if (logo && typeof logo === 'object' && 'url' in logo) logoUrl = (logo as { url: string }).url ?? null
-    if (logoDark && typeof logoDark === 'object' && 'url' in logoDark) logoDarkUrl = (logoDark as { url: string }).url ?? null
-  } catch {
-    // site settings not yet saved — fall back to wordmark
-  }
+  const settings = await getCachedSiteSettings()
+  const logo = settings?.logo
+  const logoDark = settings?.logoDark
+  if (logo && typeof logo === 'object' && 'url' in logo) logoUrl = (logo as { url: string }).url ?? null
+  if (logoDark && typeof logoDark === 'object' && 'url' in logoDark) logoDarkUrl = (logoDark as { url: string }).url ?? null
 
   return (
     <html
