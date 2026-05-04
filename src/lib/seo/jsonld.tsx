@@ -69,10 +69,7 @@ export function productSchema(transcript: {
   sectors?: Array<{ title?: string; name?: string }> | null
 }) {
   const sectorName =
-    transcript.sectors?.[0]
-      ? (transcript.sectors[0] as Record<string, unknown>).title as string ??
-        (transcript.sectors[0] as Record<string, unknown>).name as string ?? ''
-      : ''
+    transcript.sectors?.[0]?.title ?? transcript.sectors?.[0]?.name ?? ''
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -82,7 +79,7 @@ export function productSchema(transcript: {
     category: sectorName || undefined,
     offers: {
       '@type': 'Offer',
-      price: transcript.priceUsd ?? undefined,
+      price: transcript.priceUsd ?? 349,
       priceCurrency: 'USD',
       availability: 'https://schema.org/InStock',
       url: `${BASE_URL}/expert-transcripts/${transcript.slug}`,
@@ -158,6 +155,9 @@ export function faqPageSchema(faqs: FaqItem[]) {
 
 // ── HowTo ────────────────────────────────────────────────────────────────────
 
+/**
+ * @param opts.totalTime ISO 8601 duration string, e.g. "PT30M" for 30 minutes
+ */
 export function howToSchema(opts: {
   name: string
   description: string
@@ -198,11 +198,26 @@ export function itemListSchema(
 
 // ── Helper: inject as script tag (use in JSX) ────────────────────────────────
 
+function serializeLd(schema: object): string {
+  const json = JSON.stringify(schema)
+  let result = ''
+  for (let i = 0; i < json.length; i++) {
+    const code = json.charCodeAt(i)
+    if (code === 0x2028) result += '\u2028'
+    else if (code === 0x2029) result += '\u2029'
+    else if (json[i] === '<') result += '\u003c'
+    else if (json[i] === '>') result += '\u003e'
+    else if (json[i] === '&') result += '\u0026'
+    else result += json[i]
+  }
+  return result
+}
+
 export function JsonLd({ schema }: { schema: object }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      dangerouslySetInnerHTML={{ __html: serializeLd(schema) }}
     />
   )
 }
