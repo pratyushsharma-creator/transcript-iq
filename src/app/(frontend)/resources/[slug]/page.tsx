@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
+import { getBlogPostBySlug, getRelatedBlogPosts, getNextBlogPost } from '@/lib/cache/queries'
 import { ReadingProgress } from './ReadingProgress'
 import { ArticleSidebar } from './ArticleSidebar'
 import { blogPostingSchema, breadcrumbSchema, faqPageSchema, JsonLd } from '@/lib/seo/jsonld'
@@ -10,7 +9,7 @@ import { canonical, truncate } from '@/lib/seo/metadata'
 import { ARTICLE_FAQS } from '@/lib/seo/faq-data'
 import { FaqAccordion } from '@/components/seo/FaqAccordion'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 86400
 
 type Params = { slug: string }
 
@@ -20,14 +19,7 @@ export async function generateMetadata({
   params: Promise<Params>
 }): Promise<Metadata> {
   const { slug } = await params
-  const payload = await getPayload({ config: await config })
-  const res = await payload.find({
-    collection: 'blog-posts',
-    where: { slug: { equals: slug } },
-    limit: 1,
-    depth: 1,
-  })
-  const post = res.docs[0]
+  const post = await getBlogPostBySlug(slug)
   if (!post) return { title: 'Article Not Found', robots: { index: false } }
 
   return {
@@ -51,15 +43,11 @@ export default async function ResourceArticlePage({
   params: Promise<Params>
 }) {
   const { slug } = await params
-  const payload = await getPayload({ config: await config })
 
-  const res = await payload.find({
-    collection: 'blog-posts',
-    where: { slug: { equals: slug } },
-    limit: 1,
-    depth: 2,
-  })
-  const post = res.docs[0] as {
+  // CALL 1: main post (via cached helper)
+  const postDoc = await getBlogPostBySlug(slug)
+  if (!postDoc) notFound()
+  const post = postDoc as unknown as {
     id: string | number
     title: string
     slug: string
@@ -70,47 +58,15 @@ export default async function ResourceArticlePage({
     featured?: boolean
     body?: unknown
     author?: { name?: string; role?: string } | null
-  } | undefined
+  }
 
-  if (!post) notFound()
+  // CALL 2: related articles (via cached helper)
+  const relatedDocs = await getRelatedBlogPosts(slug, post.contentType ?? 'educational')
+  const related = relatedDocs as unknown as Array<{ id: string | number; slug: string; title: string; contentType?: string }>
 
-  // Fetch related articles (same category, excluding current)
-  const relatedRes = await payload.find({
-    collection: 'blog-posts',
-    where: {
-      _status: { equals: 'published' },
-      slug: { not_equals: slug },
-      contentType: { equals: post.contentType ?? 'educational' },
-    },
-    limit: 3,
-    depth: 1,
-  })
-  const related = relatedRes.docs as Array<{
-    id: string | number
-    slug: string
-    title: string
-    contentType?: string
-  }>
-
-  // Fetch next article (next in publish order)
-  const nextRes = await payload.find({
-    collection: 'blog-posts',
-    where: {
-      _status: { equals: 'published' },
-      slug: { not_equals: slug },
-    },
-    sort: '-publishedAt',
-    limit: 1,
-    depth: 1,
-  })
-  const nextPost = nextRes.docs[0] as {
-    id: string | number
-    slug: string
-    title: string
-    contentType?: string
-    excerpt?: string
-    readTime?: number
-  } | undefined
+  // CALL 3: next article (via cached helper)
+  const nextDoc = await getNextBlogPost(slug)
+  const nextPost = (nextDoc ?? undefined) as { id: string | number; slug: string; title: string; contentType?: string; excerpt?: string; readTime?: number } | undefined
 
   const catLabel = categoryLabel(post.contentType ?? 'educational')
   const authorName = post.author?.name ?? 'Pratyush Sharma'
