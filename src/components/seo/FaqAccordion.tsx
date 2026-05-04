@@ -1,6 +1,6 @@
 // src/components/seo/FaqAccordion.tsx
 'use client'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import type { FaqItem } from '@/lib/seo/jsonld'
 
 export function FaqAccordion({
@@ -11,6 +11,10 @@ export function FaqAccordion({
   heading?: string
 }) {
   const [open, setOpen] = useState<number | null>(null)
+
+  const toggle = useCallback((i: number) => {
+    setOpen((prev) => (prev === i ? null : i))
+  }, [])
 
   return (
     <section
@@ -36,13 +40,16 @@ export function FaqAccordion({
           <div
             key={i}
             style={{
-              border: '1px solid rgba(255,255,255,0.07)',
+              border: '1px solid var(--border, rgba(255,255,255,0.07))',
               borderRadius: 10,
               overflow: 'hidden',
             }}
           >
             <button
-              onClick={() => setOpen(open === i ? null : i)}
+              type="button"
+              aria-expanded={open === i}
+              aria-controls={`faq-panel-${i}`}
+              onClick={() => toggle(i)}
               style={{
                 width: '100%',
                 textAlign: 'left',
@@ -62,6 +69,7 @@ export function FaqAccordion({
             >
               <span>{faq.question}</span>
               <span
+                aria-hidden="true"
                 style={{
                   color: 'var(--accent)',
                   fontSize: 20,
@@ -77,6 +85,7 @@ export function FaqAccordion({
             </button>
             {open === i && (
               <div
+                id={`faq-panel-${i}`}
                 style={{
                   padding: '0 20px 18px',
                   fontSize: 14,
