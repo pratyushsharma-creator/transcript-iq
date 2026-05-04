@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion, useInView, useMotionValue, useTransform, animate } from 'motion/react'
 import { useEffect, useRef } from 'react'
 import { SectionShell, SectionHeader, MintGradientHeading } from './SectionShell'
@@ -191,7 +192,7 @@ export function LogosCloudRenderer({ block }: { block: LogosCloudBlock }) {
       <div className={`mt-8 grid gap-x-10 gap-y-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-${cols} items-center`}>
         {(block.logos ?? []).map((logo, i) => {
           const inner = logo.image?.url ? (
-            <img src={logo.image.url} alt={logo.image.alt ?? logo.name} className="h-8 w-auto object-contain" />
+            <Image src={logo.image.url} alt={logo.image.alt ?? logo.name} width={160} height={32} className="h-8 w-auto object-contain" />
           ) : (
             <span className="text-[14px] font-mono uppercase tracking-[0.1em] text-[var(--ink-2)]">{logo.name}</span>
           )

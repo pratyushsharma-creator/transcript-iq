@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion } from 'motion/react'
 import { useState, useEffect } from 'react'
 import { Plus, X } from 'lucide-react'
@@ -57,7 +58,7 @@ export function MarqueeTextRenderer({ block }: { block: MarqueeTextBlock }) {
       return (
         <span key={k} className="inline-flex h-10 items-center px-3 logo-cloud-item">
           {it.image?.url ? (
-            <img src={it.image.url} alt={it.label} className="max-h-8 object-contain" />
+            <Image src={it.image.url} alt={it.label} width={120} height={32} className="max-h-8 w-auto object-contain" />
           ) : (
             <span className="font-mono text-[12px] uppercase tracking-[0.1em] text-[var(--ink-2)]">{it.label}</span>
           )}

@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion, useScroll, useTransform } from 'motion/react'
 import { useRef, useState, useEffect } from 'react'
 import { SectionShell, SectionHeader, MintGradientHeading } from './SectionShell'
@@ -65,7 +66,7 @@ export function ScrollPinnedRenderer({ block }: { block: ScrollPinnedBlock }) {
                 className="absolute inset-0"
               >
                 {p.image?.url ? (
-                  <img src={p.image.url} alt="" className="h-full w-full object-cover" />
+                  <Image src={p.image.url} alt="" fill className="object-cover" />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center bg-variant-mesh">
                     <span className="font-mono text-[12px] uppercase tracking-[0.12em] text-[var(--mist)]">
@@ -134,11 +135,11 @@ export function BeforeAfterSliderRenderer({ block }: { block: BeforeAfterSliderB
         className="relative aspect-[16/9] overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] select-none"
       >
         {block.before.image.url && (
-          <img src={block.before.image.url} alt={block.before.label ?? 'Before'} className="absolute inset-0 h-full w-full object-cover" />
+          <Image src={block.before.image.url} alt={block.before.label ?? 'Before'} fill className="object-cover" />
         )}
         <div className="absolute inset-0 overflow-hidden" style={{ clipPath: `inset(0 0 0 ${pos}%)` }}>
           {block.after.image.url && (
-            <img src={block.after.image.url} alt={block.after.label ?? 'After'} className="h-full w-full object-cover" />
+            <Image src={block.after.image.url} alt={block.after.label ?? 'After'} fill className="object-cover" />
           )}
         </div>
         <div className="absolute inset-y-0" style={{ left: `${pos}%` }}>
@@ -281,8 +282,8 @@ function StackedCardItem({
       <h3 className={`mt-2 text-[24px] sm:text-[32px] font-medium leading-[1.2] text-balance`}>{card.title}</h3>
       {card.body && <p className={`mt-4 text-[15px] leading-relaxed ${card.tone === 'ink' ? 'text-[var(--bg)]/80' : 'text-[var(--ink-2)]'}`}>{card.body}</p>}
       {card.image?.url && (
-        <div className="mt-6 aspect-[16/9] overflow-hidden rounded-xl border border-[var(--border)]">
-          <img src={card.image.url} alt="" className="h-full w-full object-cover" />
+        <div className="relative mt-6 aspect-[16/9] overflow-hidden rounded-xl border border-[var(--border)]">
+          <Image src={card.image.url} alt="" fill className="object-cover" />
         </div>
       )}
     </motion.div>

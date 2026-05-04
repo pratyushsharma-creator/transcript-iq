@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion, useScroll, useTransform, useInView, useMotionValue, animate } from 'motion/react'
 import { useEffect, useRef } from 'react'
 import { SectionShell, SectionHeader, MintGradientHeading } from './SectionShell'
@@ -441,7 +442,7 @@ export function QuoteSpotlightRenderer({ block }: { block: QuoteSpotlightBlock }
           {(block.attributionName || block.attributionRole) && (
             <div className="mt-8 flex items-center justify-center gap-3">
               {block.attributionImage?.url && (
-                <img src={block.attributionImage.url} alt="" className="h-10 w-10 rounded-full border border-[var(--border)] object-cover" />
+                <Image src={block.attributionImage.url} alt="" width={40} height={40} className="rounded-full border border-[var(--border)] object-cover" />
               )}
               <div className="text-left">
                 {block.attributionName && (

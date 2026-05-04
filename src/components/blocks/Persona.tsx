@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react'
 import Link from 'next/link'
 import { useState, useRef, useEffect } from 'react'
@@ -838,9 +839,9 @@ export function PersonaCarouselRenderer({ block }: { block: PersonaCarouselBlock
               </div>
             )}
           </div>
-          <div className="aspect-[4/3] overflow-hidden rounded-xl border border-[var(--border)] bg-variant-mesh">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-[var(--border)] bg-variant-mesh">
             {personas[active].image?.url && (
-              <img src={personas[active].image!.url} alt="" className="h-full w-full object-cover" />
+              <Image src={personas[active].image!.url} alt="" fill className="object-cover" />
             )}
           </div>
         </motion.div>
