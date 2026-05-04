@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
@@ -35,7 +36,7 @@ export function ImageBlockRenderer({ block }: { block: ImageBlockData }) {
   const inner = (
     <div className={`relative overflow-hidden ${variant === 'framed' ? 'rounded-2xl border border-[var(--border)]' : ''} ${aspect}`}>
       {block.image.url ? (
-        <img src={block.image.url} alt={block.image.alt ?? ''} className="h-full w-full object-cover" />
+        <Image src={block.image.url} alt={block.image.alt ?? ''} fill className="object-cover" />
       ) : (
         <div className="flex h-full w-full items-center justify-center bg-variant-mesh">
           <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--mist)]">[Image]</span>
@@ -97,7 +98,7 @@ export function ImageGalleryRenderer({ block }: { block: GalleryBlock }) {
             className="relative aspect-[4/3] overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)]"
           >
             {img.image.url ? (
-              <img src={img.image.url} alt={img.image.alt ?? ''} className="h-full w-full object-cover" />
+              <Image src={img.image.url} alt={img.image.alt ?? ''} fill className="object-cover" />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-variant-mesh" />
             )}
@@ -135,7 +136,7 @@ export function ImageMasonryRenderer({ block }: { block: MasonryBlock }) {
         {(block.images ?? []).map((img, i) => (
           <figure key={i} className="mb-3 break-inside-avoid overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)]">
             {img.image.url ? (
-              <img src={img.image.url} alt={img.image.alt ?? ''} className="w-full" />
+              <Image src={img.image.url} alt={img.image.alt ?? ''} width={800} height={600} className="w-full h-auto" />
             ) : (
               <div className="aspect-[3/4] bg-variant-mesh" />
             )}
@@ -196,7 +197,7 @@ export function ImageCarouselRenderer({ block }: { block: CarouselBlock }) {
                 className="absolute inset-0"
               >
                 {slides[idx].image.url ? (
-                  <img src={slides[idx].image.url} alt={slides[idx].image.alt ?? ''} className="h-full w-full object-cover" />
+                  <Image src={slides[idx].image.url} alt={slides[idx].image.alt ?? ''} fill className="object-cover" />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center bg-variant-mesh" />
                 )}
