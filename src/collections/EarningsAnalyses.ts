@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
 import { publishedOnly } from '../access/publishedOnly'
+import { CACHE_TAGS, revalidateOnPublish } from '@/lib/cache/revalidation'
 
 export const EarningsAnalyses: CollectionConfig = {
   slug: 'earnings-analyses',
@@ -182,4 +183,11 @@ export const EarningsAnalyses: CollectionConfig = {
       admin: { description: 'Other companies discussed (peers, suppliers, customers).' },
     },
   ],
+  hooks: {
+    afterChange: [
+      ({ doc }) => {
+        revalidateOnPublish(CACHE_TAGS.earningsAnalyses, doc)
+      },
+    ],
+  },
 }

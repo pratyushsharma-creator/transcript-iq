@@ -1,4 +1,6 @@
 import type { GlobalConfig } from 'payload'
+import { revalidateTag } from 'next/cache'
+import { CACHE_TAGS } from '@/lib/cache/revalidation'
 
 const navItemFields = [
   { name: 'label', type: 'text', required: true },
@@ -68,4 +70,11 @@ export const SiteSettings: GlobalConfig = {
       ],
     },
   ],
+  hooks: {
+    afterChange: [
+      () => {
+        revalidateTag(CACHE_TAGS.siteSettings, 'default')
+      },
+    ],
+  },
 }

@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
 import { publishedOnly } from '../access/publishedOnly'
+import { CACHE_TAGS, revalidateOnPublish } from '@/lib/cache/revalidation'
 
 import {
   Hero,
@@ -207,4 +208,11 @@ export const Pages: CollectionConfig = {
       admin: { initCollapsed: true },
     },
   ],
+  hooks: {
+    afterChange: [
+      ({ doc }) => {
+        revalidateOnPublish(CACHE_TAGS.pages, doc)
+      },
+    ],
+  },
 }

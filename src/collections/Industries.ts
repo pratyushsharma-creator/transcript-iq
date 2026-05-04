@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
+import { revalidateTag } from 'next/cache'
+import { CACHE_TAGS } from '@/lib/cache/revalidation'
 
 export const Industries: CollectionConfig = {
   slug: 'industries',
@@ -25,4 +27,11 @@ export const Industries: CollectionConfig = {
     },
     { name: 'description', type: 'textarea' },
   ],
+  hooks: {
+    afterChange: [
+      () => {
+        revalidateTag(CACHE_TAGS.industries, 'default')
+      },
+    ],
+  },
 }

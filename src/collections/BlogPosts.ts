@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
 import { publishedOnly } from '../access/publishedOnly'
+import { CACHE_TAGS, revalidateOnPublish } from '@/lib/cache/revalidation'
 
 export const BlogPosts: CollectionConfig = {
   slug: 'blog-posts',
@@ -68,6 +69,11 @@ export const BlogPosts: CollectionConfig = {
         const words = text.split(/\s+/).filter(Boolean).length
         data.readTime = Math.max(1, Math.round(words / 200))
         return data
+      },
+    ],
+    afterChange: [
+      ({ doc }) => {
+        revalidateOnPublish(CACHE_TAGS.blogPosts, doc)
       },
     ],
   },

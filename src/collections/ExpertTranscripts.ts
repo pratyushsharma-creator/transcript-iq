@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
 import { publishedOnly } from '../access/publishedOnly'
+import { CACHE_TAGS, revalidateOnPublish } from '@/lib/cache/revalidation'
 
 export const ExpertTranscripts: CollectionConfig = {
   slug: 'expert-transcripts',
@@ -193,4 +194,11 @@ export const ExpertTranscripts: CollectionConfig = {
       admin: { description: 'Companies discussed in this transcript.' },
     },
   ],
+  hooks: {
+    afterChange: [
+      ({ doc }) => {
+        revalidateOnPublish(CACHE_TAGS.expertTranscripts, doc)
+      },
+    ],
+  },
 }
