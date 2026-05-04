@@ -27,12 +27,26 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://transcript-iq.com'),
   title: {
-    default: 'Transcript IQ — Intelligence at the speed of now',
-    template: '%s — Transcript IQ',
+    default: 'Expert Call Transcripts Without the Subscription | Transcript IQ',
+    template: '%s | Transcript IQ',
   },
   description:
-    'Anonymized expert call transcripts and earnings analysis briefs for analysts who run six LLM tabs in parallel.',
+    'Buy individual MNPI-screened expert call transcripts from $349. 77+ transcripts across 12 sectors. No subscription. Compliance certified.',
+  openGraph: {
+    siteName: 'Transcript IQ',
+    type: 'website',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
