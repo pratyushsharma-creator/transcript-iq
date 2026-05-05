@@ -4,6 +4,9 @@ import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import { ShieldCheck, Lock, ArrowRight, ChevronLeft, CreditCard } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
+import { TurnstileWidget } from '@/components/ui/Turnstile'
+
+const HAS_CAPTCHA = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY)
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -117,9 +120,11 @@ const inputClass = (error?: string) =>
 function OrderSummary({
   subtotal,
   loading,
+  turnstileReady,
 }: {
   subtotal: number
   loading: boolean
+  turnstileReady: boolean
 }) {
   const { items } = useCart()
   const tax = Math.round(subtotal * 0.09 * 100) / 100
@@ -180,7 +185,7 @@ function OrderSummary({
       <button
         type="submit"
         form="checkout-form"
-        disabled={loading || items.length === 0}
+        disabled={loading || items.length === 0 || (HAS_CAPTCHA && !turnstileReady)}
         className="group mt-5 flex w-full items-center justify-center gap-2 rounded-[10px] bg-btn-primary py-[14px] text-[14px] font-semibold text-btn-primary-fg shadow-cta transition-all duration-base ease-out hover:-translate-y-px hover:bg-btn-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
         style={{ letterSpacing: '-0.01em' }}
       >
@@ -213,11 +218,15 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<FormErrors>({})
   const [apiError, setApiError] = useState<string | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
 
   const [form, setForm] = useState<FormData>({
     firstName: '', lastName: '', email: '', organisation: '', role: '',
     billingName: '', addressLine1: '', city: '', country: '', postalCode: '', vatNumber: '',
   })
+
+  const handleTurnstileSuccess = useCallback((token: string) => setTurnstileToken(token), [])
+  const handleTurnstileExpired  = useCallback(() => setTurnstileToken(null), [])
 
   const set = useCallback((field: keyof FormData, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -244,6 +253,11 @@ export default function CheckoutPage() {
     e.preventDefault()
     if (!validate()) return
 
+    if (HAS_CAPTCHA && !turnstileToken) {
+      setApiError('Security check in progress — please wait a moment and try again.')
+      return
+    }
+
     setLoading(true)
     setApiError(null)
 
@@ -253,6 +267,7 @@ export default function CheckoutPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           items,
+          turnstileToken,
           customer: {
             firstName: form.firstName,
             lastName: form.lastName,
@@ -404,6 +419,13 @@ export default function CheckoutPage() {
               </div>
             </div>
 
+            {/* Turnstile verification — Managed widget, mostly invisible */}
+            <TurnstileWidget
+              onSuccess={handleTurnstileSuccess}
+              onExpired={handleTurnstileExpired}
+              className="mt-4"
+            />
+
             {apiError && (
               <div className="mt-4 rounded-lg border border-[rgba(248,113,113,0.4)] bg-[rgba(248,113,113,0.08)] p-3">
                 <p className="font-mono text-[11px] text-[#F87171]">{apiError}</p>
@@ -420,7 +442,7 @@ export default function CheckoutPage() {
         </form>
 
         {/* ── RIGHT: Summary ── */}
-        <OrderSummary subtotal={subtotal} loading={loading} />
+        <OrderSummary subtotal={subtotal} loading={loading} turnstileReady={!HAS_CAPTCHA || Boolean(turnstileToken)} />
       </div>
     </div>
   )

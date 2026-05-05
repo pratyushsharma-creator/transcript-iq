@@ -1,8 +1,11 @@
 'use client'
 
-import { use, useState } from 'react'
+import { use, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { TurnstileWidget } from '@/components/ui/Turnstile'
+
+const HAS_CAPTCHA = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY)
 
 export default function ResetPasswordPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = use(params)
@@ -13,6 +16,10 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ token:
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+
+  const handleTurnstileSuccess = useCallback((t: string) => setTurnstileToken(t), [])
+  const handleTurnstileExpired  = useCallback(() => setTurnstileToken(null), [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -23,13 +30,18 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ token:
       return
     }
 
+    if (HAS_CAPTCHA && !turnstileToken) {
+      setError('Security check in progress — please wait a moment and try again.')
+      return
+    }
+
     setLoading(true)
 
     try {
-      const res = await fetch('/api/users/reset-password', {
+      const res = await fetch('/api/auth/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, password }),
+        body: JSON.stringify({ token, password, turnstileToken }),
       })
 
       if (!res.ok) {
@@ -110,6 +122,13 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ token:
                 />
               </div>
 
+              {/* Turnstile widget */}
+              <TurnstileWidget
+                onSuccess={handleTurnstileSuccess}
+                onExpired={handleTurnstileExpired}
+                className="mt-1"
+              />
+
               {error && (
                 <p className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-[13px] text-red-400">
                   {error}
@@ -118,7 +137,7 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ token:
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || (HAS_CAPTCHA && !turnstileToken)}
                 className="w-full rounded-[10px] bg-btn-primary px-4 py-3 text-[14px] font-semibold text-btn-primary-fg shadow-cta transition-all duration-base ease-out hover:-translate-y-px hover:bg-btn-primary-hover disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
               >
                 {loading ? 'Updating…' : 'Update password'}

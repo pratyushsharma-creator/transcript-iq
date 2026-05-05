@@ -1,11 +1,12 @@
 'use client'
 
-import type { Metadata } from 'next'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { Mail, MapPin, Clock, Send, ChevronDown } from 'lucide-react'
+import { TurnstileWidget } from '@/components/ui/Turnstile'
 
-// Note: metadata can't be exported from a 'use client' component.
-// Handled in a separate layout.tsx or via generateMetadata in a server wrapper.
+// Note: metadata exported from a separate layout.tsx (this file uses 'use client')
+
+const HAS_CAPTCHA = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY)
 
 const SUBJECTS = [
   'General enquiry',
@@ -34,6 +35,11 @@ export default function ContactPage() {
     message: '',
   })
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+
+  const handleTurnstileSuccess = useCallback((token: string) => setTurnstileToken(token), [])
+  const handleTurnstileExpired  = useCallback(() => setTurnstileToken(null), [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
@@ -41,10 +47,34 @@ export default function ContactPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setErrorMsg(null)
+
+    if (HAS_CAPTCHA && !turnstileToken) {
+      setErrorMsg('Security check in progress — please wait a moment and try again.')
+      return
+    }
+
     setStatus('sending')
-    // Simulate submission — wire to Payload form handler or email API in production
-    await new Promise((r) => setTimeout(r, 1400))
-    setStatus('sent')
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, turnstileToken }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setErrorMsg(data?.error ?? 'Something went wrong. Please try again.')
+        setStatus('error')
+        return
+      }
+
+      setStatus('sent')
+    } catch {
+      setErrorMsg('Something went wrong. Please try again.')
+      setStatus('error')
+    }
   }
 
   const isValid = form.name.trim() && form.company.trim() && form.email.trim() && form.subject && form.message.trim()
@@ -182,10 +212,22 @@ export default function ContactPage() {
               />
             </div>
 
+            {/* Turnstile widget */}
+            <TurnstileWidget
+              onSuccess={handleTurnstileSuccess}
+              onExpired={handleTurnstileExpired}
+            />
+
+            {errorMsg && (
+              <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-[13px] text-red-400">
+                {errorMsg}
+              </p>
+            )}
+
             <div className="flex items-center gap-4">
               <button
                 type="submit"
-                disabled={!isValid || status === 'sending'}
+                disabled={!isValid || status === 'sending' || (HAS_CAPTCHA && !turnstileToken)}
                 className="inline-flex items-center gap-2 rounded-[10px] bg-btn-primary px-6 py-3 text-[14px] font-semibold text-btn-primary-fg shadow-cta transition-all duration-base ease-out hover:-translate-y-px hover:bg-btn-primary-hover disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
               >
                 {status === 'sending' ? (

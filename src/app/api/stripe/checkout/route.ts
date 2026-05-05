@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
+import { verifyTurnstile } from '@/lib/turnstile'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -32,6 +33,7 @@ type CheckoutBody = {
     postalCode?: string
     vatNumber?: string
   }
+  turnstileToken?: string
 }
 
 // ── POST /api/stripe/checkout ─────────────────────────────────────────────────
@@ -40,6 +42,15 @@ export async function POST(req: NextRequest) {
   try {
     const body: CheckoutBody = await req.json()
     const { items, customer, billing } = body
+
+    // Verify Turnstile before creating Stripe session (dev bypass when key unset)
+    const { success: turnstileOk, errorCode } = await verifyTurnstile(body.turnstileToken)
+    if (!turnstileOk) {
+      return NextResponse.json(
+        { error: 'Bot verification failed. Please refresh and try again.', errorCode },
+        { status: 403 },
+      )
+    }
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: 'Cart is empty' }, { status: 400 })

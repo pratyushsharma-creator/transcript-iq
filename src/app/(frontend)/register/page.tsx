@@ -1,8 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { TurnstileWidget } from '@/components/ui/Turnstile'
+
+const HAS_CAPTCHA = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY)
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -13,6 +16,10 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+
+  const handleTurnstileSuccess = useCallback((token: string) => setTurnstileToken(token), [])
+  const handleTurnstileExpired  = useCallback(() => setTurnstileToken(null), [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -23,13 +30,23 @@ export default function RegisterPage() {
       return
     }
 
+    if (HAS_CAPTCHA && !turnstileToken) {
+      setError('Security check in progress — please wait a moment and try again.')
+      return
+    }
+
     setLoading(true)
 
     try {
-      const body: Record<string, string> = { email, password, name }
+      const body: Record<string, string | undefined> = {
+        email,
+        password,
+        name,
+        turnstileToken: turnstileToken ?? undefined,
+      }
       if (company.trim()) body.company = company.trim()
 
-      const res = await fetch('/api/users', {
+      const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -141,6 +158,13 @@ export default function RegisterPage() {
             />
           </div>
 
+          {/* Turnstile widget */}
+          <TurnstileWidget
+            onSuccess={handleTurnstileSuccess}
+            onExpired={handleTurnstileExpired}
+            className="mt-1"
+          />
+
           {error && (
             <p className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-[13px] text-red-400">
               {error}
@@ -149,7 +173,7 @@ export default function RegisterPage() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || (HAS_CAPTCHA && !turnstileToken)}
             className="w-full rounded-[10px] bg-btn-primary px-4 py-3 text-[14px] font-semibold text-btn-primary-fg shadow-cta transition-all duration-base ease-out hover:-translate-y-px hover:bg-btn-primary-hover disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
           >
             {loading ? 'Creating account…' : 'Create account'}

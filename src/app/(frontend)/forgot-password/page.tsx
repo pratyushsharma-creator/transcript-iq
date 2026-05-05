@@ -1,24 +1,37 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import Link from 'next/link'
+import { TurnstileWidget } from '@/components/ui/Turnstile'
+
+const HAS_CAPTCHA = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY)
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [sentTo, setSentTo] = useState<string | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+
+  const handleTurnstileSuccess = useCallback((token: string) => setTurnstileToken(token), [])
+  const handleTurnstileExpired  = useCallback(() => setTurnstileToken(null), [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
+
+    if (HAS_CAPTCHA && !turnstileToken) {
+      setError('Security check in progress — please wait a moment and try again.')
+      return
+    }
+
     setLoading(true)
 
     try {
-      const res = await fetch('/api/users/forgot-password', {
+      const res = await fetch('/api/auth/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, turnstileToken }),
       })
 
       if (!res.ok) {
@@ -90,6 +103,13 @@ export default function ForgotPasswordPage() {
                 />
               </div>
 
+              {/* Turnstile widget */}
+              <TurnstileWidget
+                onSuccess={handleTurnstileSuccess}
+                onExpired={handleTurnstileExpired}
+                className="mt-1"
+              />
+
               {error && (
                 <p className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-[13px] text-red-400">
                   {error}
@@ -98,7 +118,7 @@ export default function ForgotPasswordPage() {
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || (HAS_CAPTCHA && !turnstileToken)}
                 className="w-full rounded-[10px] bg-btn-primary px-4 py-3 text-[14px] font-semibold text-btn-primary-fg shadow-cta transition-all duration-base ease-out hover:-translate-y-px hover:bg-btn-primary-hover disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
               >
                 {loading ? 'Sending…' : 'Send reset link'}
