@@ -179,14 +179,13 @@ export function TranscriptCard({
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }}
       onClick={handleCardClick}
-      className="group relative flex flex-col overflow-hidden cursor-pointer card-hover-lift hover:-translate-y-[3px] hover:shadow-[0_4px_12px_-2px_rgba(0,0,0,.18),0_20px_48px_-12px_rgba(0,0,0,.22)]"
+      className="group relative flex flex-col overflow-hidden cursor-pointer card-hover-lift shadow-[0_2px_8px_-2px_rgba(0,0,0,.12),0_12px_32px_-8px_rgba(0,0,0,.10)] hover:-translate-y-[3px] hover:shadow-[0_4px_12px_-2px_rgba(0,0,0,.18),0_20px_48px_-12px_rgba(0,0,0,.22)]"
       style={{
         background: 'var(--surface)',
         border: '1px solid var(--border)',
         borderLeft: '3px solid var(--accent)',
         borderRadius: 14,
         padding: '28px 25px 24px 25px',
-        boxShadow: '0 2px 8px -2px rgba(0,0,0,.12), 0 12px 32px -8px rgba(0,0,0,.10)',
         transition:
           'box-shadow .28s cubic-bezier(.22,1,.36,1), transform .28s cubic-bezier(.22,1,.36,1), border-color .28s',
       }}
