@@ -252,7 +252,7 @@ export function EarningsProductPage({
       </div>
 
       {/* Hero grid */}
-      <div className="grid gap-12 pt-7 items-start" style={{ gridTemplateColumns: 'minmax(0, 1fr) 360px' }}>
+      <div className="grid gap-8 pt-7 items-start lg:grid-cols-[minmax(0,1fr)_360px]">
 
         {/* ═══ LEFT COLUMN ═══ */}
         <div>
@@ -366,12 +366,12 @@ export function EarningsProductPage({
 
           {/* Content tabs */}
           <div className="border-t border-[var(--border)]">
-            <div className="flex border-b border-[var(--border)]">
+            <div className="flex border-b border-[var(--border)] overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
               {TABS.map(({ id, label }) => (
                 <button
                   key={id}
                   onClick={() => setTab(id)}
-                  className={`font-mono text-[11px] tracking-[0.08em] uppercase px-[22px] py-[14px] transition-all whitespace-nowrap bg-transparent cursor-pointer border-0 border-t-0 border-l-0 border-r-0 ${tab === id ? 'text-[var(--accent)]' : 'text-[var(--mist)] hover:text-[var(--slate)]'}`}
+                  className={`font-mono text-[11px] tracking-[0.08em] uppercase px-[22px] py-[14px] transition-all whitespace-nowrap bg-transparent cursor-pointer border-0 border-t-0 border-l-0 border-r-0 shrink-0 ${tab === id ? 'text-[var(--accent)]' : 'text-[var(--mist)] hover:text-[var(--slate)]'}`}
                   style={{ borderBottom: tab === id ? '1.5px solid var(--accent)' : '1.5px solid transparent' }}
                 >
                   {label}
@@ -521,7 +521,7 @@ export function EarningsProductPage({
         </div>
 
         {/* ═══ RIGHT: PURCHASE CARD ═══ */}
-        <div className="sticky top-[68px]">
+        <div className="lg:sticky lg:top-[68px]">
           <div className="bg-[var(--surface)] border border-[var(--border-md)] rounded-[18px] overflow-hidden shadow-[0_24px_64px_-24px_rgba(0,0,0,0.5)]">
 
             {/* Ticker identity header */}
@@ -717,7 +717,7 @@ export function EarningsProductPage({
               {primarySector ? `View all ${primarySector.name} analyses →` : 'View all analyses →'}
             </Link>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {related.map(r => <RelatedCard key={r.id} doc={r} />)}
           </div>
         </div>
