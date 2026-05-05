@@ -75,14 +75,14 @@ function StencilHero({ block }: { block: HeroBlock }) {
           <div style={{
             position: 'absolute', width: 900, height: 900, borderRadius: '50%',
             filter: 'blur(110px)',
-            background: 'radial-gradient(circle, rgba(52,211,153,.13) 0%, transparent 68%)',
+            background: 'radial-gradient(circle, rgba(52,211,153,.22) 0%, transparent 68%)',
             top: -320, right: -200,
             animation: 'stencil-orb-drift ease-in-out 30s infinite alternate',
           }} />
           <div style={{
             position: 'absolute', width: 600, height: 600, borderRadius: '50%',
             filter: 'blur(110px)',
-            background: 'radial-gradient(circle, rgba(16,185,129,.08) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(16,185,129,.16) 0%, transparent 70%)',
             bottom: 0, left: -160,
             animation: 'stencil-orb-drift ease-in-out 38s infinite alternate',
             animationDelay: '-16s',
@@ -90,7 +90,7 @@ function StencilHero({ block }: { block: HeroBlock }) {
           <div style={{
             position: 'absolute', width: 400, height: 400, borderRadius: '50%',
             filter: 'blur(110px)',
-            background: 'radial-gradient(circle, rgba(52,211,153,.06) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(52,211,153,.12) 0%, transparent 70%)',
             top: '30%', left: '40%',
             animation: 'stencil-orb-drift ease-in-out 45s infinite alternate',
             animationDelay: '-22s',
@@ -104,11 +104,12 @@ function StencilHero({ block }: { block: HeroBlock }) {
           style={{
             zIndex: 0,
             backgroundImage:
-              'linear-gradient(rgba(255,255,255,.07) 1px, transparent 1px),' +
-              'linear-gradient(90deg, rgba(255,255,255,.07) 1px, transparent 1px)',
+              'linear-gradient(var(--grid-line) 1px, transparent 1px),' +
+              'linear-gradient(90deg, var(--grid-line) 1px, transparent 1px)',
             backgroundSize: '72px 72px',
             maskImage: 'radial-gradient(ellipse 90% 80% at 50% 40%, black 10%, transparent 80%)',
-            opacity: 0.6,
+            WebkitMaskImage: 'radial-gradient(ellipse 90% 80% at 50% 40%, black 10%, transparent 80%)',
+            opacity: 0.8,
           }}
         />
 
@@ -226,10 +227,10 @@ function StencilHero({ block }: { block: HeroBlock }) {
             {primaryCta && (
               <Link
                 href={primaryCta.url}
-                className="group inline-flex items-center gap-[9px] rounded-[11px] bg-[var(--accent)] px-[30px] py-[14px] text-[15px] font-semibold text-[#050A07] transition-all duration-200 hover:-translate-y-px hover:bg-[#2FCC8F]"
+                className="group inline-flex items-center gap-[9px] rounded-[11px] bg-btn-primary px-[30px] py-[14px] text-[15px] font-semibold text-btn-primary-fg transition-all duration-200 hover:-translate-y-px hover:bg-btn-primary-hover"
                 style={{
                   letterSpacing: '-0.01em',
-                  boxShadow: '0 0 0 1px rgba(52,211,153,.26), 0 8px 28px -8px rgba(52,211,153,.28)',
+                  boxShadow: '0 0 0 1px var(--accent-border), 0 8px 28px -8px var(--accent-glow)',
                 }}
               >
                 <svg
@@ -246,13 +247,8 @@ function StencilHero({ block }: { block: HeroBlock }) {
             {secondaryCta && (
               <Link
                 href={secondaryCta.url}
-                className="inline-flex items-center rounded-[11px] border px-[26px] py-[14px] text-[15px] font-medium transition-all duration-200 hover:-translate-y-px hover:bg-white/[0.04] hover:border-white/20"
-                style={{
-                  letterSpacing: '-0.01em',
-                  color: 'var(--ink-2)',
-                  borderColor: 'rgba(255,255,255,.13)',
-                  background: 'transparent',
-                }}
+                className="inline-flex items-center rounded-[11px] border border-[var(--border-2)] px-[26px] py-[14px] text-[15px] font-medium text-[var(--ink-2)] transition-all duration-200 hover:-translate-y-px hover:border-[var(--border)] hover:bg-[var(--surface-2)]"
+                style={{ letterSpacing: '-0.01em', background: 'transparent' }}
               >
                 {secondaryCta.label}
               </Link>
@@ -266,8 +262,8 @@ function StencilHero({ block }: { block: HeroBlock }) {
         <div
           style={{
             position: 'relative', zIndex: 1,
-            borderTop: '1px solid rgba(255,255,255,.07)',
-            background: 'rgba(9,9,11,.7)',
+            borderTop: '1px solid var(--border)',
+            background: 'color-mix(in srgb, var(--bg) 85%, transparent)',
             backdropFilter: 'blur(12px)',
           }}
         >
@@ -289,16 +285,16 @@ function StencilHero({ block }: { block: HeroBlock }) {
                 style={{
                   paddingLeft:  i === 0 ? 0 : 32,
                   paddingRight: i === stats.length - 1 ? 0 : 32,
-                  borderRight:  i < stats.length - 1 ? '1px solid rgba(255,255,255,.07)' : 'none',
+                  borderRight:  i < stats.length - 1 ? '1px solid var(--border)' : 'none',
                 }}
               >
                 <div
                   className="font-mono uppercase"
-                  style={{ fontSize: 8, letterSpacing: '.14em', color: 'rgba(255,255,255,.35)', marginBottom: 4 }}
+                  style={{ fontSize: 8, letterSpacing: '.14em', color: 'var(--mist)', marginBottom: 4 }}
                 >
                   {s.label}
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 500, letterSpacing: '-0.01em', color: 'rgba(255,255,255,.75)' }}>
+                <div style={{ fontSize: 14, fontWeight: 500, letterSpacing: '-0.01em', color: 'var(--ink)' }}>
                   {s.value}
                 </div>
               </div>
