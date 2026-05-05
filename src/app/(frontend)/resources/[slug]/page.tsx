@@ -128,13 +128,7 @@ export default async function ResourceArticlePage({
           zIndex: 1,
         }}
       >
-        <div
-          style={{
-            maxWidth: 760,
-            margin: '0 auto',
-            padding: '0 48px 52px',
-          }}
-        >
+        <div className="max-w-[760px] mx-auto px-5 pb-[52px] sm:px-8 lg:px-12">
           {/* Breadcrumb */}
           <div
             style={{
@@ -291,21 +285,9 @@ export default async function ResourceArticlePage({
       </div>
 
       {/* Article layout: body + sidebar */}
-      <div
-        style={{
-          maxWidth: 1200,
-          margin: '0 auto',
-          padding: '0 48px 96px',
-          display: 'grid',
-          gridTemplateColumns: '1fr 280px',
-          gap: 64,
-          alignItems: 'start',
-          position: 'relative',
-          zIndex: 1,
-        }}
-      >
+      <div className="max-w-[1200px] mx-auto px-5 pb-16 sm:px-8 lg:px-12 lg:pb-24 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-10 lg:gap-16 items-start relative z-[1]">
         {/* Article body */}
-        <article style={{ paddingTop: 48 }}>
+        <article className="pt-8 lg:pt-12">
           <ArticleBody body={post.body} />
 
           {/* Article footer */}
@@ -351,15 +333,7 @@ export default async function ResourceArticlePage({
 
       {/* Next article */}
       {nextPost && (
-        <div
-          style={{
-            background: 'var(--s1)',
-            borderTop: '1px solid rgba(255,255,255,0.07)',
-            padding: 48,
-            position: 'relative',
-            zIndex: 1,
-          }}
-        >
+        <div className="bg-[var(--s1)] border-t border-[rgba(255,255,255,0.07)] px-5 py-8 sm:px-8 lg:px-12 lg:py-12 relative z-[1]">
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
             <span
               style={{
@@ -376,24 +350,9 @@ export default async function ResourceArticlePage({
             </span>
             <Link
               href={`/resources/${nextPost.slug}`}
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: 0,
-                border: '1px solid rgba(255,255,255,0.07)',
-                borderRadius: 14,
-                overflow: 'hidden',
-                textDecoration: 'none',
-                color: 'inherit',
-                transition: 'all 0.2s',
-              }}
+              className="grid grid-cols-1 sm:grid-cols-2 gap-0 border border-[rgba(255,255,255,0.07)] rounded-[14px] overflow-hidden no-underline text-inherit transition-all duration-200"
             >
-              <div
-                style={{
-                  padding: '28px 32px',
-                  borderRight: '1px solid rgba(255,255,255,0.07)',
-                }}
-              >
+              <div className="p-7 sm:px-8 border-b border-[rgba(255,255,255,0.07)] sm:border-b-0 sm:border-r">
                 <div
                   style={{
                     fontFamily: 'var(--font-mono)',
@@ -446,7 +405,7 @@ export default async function ResourceArticlePage({
       )}
 
       {articleFaqs.length > 0 && (
-        <div style={{ maxWidth: 760, margin: '0 auto', padding: '0 48px' }}>
+        <div className="max-w-[760px] mx-auto px-5 sm:px-8 lg:px-12">
           <FaqAccordion faqs={articleFaqs} />
         </div>
       )}
