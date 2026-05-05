@@ -100,10 +100,10 @@ export const FeaturedProducts: Block = {
     {
       name: 'layout',
       type: 'select',
-      defaultValue: 'grid-3',
+      defaultValue: 'grid-2',
       options: [
-        { label: '3-card grid', value: 'grid-3' },
         { label: '2-card grid (large)', value: 'grid-2' },
+        { label: '3-card grid', value: 'grid-3' },
         { label: '4-card grid', value: 'grid-4' },
         { label: 'Compact list (rows)', value: 'list' },
         { label: 'Carousel', value: 'carousel' },
