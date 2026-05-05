@@ -72,7 +72,7 @@ function Steps({ current }: { current: 1 | 2 | 3 }) {
               </span>
             </div>
             {i < steps.length - 1 && (
-              <div className="mx-3 h-px w-12 bg-[var(--border)]" />
+              <div className="mx-2 sm:mx-3 h-px w-8 sm:w-12 bg-[var(--border)]" />
             )}
           </div>
         )
@@ -131,7 +131,7 @@ function OrderSummary({
   const total = subtotal + tax
 
   return (
-    <div className="sticky top-24 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6">
+    <div className="lg:sticky lg:top-24 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6">
       <h2 className="mb-5 border-b border-[var(--border)] pb-4 text-[14px] font-semibold tracking-[-0.01em] text-[var(--ink)]">
         Order Summary
         <span className="ml-2 font-mono text-[11px] font-normal text-[var(--mist)]">
@@ -329,9 +329,9 @@ export default function CheckoutPage() {
 
       <Steps current={2} />
 
-      <div className="grid gap-10 lg:grid-cols-[1fr_360px]">
-        {/* ── LEFT: Form ── */}
-        <form id="checkout-form" onSubmit={handleSubmit} noValidate className="flex flex-col gap-6">
+      <div className="grid gap-8 lg:gap-10 lg:grid-cols-[1fr_360px]">
+        {/* ── LEFT: Form — order-2 on mobile so summary appears first ── */}
+        <form id="checkout-form" onSubmit={handleSubmit} noValidate className="flex flex-col gap-6 order-2 lg:order-1">
 
           {/* Section 1: Contact */}
           <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6">
@@ -441,8 +441,10 @@ export default function CheckoutPage() {
           </section>
         </form>
 
-        {/* ── RIGHT: Summary ── */}
-        <OrderSummary subtotal={subtotal} loading={loading} turnstileReady={!HAS_CAPTCHA || Boolean(turnstileToken)} />
+        {/* ── RIGHT: Summary — order-1 on mobile (appears first), order-2 on lg ── */}
+        <div className="order-1 lg:order-2">
+          <OrderSummary subtotal={subtotal} loading={loading} turnstileReady={!HAS_CAPTCHA || Boolean(turnstileToken)} />
+        </div>
       </div>
     </div>
   )
