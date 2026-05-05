@@ -229,7 +229,7 @@ export function TranscriptProductPage({
 
       {/* Top bar */}
       <div className="flex items-center justify-between pt-5">
-        <nav className="flex items-center gap-2 font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--mist)]">
+        <nav className="hidden md:flex items-center gap-2 font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--mist)]">
           <Link href="/" className="hover:text-[var(--slate)] transition-colors">Home</Link>
           <span className="text-[var(--border-2)]">›</span>
           <Link href="/expert-transcripts" className="hover:text-[var(--slate)] transition-colors">Transcript Library</Link>
@@ -256,7 +256,7 @@ export function TranscriptProductPage({
       </div>
 
       {/* Hero grid */}
-      <div className="grid gap-12 pt-8 items-start" style={{ gridTemplateColumns: 'minmax(0, 1fr) 360px' }}>
+      <div className="grid gap-8 pt-8 items-start lg:grid-cols-[minmax(0,1fr)_360px]">
 
         {/* ═══ LEFT COLUMN ═══ */}
         <div>
@@ -287,12 +287,11 @@ export function TranscriptProductPage({
           )}
 
           {/* Meta strip */}
-          <div className="flex items-center border border-[var(--border)] rounded-[10px] overflow-hidden bg-[var(--surface)] mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-5 border border-[var(--border)] rounded-[10px] overflow-hidden bg-[var(--surface)] mb-6">
             {metaCells.map((cell, i) => (
               <div
                 key={cell.label}
-                className="flex-1 px-[18px] py-3"
-                style={{ borderRight: i < metaCells.length - 1 ? '1px solid var(--border)' : 'none' }}
+                className="px-4 md:px-[18px] py-3 border-r border-[var(--border)] last:border-r-0 border-b border-[var(--border)] md:border-b-0"
               >
                 <div className="font-mono text-[8px] tracking-[0.14em] uppercase text-[var(--mist)] mb-1">{cell.label}</div>
                 <div className={`text-[13px] font-medium tracking-[-0.01em] ${cell.accent ? 'text-[var(--accent)] font-mono' : 'text-[var(--ink-2)]'}`}>
@@ -329,12 +328,12 @@ export function TranscriptProductPage({
 
           {/* Content tabs */}
           <div className="border-t border-[var(--border)]">
-            <div className="flex border-b border-[var(--border)]">
+            <div className="flex border-b border-[var(--border)] overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
               {TABS.map(({ id, label }) => (
                 <button
                   key={id}
                   onClick={() => setTab(id)}
-                  className={`font-mono text-[11px] tracking-[0.08em] uppercase px-[22px] py-[14px] transition-all whitespace-nowrap bg-transparent cursor-pointer border-0 border-t-0 border-l-0 border-r-0 ${tab === id ? 'text-[var(--accent)]' : 'text-[var(--mist)] hover:text-[var(--slate)]'}`}
+                  className={`font-mono text-[10px] sm:text-[11px] tracking-[0.08em] uppercase px-4 sm:px-[22px] py-[14px] transition-all whitespace-nowrap shrink-0 bg-transparent cursor-pointer border-0 border-t-0 border-l-0 border-r-0 ${tab === id ? 'text-[var(--accent)]' : 'text-[var(--mist)] hover:text-[var(--slate)]'}`}
                   style={{ borderBottom: tab === id ? '1.5px solid var(--accent)' : '1.5px solid transparent' }}
                 >
                   {label}
@@ -366,7 +365,7 @@ export function TranscriptProductPage({
 
               {/* Topics Covered */}
               {tab === 'topics' && (
-                <div className="grid grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {(transcript.topicsCovered ?? []).map(t => (
                     <div key={t.id ?? t.topic} className="flex items-start gap-2.5 bg-[var(--surface)] border border-[var(--border)] rounded-[10px] px-4 py-[14px] hover:border-[var(--border-md)] transition-all">
                       <div className="w-[6px] h-[6px] rounded-full bg-[var(--accent)] flex-shrink-0 mt-[5px]" />
@@ -402,8 +401,8 @@ export function TranscriptProductPage({
                       </div>
                     </div>
                     <div
-                      className="grid gap-px rounded-[8px] overflow-hidden"
-                      style={{ gridTemplateColumns: 'repeat(3, 1fr)', background: 'var(--border)', border: '1px solid var(--border)' }}
+                      className="grid grid-cols-2 sm:grid-cols-3 gap-px rounded-[8px] overflow-hidden"
+                      style={{ background: 'var(--border)', border: '1px solid var(--border)' }}
                     >
                       {expertSpecs.map(spec => (
                         <div key={spec.label} className="bg-[var(--bg)] px-[14px] py-3">
@@ -492,7 +491,7 @@ export function TranscriptProductPage({
         </div>
 
         {/* ═══ RIGHT: PURCHASE CARD ═══ */}
-        <div className="sticky top-[68px]">
+        <div className="lg:sticky lg:top-[68px]">
           <div className="bg-[var(--surface)] border border-[var(--border-md)] rounded-[18px] overflow-hidden shadow-[0_24px_64px_-24px_rgba(0,0,0,0.5)]">
 
             {/* Header */}
@@ -633,7 +632,7 @@ export function TranscriptProductPage({
       {/* Bundles section */}
       <div className="pt-12 border-t border-[var(--border)]">
         <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--mist)] mb-5">Save more with bundles</div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[14px] px-[26px] py-6 hover:border-[var(--border-md)] hover:-translate-y-px transition-all cursor-pointer">
             <div className="font-mono text-[9px] tracking-[0.14em] uppercase text-[var(--accent)] mb-2">3 Transcripts</div>
             <div className="text-[16px] font-medium tracking-[-0.015em] mb-2.5">
@@ -680,7 +679,7 @@ export function TranscriptProductPage({
       {/* Related transcripts */}
       {related.length > 0 && (
         <div className="py-12 border-t border-[var(--border)]">
-          <div className="flex items-baseline justify-between mb-6">
+          <div className="flex flex-wrap items-baseline justify-between gap-3 mb-6">
             <div>
               <div className="font-mono text-[9px] tracking-[0.14em] uppercase text-[var(--mist)] mb-1.5">You may also like</div>
               <div className="text-[22px] font-medium tracking-[-0.025em]">Related Transcripts</div>
@@ -693,7 +692,7 @@ export function TranscriptProductPage({
               {primarySector ? `View all ${primarySector.name} transcripts →` : 'View all transcripts →'}
             </Link>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {related.map(r => <RelatedCard key={r.id} doc={r} />)}
           </div>
         </div>
