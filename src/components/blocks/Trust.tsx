@@ -119,13 +119,8 @@ export function TrustNumbersRenderer({ block }: { block: TrustNumbersBlock }) {
           alignment="center"
         />
       )}
-      <div
-        className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]"
-        style={{
-          gridTemplateColumns: `repeat(${stats.length}, minmax(0, 1fr))`,
-        }}
-      >
-        <div className="grid" style={{ gridTemplateColumns: `repeat(${stats.length}, minmax(0, 1fr))` }}>
+      <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+        <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-[repeat(${stats.length},_minmax(0,1fr))]`}>
           {stats.map((s, i) => (
             <motion.div
               key={i}
@@ -133,7 +128,7 @@ export function TrustNumbersRenderer({ block }: { block: TrustNumbersBlock }) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-40px' }}
               transition={{ duration: 0.5, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
-              className={`group relative flex flex-col gap-2 px-6 py-7 transition-colors duration-base hover:bg-[var(--surface-2)] ${
+              className={`group relative flex flex-col gap-2 px-4 py-5 sm:px-6 sm:py-7 transition-colors duration-base hover:bg-[var(--surface-2)] border-b border-[var(--border)] lg:border-b-0 ${
                 i < stats.length - 1 ? 'border-r border-[var(--border)]' : ''
               }`}
             >
