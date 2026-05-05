@@ -59,11 +59,22 @@ if (process.env.STRIPE_SECRET_KEY) {
   )
 }
 
+// Private store for purchased transcript PDF files
 if (process.env.BLOB_READ_WRITE_TOKEN) {
   plugins.push(
     vercelBlobStorage({
-      collections: { media: true, 'transcript-files': true },
+      collections: { 'transcript-files': true },
       token: process.env.BLOB_READ_WRITE_TOKEN,
+    }),
+  )
+}
+
+// Public store for media uploads (logos, images, etc.)
+if (process.env.BLOB_MEDIA_READ_WRITE_TOKEN) {
+  plugins.push(
+    vercelBlobStorage({
+      collections: { media: true },
+      token: process.env.BLOB_MEDIA_READ_WRITE_TOKEN,
     }),
   )
 }
