@@ -152,8 +152,7 @@ function StencilHero({ block }: { block: HeroBlock }) {
                   fontWeight: 700,
                   letterSpacing: '-0.055em',
                   lineHeight: 0.91,
-                  color: 'transparent',
-                  WebkitTextStroke: '1.5px rgba(255,255,255,.22)',
+                  color: 'var(--ink)',
                 }}
               >
                 {line1}
