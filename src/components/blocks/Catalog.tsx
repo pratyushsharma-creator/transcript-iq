@@ -108,6 +108,7 @@ export async function FeaturedProductsRenderer({ block }: { block: FeaturedProdu
         sectorNames: namesFromRelationship(d.sectors),
         tickerSymbols: tickersFromRelationship(d.companies),
         engagementCopy: d.engagementCopy,
+        complianceBadges: Array.isArray(d.complianceBadges) ? d.complianceBadges : null,
       })
     }
   }
