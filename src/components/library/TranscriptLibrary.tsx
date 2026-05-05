@@ -406,13 +406,13 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
             WebkitMaskImage: 'linear-gradient(180deg, transparent, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0.4) 70%, transparent)',
           }}
         />
-        <div className="relative z-10 mx-auto max-w-[1280px] px-10 pb-10 pt-1">
+        <div className="relative z-10 mx-auto max-w-[1280px] px-4 sm:px-6 md:px-10 pb-10 pt-1">
           <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--mist)] mb-7">
             <a href="/" className="hover:text-[var(--slate)] transition-colors duration-150">Home</a>
             <span className="text-[var(--border-2)]">›</span>
             <span>Transcript Library</span>
           </div>
-          <div className="flex items-end justify-between gap-6 mb-4">
+          <div className="flex flex-wrap items-end justify-between gap-4 mb-4">
             <h1 className="text-[clamp(32px,4vw,52px)] font-semibold tracking-[-0.04em] leading-[1]">
               Expert Call <em className="not-italic text-[var(--accent)] font-[400]">Transcripts</em>
             </h1>
@@ -421,7 +421,7 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
                 <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
                 {total} transcripts
               </span>
-              <span className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--mist)] px-2.5 py-1.5 bg-[var(--surface)] border border-[var(--border)] rounded-full">
+              <span className="hidden sm:inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--mist)] px-2.5 py-1.5 bg-[var(--surface)] border border-[var(--border)] rounded-full">
                 100% MNPI Screened
               </span>
             </div>
@@ -434,7 +434,7 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
 
       {/* ── Filter bar ─────────────────────────────────────────────────── */}
       <div className="sticky top-16 z-40 border-b border-[var(--border)] backdrop-blur-[16px]" style={{ background: 'color-mix(in srgb, var(--bg) 92%, transparent)' }}>
-        <div className="mx-auto max-w-[1280px] px-10">
+        <div className="mx-auto max-w-[1280px] px-4 sm:px-6 md:px-10">
           {/* Filter tabs */}
           <div className="flex gap-0 border-b border-[var(--border)] overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
             {[
@@ -486,7 +486,7 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
           </div>
 
           {/* Results bar */}
-          <div className="flex items-center justify-between py-2.5 gap-4 border-t border-[var(--border)]">
+          <div className="flex flex-wrap items-center justify-between py-2.5 gap-3 border-t border-[var(--border)]">
             <div className="flex items-center gap-2.5 flex-wrap">
               <span className="font-mono text-[11px] text-[var(--mist)] tracking-[0.06em] whitespace-nowrap">
                 Showing <strong className="text-[var(--ink)]">{docs.length}</strong> of <strong className="text-[var(--ink)]">{total}</strong> transcripts
@@ -536,7 +536,7 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
       </div>
 
       {/* ── Main content ───────────────────────────────────────────────── */}
-      <div className="mx-auto max-w-[1280px] px-10 py-8 pb-20">
+      <div className="mx-auto max-w-[1280px] px-4 sm:px-6 md:px-10 py-8 pb-20">
         {loading && docs.length === 0 ? (
           <div className="py-20 text-center font-mono text-[11px] text-[var(--mist)]">Loading…</div>
         ) : docs.length === 0 ? (
