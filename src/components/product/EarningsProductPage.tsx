@@ -225,7 +225,7 @@ export function EarningsProductPage({
 
       {/* Top bar */}
       <div className="flex items-center justify-between pt-5">
-        <nav className="flex items-center gap-2 font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--mist)]">
+        <nav className="hidden md:flex items-center gap-2 font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--mist)]">
           <Link href="/" className="hover:text-[var(--slate)] transition-colors">Home</Link>
           <span className="text-[var(--border-2)]">›</span>
           <Link href="/earnings-analysis" className="hover:text-[var(--slate)] transition-colors">Earnings Library</Link>
@@ -455,7 +455,7 @@ export function EarningsProductPage({
 
               {/* Key Themes */}
               {tab === 'themes' && (
-                <div className="grid grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {(analysis.keyTopics ?? []).map(t => (
                     <div key={t.id ?? t.topic} className="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] px-[18px] py-4 hover:border-[var(--border-md)] transition-all">
                       <div className="text-[14px] font-medium tracking-[-0.01em] flex items-center gap-2 mb-[5px]">
@@ -504,7 +504,7 @@ export function EarningsProductPage({
 
               {/* Methodology */}
               {tab === 'methodology' && (
-                <div className="grid grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {methodologyItems.map(item => (
                     <div key={item.label} className="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] px-5 py-[18px]">
                       <div className="font-mono text-[9px] tracking-[0.14em] uppercase text-[var(--mist)] mb-2">{item.label}</div>
@@ -704,7 +704,7 @@ export function EarningsProductPage({
       {/* Related earnings */}
       {related.length > 0 && (
         <div className="py-12 border-t border-[var(--border)]">
-          <div className="flex items-baseline justify-between mb-6">
+          <div className="flex flex-wrap items-baseline justify-between gap-3 mb-6">
             <div>
               <div className="font-mono text-[9px] tracking-[0.14em] uppercase text-[var(--mist)] mb-1.5">You may also like</div>
               <div className="text-[22px] font-medium tracking-[-0.025em]">Related Earnings Analyses</div>

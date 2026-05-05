@@ -461,7 +461,7 @@ export async function LatestArticlesRenderer({ block }: { block: LatestArticlesB
             <div className="mb-px grid overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] transition-colors hover:bg-[var(--surface-2)] lg:grid-cols-[1fr_380px]">
               <Link
                 href={`/resources/${featured.slug}`}
-                className="flex flex-col justify-between gap-6 p-10 lg:border-r lg:border-[var(--border)] lg:p-12"
+                className="flex flex-col justify-between gap-6 p-6 sm:p-8 lg:border-r lg:border-[var(--border)] lg:p-12"
               >
                 <div>
                   <div className="mb-5 flex items-center gap-3">
@@ -489,7 +489,7 @@ export async function LatestArticlesRenderer({ block }: { block: LatestArticlesB
 
               {/* Aside — pull quote + stat grid */}
               <div
-                className="flex flex-col justify-between gap-6 p-10 lg:p-9"
+                className="flex flex-col justify-between gap-6 p-6 sm:p-8 lg:p-9"
                 style={{
                   background: 'linear-gradient(160deg, var(--surface) 0%, rgba(14,217,138,0.06) 100%)',
                 }}

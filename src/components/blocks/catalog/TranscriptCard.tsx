@@ -271,34 +271,34 @@ export function TranscriptCard({
         </div>
       ) : null}
 
-      {/* ── Footer: price + tier + buttons ─────────────────────────────── */}
-      <div className="mt-auto flex items-center justify-between gap-3 border-t border-[var(--border)] pt-[16px]">
-        {/* Price block */}
-        <div className="flex items-baseline gap-[8px]">
-          <span className="font-mono text-[24px] font-medium leading-none tracking-[-0.04em] text-[var(--accent)]">
-            ${data.priceUsd}
-          </span>
-          {data.originalPriceUsd && data.originalPriceUsd > data.priceUsd && (
-            <span className="font-mono text-[13px] text-[var(--mist)] line-through">
-              ${data.originalPriceUsd}
+      {/* ── Footer: price + tier (row 1) · buttons (row 2) ──────────────── */}
+      <div className="mt-auto border-t border-[var(--border)] pt-[16px] flex flex-col gap-[10px]">
+        {/* Row 1: Price + Tier badge */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-baseline gap-[8px]">
+            <span className="font-mono text-[24px] font-medium leading-none tracking-[-0.04em] text-[var(--accent)]">
+              ${data.priceUsd}
             </span>
-          )}
-          {data.discountPercent && data.discountPercent > 0 && (
-            <span className="font-mono text-[9px] font-bold uppercase tracking-[0.08em] text-btn-primary-fg bg-[var(--accent)] px-[7px] py-[2px] rounded-[4px]">
-              {data.discountPercent}% OFF
-            </span>
-          )}
+            {data.originalPriceUsd && data.originalPriceUsd > data.priceUsd && (
+              <span className="font-mono text-[13px] text-[var(--mist)] line-through">
+                ${data.originalPriceUsd}
+              </span>
+            )}
+            {data.discountPercent && data.discountPercent > 0 && (
+              <span className="font-mono text-[9px] font-bold uppercase tracking-[0.08em] text-btn-primary-fg bg-[var(--accent)] px-[7px] py-[2px] rounded-[4px]">
+                {data.discountPercent}% OFF
+              </span>
+            )}
+          </div>
+          {data.tier && <TierBadge tier={data.tier} />}
         </div>
 
-        {/* Tier badge */}
-        {data.tier && <TierBadge tier={data.tier} />}
-
-        {/* Action buttons */}
-        <div className="flex gap-[8px] shrink-0">
+        {/* Row 2: Action buttons — flex-1 so each fills half the row */}
+        <div className="flex gap-[8px]">
           <button
             type="button"
             onClick={handleAddToCart}
-            className={`flex items-center gap-1 rounded-[8px] border px-[15px] py-[9px] font-sans text-[12px] font-medium tracking-[-0.01em] transition-all duration-150 ${
+            className={`flex-1 flex items-center justify-center gap-1 rounded-[8px] border py-[9px] font-sans text-[12px] font-medium tracking-[-0.01em] transition-all duration-150 ${
               inCart
                 ? 'border-[var(--accent-border)] bg-[var(--accent-tint)] text-[var(--accent)]'
                 : 'border-[var(--border)] bg-transparent text-[var(--ink-2)] hover:border-[var(--border-2)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]'
@@ -310,7 +310,7 @@ export function TranscriptCard({
           <button
             type="button"
             onClick={handleBuyNow}
-            className="flex items-center gap-1.5 rounded-[8px] bg-btn-primary px-[18px] py-[9px] font-sans text-[12px] font-semibold tracking-[-0.01em] text-btn-primary-fg shadow-cta transition-all duration-base ease-out hover:-translate-y-px hover:bg-btn-primary-hover"
+            className="flex-1 flex items-center justify-center gap-1.5 rounded-[8px] bg-btn-primary py-[9px] font-sans text-[12px] font-semibold tracking-[-0.01em] text-btn-primary-fg shadow-cta transition-all duration-base ease-out hover:-translate-y-px hover:bg-btn-primary-hover"
           >
             <CartIcon />
             Buy Now
