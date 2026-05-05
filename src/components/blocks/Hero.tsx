@@ -115,8 +115,8 @@ function StencilHero({ block }: { block: HeroBlock }) {
 
         {/* ── Copy — left-aligned, max-width container ── */}
         <div
-          className="relative mx-auto"
-          style={{ zIndex: 1, maxWidth: 1280, padding: '80px 48px 72px' }}
+          className="relative mx-auto max-w-[1280px] px-5 pt-10 pb-10 sm:px-8 sm:pt-14 sm:pb-12 lg:px-12 lg:pt-20 lg:pb-18"
+          style={{ zIndex: 1 }}
         >
           {/* Eyebrow pill */}
           {block.eyebrow && (
@@ -268,24 +268,17 @@ function StencilHero({ block }: { block: HeroBlock }) {
           }}
         >
           <motion.div
-            className="mx-auto"
+            className="mx-auto max-w-[1280px] px-5 py-5 sm:px-8 lg:px-12 lg:py-[22px] grid grid-cols-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            style={{
-              maxWidth: 1280,
-              padding: '22px 48px',
-              display: 'grid',
-              gridTemplateColumns: `repeat(${stats.length}, 1fr)`,
-            }}
           >
             {stats.map((s, i) => (
               <div
                 key={i}
+                className="px-4 lg:px-8"
                 style={{
-                  paddingLeft:  i === 0 ? 0 : 32,
-                  paddingRight: i === stats.length - 1 ? 0 : 32,
-                  borderRight:  i < stats.length - 1 ? '1px solid var(--border)' : 'none',
+                  borderRight: i < stats.length - 1 ? '1px solid var(--border)' : 'none',
                 }}
               >
                 <div
