@@ -393,14 +393,14 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
         className="relative overflow-hidden"
         style={{
           background:
-            'radial-gradient(ellipse 900px 400px at 70% -20%, rgba(52,211,153,0.14), transparent 55%), radial-gradient(ellipse 500px 300px at 0% 100%, rgba(16,185,129,0.08), transparent 60%), var(--bg)',
+            'radial-gradient(ellipse 900px 400px at 70% -20%, var(--accent-tint-2), transparent 55%), radial-gradient(ellipse 500px 300px at 0% 100%, var(--accent-tint), transparent 60%), var(--bg)',
         }}
       >
         <div
           aria-hidden
           className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.032) 1px, transparent 0)',
+            backgroundImage: 'radial-gradient(circle at 1px 1px, var(--grid-dot) 1px, transparent 0)',
             backgroundSize: '28px 28px',
             maskImage: 'linear-gradient(180deg, transparent, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0.4) 70%, transparent)',
             WebkitMaskImage: 'linear-gradient(180deg, transparent, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0.4) 70%, transparent)',
@@ -433,7 +433,7 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
       </div>
 
       {/* ── Filter bar ─────────────────────────────────────────────────── */}
-      <div className="sticky top-16 z-40 border-b border-[var(--border)] backdrop-blur-[16px]" style={{ background: 'rgba(9,9,11,0.9)' }}>
+      <div className="sticky top-16 z-40 border-b border-[var(--border)] backdrop-blur-[16px]" style={{ background: 'color-mix(in srgb, var(--bg) 92%, transparent)' }}>
         <div className="mx-auto max-w-[1280px] px-10">
           {/* Filter tabs */}
           <div className="flex gap-0 border-b border-[var(--border)] overflow-x-auto" style={{ scrollbarWidth: 'none' }}>

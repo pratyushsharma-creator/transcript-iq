@@ -184,7 +184,7 @@ function EarningsCard({ doc, view }: { doc: EarningsDoc; view: 'grid' | 'list' }
         className={[
           'flex items-center justify-between gap-2.5',
           view === 'list'
-            ? 'flex-col items-start justify-start pt-[18px] px-5 pb-3 min-w-[140px] border-r border-[var(--border)] bg-[rgba(255,255,255,0.01)]'
+            ? 'flex-col items-start justify-start pt-[18px] px-5 pb-3 min-w-[140px] border-r border-[var(--border)] bg-[var(--surface-2)]/30'
             : 'px-[18px] pt-3.5',
         ].join(' ')}
       >
@@ -453,14 +453,14 @@ export function EarningsLibrary({ initialDocs, totalDocs, industries }: Earnings
         className="relative overflow-hidden"
         style={{
           background:
-            'radial-gradient(ellipse 1000px 500px at 80% -10%, rgba(52,211,153,0.10), transparent 55%), radial-gradient(ellipse 500px 350px at -5% 110%, rgba(52,211,153,0.06), transparent 60%), var(--bg)',
+            'radial-gradient(ellipse 1000px 500px at 80% -10%, var(--accent-tint-2), transparent 55%), radial-gradient(ellipse 500px 350px at -5% 110%, var(--accent-tint), transparent 60%), var(--bg)',
         }}
       >
         <div
           aria-hidden
           className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.03) 1px, transparent 0)',
+            backgroundImage: 'radial-gradient(circle at 1px 1px, var(--grid-dot) 1px, transparent 0)',
             backgroundSize: '28px 28px',
             maskImage: 'linear-gradient(180deg, transparent, rgba(0,0,0,0.5) 30%, rgba(0,0,0,0.5) 70%, transparent)',
             WebkitMaskImage: 'linear-gradient(180deg, transparent, rgba(0,0,0,0.5) 30%, rgba(0,0,0,0.5) 70%, transparent)',
@@ -491,7 +491,7 @@ export function EarningsLibrary({ initialDocs, totalDocs, industries }: Earnings
       </div>
 
       {/* ── Filter bar ─────────────────────────────────────────────────── */}
-      <div className="sticky top-16 z-40 border-b border-[var(--border)] backdrop-blur-[16px]" style={{ background: 'rgba(9,9,11,0.9)' }}>
+      <div className="sticky top-16 z-40 border-b border-[var(--border)] backdrop-blur-[16px]" style={{ background: 'color-mix(in srgb, var(--bg) 92%, transparent)' }}>
         <div className="mx-auto max-w-[1280px] px-10">
           {/* Tabs */}
           <div className="flex gap-0 border-b border-[var(--border)] overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
