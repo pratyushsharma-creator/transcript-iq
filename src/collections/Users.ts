@@ -33,13 +33,15 @@ export const Users: CollectionConfig = {
       },
       hooks: {
         beforeChange: [
-          ({ value, siblingData }) => {
+          ({ value, previousValue, siblingData }) => {
+            // Preserve existing key — readOnly fields come back as undefined from admin saves
+            if (previousValue) return previousValue
             const role = (siblingData as Record<string, unknown>)?.role
             // Auto-generate a UUID key for admin/editor users who don't have one yet
             if (!value && (role === 'admin' || role === 'editor')) {
               return crypto.randomUUID()
             }
-            return value
+            return value ?? undefined
           },
         ],
       },
