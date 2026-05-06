@@ -144,14 +144,14 @@ export const ExpertTranscripts: CollectionConfig = {
     {
       name: 'metaTitle',
       type: 'text',
-      maxLength: 70,
-      admin: { position: 'sidebar', description: 'SEO / OG title override (max 70 chars). Leave blank to auto-generate.' },
+      maxLength: 120,
+      admin: { position: 'sidebar', description: 'SEO / OG title override (max 120 chars). Leave blank to auto-generate.' },
     },
     {
       name: 'metaDescription',
       type: 'textarea',
-      maxLength: 160,
-      admin: { position: 'sidebar', description: 'SEO / OG description override (max 160 chars). Leave blank to auto-generate from summary.' },
+      maxLength: 300,
+      admin: { position: 'sidebar', description: 'SEO / OG description override (max 300 chars, displayed truncated to 160). Leave blank to auto-generate from summary.' },
     },
 
     // ── Compliance & engagement ────────────────────────────────────────
