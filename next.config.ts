@@ -7,6 +7,15 @@ const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      // Legacy seed-data URLs that shipped with wrong paths
+      { source: '/transcripts', destination: '/expert-transcripts', permanent: true },
+      { source: '/earnings', destination: '/earnings-analysis', permanent: true },
+      { source: '/transcript-library', destination: '/expert-transcripts', permanent: true },
+      { source: '/blog', destination: '/resources', permanent: true },
+    ]
+  },
   images: {
     remotePatterns: [
       {

@@ -117,7 +117,7 @@ export const FeaturedProducts: Block = {
       fields: [
         { name: 'enabled', type: 'checkbox', defaultValue: true },
         { name: 'label', type: 'text', defaultValue: 'See all transcripts' },
-        { name: 'url', type: 'text', defaultValue: '/transcripts' },
+        { name: 'url', type: 'text', defaultValue: '/expert-transcripts' },
       ],
     },
     ...sectionBaseFields,

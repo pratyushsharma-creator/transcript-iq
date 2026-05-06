@@ -11,7 +11,9 @@
 @layer base {
   html,
   body {
-    overflow-x: hidden;
+    /* clip (not hidden) — prevents horizontal overflow without creating a
+       new scroll container, so position:sticky children keep working.     */
+    overflow-x: clip;
   }
 
   :root {

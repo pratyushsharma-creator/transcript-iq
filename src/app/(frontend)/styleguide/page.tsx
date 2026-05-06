@@ -68,14 +68,14 @@ function Hero() {
           className="mt-10 flex flex-wrap items-center gap-3"
         >
           <a
-            href="/transcripts"
+            href="/expert-transcripts"
             className="group inline-flex items-center gap-2 rounded-md bg-btn-primary px-5 py-3 text-sm font-medium text-white shadow-cta transition-all duration-base ease-out hover:-translate-y-px hover:bg-btn-primary-hover"
           >
             Browse transcripts
             <ArrowRight className="h-4 w-4 transition-transform duration-base ease-out group-hover:translate-x-0.5" />
           </a>
           <a
-            href="/earnings"
+            href="/earnings-analysis"
             className="inline-flex items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--surface)] px-5 py-3 text-sm font-medium text-[var(--ink)] transition-all duration-base ease-out hover:-translate-y-px hover:border-[var(--accent-border)]"
           >
             Earnings briefs

@@ -38,7 +38,7 @@ export function SectionShell({
   return (
     <section
       id={anchorId || undefined}
-      className={`relative isolate overflow-hidden ${bgClass[background ?? 'clean']} ${spacingClass[spacing ?? 'default']} ${className}`}
+      className={`relative isolate overflow-clip ${bgClass[background ?? 'clean']} ${spacingClass[spacing ?? 'default']} ${className}`}
     >
       {contained ? (
         <div className="mx-auto w-full max-w-[1240px] px-6">{children}</div>

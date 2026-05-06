@@ -569,7 +569,7 @@ async function main() {
       subheading:
         'Browse 100+ expert transcripts on demand, or commission a bespoke call on any topic you need.',
       ctas: [
-        { label: 'Browse Transcript Library →', url: '/transcripts', variant: 'primary' },
+        { label: 'Browse Transcript Library →', url: '/expert-transcripts', variant: 'primary' },
         { label: 'Commission Custom Research', url: '/custom-reports', variant: 'secondary' },
       ],
       complianceNote: 'MNPI Screened · PII Redacted · No Subscription · Instant PDF Delivery',

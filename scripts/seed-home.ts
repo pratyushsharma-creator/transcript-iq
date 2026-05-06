@@ -82,7 +82,7 @@ async function main() {
       subheading:
         'Verbatim expert call transcripts from C-suite executives, VPs, and directors across 13 sectors — from $349. Comprehensive earnings analyses covering the companies your portfolio follows, from $99. Portable PDF, instant delivery, no subscription required.',
       ctas: [
-        { label: 'Browse Transcripts', url: '/transcripts', variant: 'primary' },
+        { label: 'Browse Transcripts', url: '/expert-transcripts', variant: 'primary' },
         { label: 'Get a Free Transcript', url: '/free-transcript', variant: 'secondary' },
       ],
       visual: {
@@ -168,7 +168,7 @@ async function main() {
       limit: 3,
       layout: 'grid-3',
       cardHover: 'moving-border',
-      showAllCta: { enabled: true, label: 'View All Transcripts', url: '/transcripts' },
+      showAllCta: { enabled: true, label: 'View All Transcripts', url: '/expert-transcripts' },
       background: 'clean',
       spacing: 'default',
     },
@@ -185,7 +185,7 @@ async function main() {
       limit: 2,
       layout: 'grid-2',
       cardHover: 'moving-border',
-      showAllCta: { enabled: true, label: 'Browse All Analyses', url: '/transcripts' },
+      showAllCta: { enabled: true, label: 'Browse All Analyses', url: '/earnings-analysis' },
       background: 'mesh',
       spacing: 'default',
     },
@@ -475,7 +475,7 @@ async function main() {
       subheading:
         '2,400+ expert call transcripts on demand. No subscription. No sales call. Buy what you need, when you need it.',
       ctas: [
-        { label: 'Browse the library', url: '/transcripts', variant: 'primary' },
+        { label: 'Browse the library', url: '/expert-transcripts', variant: 'primary' },
         { label: 'Get a free transcript', url: '/free-transcript', variant: 'secondary' },
       ],
       alignment: 'center',

@@ -68,7 +68,7 @@ export function ResourcesHubClient({
           borderTop: '1px solid rgba(255,255,255,0.07)',
           borderBottom: '1px solid rgba(255,255,255,0.07)',
           position: 'sticky',
-          top: 54,
+          top: 64,
           zIndex: 90,
           background: 'rgba(9,9,11,0.9)',
           backdropFilter: 'blur(16px)',
