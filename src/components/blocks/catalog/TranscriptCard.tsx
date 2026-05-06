@@ -8,13 +8,11 @@ export type TranscriptCardData = {
   id: string | number
   slug: string
   title: string
-  expertId?: string | null
   expertFormerTitle?: string | null
   expertLevel?: string | null
   tier?: string | null
   dateConducted?: string | null
   duration?: number | null
-  summary?: string | null
   priceUsd: number
   originalPriceUsd?: number | null
   discountPercent?: number | null
@@ -169,8 +167,7 @@ export function TranscriptCard({
   const sectorDisplay = data.sectorNames?.[0] ?? ''
   const datePart = formatCardDate(data.dateConducted)
   const geoPart = data.geography?.[0] ?? ''
-  const durationPart = data.duration ? `${data.duration} min` : ''
-  const metaRight = [datePart, geoPart, durationPart].filter(Boolean).join(' · ')
+  const metaRight = [datePart, geoPart].filter(Boolean).join(' · ')
 
   return (
     <motion.article
@@ -179,18 +176,17 @@ export function TranscriptCard({
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }}
       onClick={handleCardClick}
-      className="group relative flex flex-col overflow-hidden cursor-pointer card-hover-lift shadow-[0_2px_8px_-2px_rgba(0,0,0,.12),0_12px_32px_-8px_rgba(0,0,0,.10)] hover:-translate-y-[3px] hover:shadow-[0_4px_12px_-2px_rgba(0,0,0,.18),0_20px_48px_-12px_rgba(0,0,0,.22)]"
+      className="group relative flex flex-col overflow-hidden cursor-pointer shadow-[0_2px_8px_-2px_rgba(0,0,0,.08),0_8px_24px_-8px_rgba(0,0,0,.08)] hover:-translate-y-[3px] hover:shadow-[0_4px_16px_-4px_rgba(0,0,0,.16),0_20px_48px_-12px_rgba(0,0,0,.18)]"
       style={{
         background: 'var(--surface)',
-        border: '1px solid var(--border)',
-        borderLeft: '3px solid var(--accent)',
+        border: '1px solid var(--accent-border)',
         borderRadius: 14,
         padding: '28px 25px 24px 25px',
         transition:
           'box-shadow .28s cubic-bezier(.22,1,.36,1), transform .28s cubic-bezier(.22,1,.36,1), border-color .28s',
       }}
     >
-      {/* ── Card header: sector + date/region/duration ─────────────────── */}
+      {/* ── Card header: sector + date/region ─────────────────────────── */}
       <div className="mb-[14px] flex items-center justify-between">
         <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--accent)]">
           {sectorDisplay}
@@ -201,30 +197,33 @@ export function TranscriptCard({
       </div>
 
       {/* ── Title ──────────────────────────────────────────────────────── */}
-      <h3 className="mb-[10px] line-clamp-3 text-[17px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--ink)] transition-colors group-hover:text-[var(--accent)]">
+      <h3 className="mb-[14px] line-clamp-3 text-[19px] font-semibold leading-[1.3] tracking-[-0.025em] text-[var(--ink)] transition-colors group-hover:text-[var(--accent)]">
         {data.title}
       </h3>
 
-      {/* ── Excerpt ────────────────────────────────────────────────────── */}
-      {data.summary && (
-        <p className="mb-[20px] line-clamp-2 text-[13px] leading-[1.68] text-[var(--ink-2)]">
-          {data.summary}
-        </p>
+      {/* ── Expert designation ─────────────────────────────────────────── */}
+      {data.expertFormerTitle && (
+        <div className="mb-[18px] flex items-center gap-[9px]">
+          <span
+            className="shrink-0 rounded-full flex items-center justify-center font-mono text-[6px] font-semibold tracking-[0.04em] text-[#064E3B]"
+            style={{
+              width: 22,
+              height: 22,
+              background: 'linear-gradient(135deg, var(--accent-deep), var(--accent))',
+            }}
+          >
+            EXP
+          </span>
+          <span className="flex-1 text-[12px] leading-[1.45] text-[var(--ink-2)] line-clamp-2">
+            {data.expertFormerTitle}
+          </span>
+        </div>
       )}
 
-      {/* ── Meta band: Expert | Level | Duration | Compliance ──────────── */}
+      {/* ── Meta band: Level | Duration | Compliance ───────────────────── */}
       <div className="mb-[16px] flex items-stretch border-y border-[var(--border)] py-[12px]">
-        {/* Expert */}
-        <div className="flex-1 border-r border-[var(--border)] pr-[14px]">
-          <div className="mb-[4px] font-mono text-[8px] uppercase tracking-[0.16em] text-[var(--mist)]">
-            Expert
-          </div>
-          <div className="text-[12px] font-medium text-[var(--ink)]">
-            {data.expertId ?? '—'}
-          </div>
-        </div>
         {/* Level */}
-        <div className="flex-1 border-r border-[var(--border)] px-[14px]">
+        <div className="flex-1 border-r border-[var(--border)] pr-[14px]">
           <div className="mb-[4px] font-mono text-[8px] uppercase tracking-[0.16em] text-[var(--mist)]">
             Level
           </div>
@@ -273,19 +272,19 @@ export function TranscriptCard({
 
       {/* ── Footer: price + tier (row 1) · buttons (row 2) ──────────────── */}
       <div className="mt-auto border-t border-[var(--border)] pt-[16px] flex flex-col gap-[10px]">
-        {/* Row 1: Price + Tier badge */}
+        {/* Row 1: Price + Tier badge — all items vertically centred */}
         <div className="flex items-center justify-between gap-2">
-          <div className="flex items-baseline gap-[8px]">
+          <div className="flex items-center gap-[8px]">
             <span className="font-mono text-[24px] font-medium leading-none tracking-[-0.04em] text-[var(--accent)]">
               ${data.priceUsd}
             </span>
             {data.originalPriceUsd && data.originalPriceUsd > data.priceUsd && (
-              <span className="font-mono text-[13px] text-[var(--mist)] line-through">
+              <span className="font-mono text-[13px] leading-none text-[var(--mist)] line-through">
                 ${data.originalPriceUsd}
               </span>
             )}
             {data.discountPercent && data.discountPercent > 0 && (
-              <span className="font-mono text-[9px] font-bold uppercase tracking-[0.08em] text-btn-primary-fg bg-[var(--accent)] px-[7px] py-[2px] rounded-[4px]">
+              <span className="font-mono text-[9px] font-bold uppercase tracking-[0.08em] leading-none text-btn-primary-fg bg-[var(--accent)] px-[7px] py-[3px] rounded-[4px]">
                 {data.discountPercent}% OFF
               </span>
             )}

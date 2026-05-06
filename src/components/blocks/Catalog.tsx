@@ -94,7 +94,6 @@ export async function FeaturedProductsRenderer({ block }: { block: FeaturedProdu
         id: d.id,
         slug: d.slug,
         title: d.title,
-        expertId: d.expertId,
         expertFormerTitle: d.expertFormerTitle,
         expertLevel: d.expertLevel,
         tier: d.tier,

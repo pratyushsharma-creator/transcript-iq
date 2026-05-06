@@ -10,7 +10,7 @@ export const ExpertTranscripts: CollectionConfig = {
   labels: { singular: 'Expert transcript', plural: 'Expert transcripts' },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'expertId', 'tier', 'priceUsd', 'dateConducted', 'featured', '_status'],
+    defaultColumns: ['title', 'expertFormerTitle', 'tier', 'priceUsd', 'dateConducted', 'featured', '_status'],
     group: 'Catalog',
   },
   versions: { drafts: true },
@@ -33,12 +33,6 @@ export const ExpertTranscripts: CollectionConfig = {
     { name: 'coverImage', type: 'upload', relationTo: 'media' },
 
     // ── Expert profile (anonymized) ────────────────────────────────────
-    {
-      name: 'expertId',
-      type: 'text',
-      required: true,
-      admin: { description: 'Format: EXP-001 (always anonymized).' },
-    },
     {
       name: 'expertFormerTitle',
       type: 'text',

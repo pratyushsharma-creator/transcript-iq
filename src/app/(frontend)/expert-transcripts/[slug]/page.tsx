@@ -62,7 +62,6 @@ export default async function ExpertTranscriptDetailPage({ params }: { params: P
     priceUsd: r.priceUsd,
     discountPercent: r.discountPercent ?? undefined,
     duration: r.duration ?? undefined,
-    expertId: r.expertId,
     expertFormerTitle: r.expertFormerTitle,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     sectors: r.sectors as any,

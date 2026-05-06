@@ -274,11 +274,8 @@ function TranscriptCard({ doc, view }: { doc: TranscriptDoc; view: 'grid' | 'lis
     <Link
       href={`/expert-transcripts/${doc.slug}`}
       className={[
-        'group relative flex overflow-hidden rounded-[14px] border transition-all duration-200 no-underline text-[var(--ink)]',
-        'hover:border-[var(--border-md)] hover:-translate-y-0.5 hover:shadow-[0_12px_40px_-12px_rgba(0,0,0,0.3)]',
-        hasElite
-          ? 'border-[var(--accent-border)]'
-          : 'border-[var(--border)]',
+        'group relative flex overflow-hidden rounded-[14px] border border-[var(--accent-border)] transition-all duration-200 no-underline text-[var(--ink)]',
+        'hover:-translate-y-[3px] hover:shadow-[0_4px_16px_-4px_rgba(0,0,0,.16),0_20px_48px_-12px_rgba(0,0,0,.18)]',
         view === 'list' ? 'flex-row' : 'flex-col',
       ].join(' ')}
       style={{
@@ -314,16 +311,9 @@ function TranscriptCard({ doc, view }: { doc: TranscriptDoc; view: 'grid' | 'lis
         </div>
 
         {/* Title */}
-        <div className="text-[15px] font-medium tracking-[-0.015em] leading-[1.35] text-[var(--ink)] mb-2.5 flex-1">
+        <div className="text-[17px] font-semibold tracking-[-0.02em] leading-[1.3] text-[var(--ink)] mb-3 line-clamp-3 group-hover:text-[var(--accent)] transition-colors">
           {doc.title}
         </div>
-
-        {/* Summary */}
-        {doc.summary && (
-          <p className="text-[12px] text-[var(--slate)] dark:text-[#A0A0AA] leading-[1.6] mb-3.5 line-clamp-2">
-            {doc.summary}
-          </p>
-        )}
 
         {/* Meta row */}
         <div className="flex items-center gap-3 font-mono text-[10px] text-[var(--mist)] dark:text-[#A0A0AA] mb-2.5 flex-wrap">
@@ -385,12 +375,17 @@ function TranscriptCard({ doc, view }: { doc: TranscriptDoc; view: 'grid' | 'lis
           view === 'list' ? 'border-t-0 border-l flex-col justify-center min-w-[160px] gap-3 py-5' : '',
         ].join(' ')}
       >
-        <div className="flex items-baseline gap-1.5">
-          <span className="font-mono text-[18px] font-medium text-[var(--accent)] tracking-[-0.02em]">
+        <div className="flex items-center gap-[7px]">
+          <span className="font-mono text-[18px] font-medium leading-none text-[var(--accent)] tracking-[-0.02em]">
             ${doc.priceUsd}
           </span>
           {!!doc.originalPriceUsd && (
-            <span className="font-mono text-[12px] text-[var(--mist)] dark:text-[#A0A0AA] line-through">${doc.originalPriceUsd}</span>
+            <span className="font-mono text-[12px] leading-none text-[var(--mist)] line-through">${doc.originalPriceUsd}</span>
+          )}
+          {!!doc.discountPercent && (
+            <span className="font-mono text-[9px] font-bold leading-none uppercase tracking-[0.08em] text-white bg-[var(--accent)] px-[6px] py-[2px] rounded-[3px]">
+              {doc.discountPercent}% OFF
+            </span>
           )}
         </div>
         <TierBadge tier={doc.tier} />

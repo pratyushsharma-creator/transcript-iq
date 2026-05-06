@@ -16,7 +16,6 @@ interface TranscriptDoc {
   id: string
   title: string
   slug: string
-  expertId: string
   expertFormerTitle: string
   expertLevel: string
   dateConducted?: string
@@ -45,7 +44,6 @@ export interface RelatedTranscript {
   priceUsd: number
   discountPercent?: number
   duration?: number
-  expertId: string
   expertFormerTitle: string
   sectors?: (string | Industry)[]
   geography?: string | string[]
@@ -111,7 +109,9 @@ function RelatedCard({ doc }: { doc: RelatedTranscript }) {
   const primarySector = sectors[0]
   const geoArr = Array.isArray(doc.geography) ? doc.geography : doc.geography ? [doc.geography] : []
   const geoStr = geoArr.map(g => GEO_LABELS[g] ?? g).join(', ')
-  const initials = doc.expertId.replace('EXP-', '').slice(0, 3)
+  const initials = doc.expertFormerTitle
+    ? doc.expertFormerTitle.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0] ?? '').join('').toUpperCase() || 'EX'
+    : 'EX'
 
   return (
     <Link
@@ -185,7 +185,9 @@ export function TranscriptProductPage({
 
   const compBadges = (transcript.complianceBadges ?? ['mnpi-screened', 'pii-redacted', 'compliance-certified', 'expert-anonymised']) as CompKey[]
 
-  const expertInitials = transcript.expertId.slice(0, 3)
+  const expertInitials = transcript.expertFormerTitle
+    ? transcript.expertFormerTitle.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0] ?? '').join('').toUpperCase() || 'EX'
+    : 'EX'
   const levelDisplay = LEVEL_LABELS[transcript.expertLevel] ?? transcript.expertLevel
 
   const TABS: { id: TabId; label: string }[] = [
@@ -200,7 +202,6 @@ export function TranscriptProductPage({
     { label: 'Pages', value: transcript.pageCount ? `${transcript.pageCount} pages` : '—', accent: false },
     { label: 'Expert Level', value: levelDisplay, accent: false },
     { label: 'Geography', value: geoDisplay || '—', accent: false },
-    { label: 'Expert ID', value: transcript.expertId, accent: true },
   ]
 
   const expertSpecs = [
@@ -209,7 +210,6 @@ export function TranscriptProductPage({
     { label: 'Geography', value: geoDisplay || '—', accent: false },
     { label: 'Status', value: 'Former (no active conflicts)', accent: false },
     { label: 'Compliance', value: 'Pre-screened ✓', accent: true },
-    { label: 'Expert ID', value: transcript.expertId, accent: false },
   ]
 
   const includedItems = [
@@ -242,7 +242,7 @@ export function TranscriptProductPage({
             </>
           )}
           <span className="text-[var(--border-2)]">›</span>
-          <span>{transcript.expertId}</span>
+          <span>{transcript.expertFormerTitle}</span>
         </nav>
         <Link
           href="/expert-transcripts"
@@ -397,7 +397,7 @@ export function TranscriptProductPage({
                       </div>
                       <div>
                         <div className="font-mono text-[12px] text-[var(--accent)] tracking-[0.06em] mb-0.5">
-                          {transcript.expertId} · Verified
+                          Expert Profile · Verified
                         </div>
                         <div className="text-[15px] font-medium tracking-[-0.01em] leading-[1.3]">
                           {transcript.expertFormerTitle}
