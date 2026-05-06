@@ -7,15 +7,20 @@ import { canonical } from '@/lib/seo/metadata'
 export const revalidate = 3600
 
 export async function generateMetadata() {
+  const page = await getPageBySlug('home')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const p = page as any
+  const defaultTitle = 'Expert Call Transcripts Without the Subscription'
+  const defaultDesc = 'Buy individual MNPI-screened expert call transcripts from $349. No subscription. Compliance certified.'
+  const title = p?.metaTitle || defaultTitle
+  const description = p?.metaDescription || defaultDesc
   return {
-    title: 'Expert Call Transcripts Without the Subscription',
-    description:
-      'Buy individual MNPI-screened expert call transcripts from $349. 77+ transcripts across 12 sectors. No subscription. Compliance certified.',
+    title,
+    description,
     alternates: { canonical: canonical('/') },
     openGraph: {
-      title: 'Expert Call Transcripts Without the Subscription | Transcript IQ',
-      description:
-        'Institutional primary research. Buy per transcript — no subscription, no platform fee. MNPI-screened, compliance certified.',
+      title: p?.metaTitle || `${defaultTitle} | Transcript IQ`,
+      description,
       url: canonical('/'),
       type: 'website',
     },

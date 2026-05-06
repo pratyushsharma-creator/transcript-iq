@@ -202,6 +202,18 @@ export const Pages: CollectionConfig = {
       },
     },
     {
+      name: 'metaTitle',
+      type: 'text',
+      maxLength: 70,
+      admin: { position: 'sidebar', description: 'OG / SEO title override (max 70 chars). Leave blank to use the default for this page.' },
+    },
+    {
+      name: 'metaDescription',
+      type: 'textarea',
+      maxLength: 160,
+      admin: { position: 'sidebar', description: 'OG / SEO meta description (max 160 chars). Leave blank to use the default.' },
+    },
+    {
       name: 'layout',
       type: 'blocks',
       blocks: allBlocks,

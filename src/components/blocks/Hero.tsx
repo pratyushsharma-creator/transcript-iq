@@ -268,7 +268,8 @@ function StencilHero({ block }: { block: HeroBlock }) {
           }}
         >
           <motion.div
-            className="mx-auto max-w-[1280px] px-5 py-5 sm:px-8 lg:px-12 lg:py-[22px] grid grid-cols-2"
+            className="mx-auto max-w-[1280px] px-5 py-5 sm:px-8 lg:px-12 lg:py-[22px] grid overflow-x-auto"
+            style={{ gridTemplateColumns: `repeat(${stats.length}, minmax(120px, 1fr))` }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
@@ -276,7 +277,7 @@ function StencilHero({ block }: { block: HeroBlock }) {
             {stats.map((s, i) => (
               <div
                 key={i}
-                className="px-4 lg:px-8"
+                className="px-4 lg:px-8 py-1"
                 style={{
                   borderRight: i < stats.length - 1 ? '1px solid var(--border)' : 'none',
                 }}

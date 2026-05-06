@@ -175,7 +175,6 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
       className="flex flex-col gap-10 px-4 py-12 lg:grid lg:items-center lg:gap-[72px] lg:px-12 lg:py-16"
       style={{
         position: 'relative',
-        minHeight: 'calc(100vh - 54px)',
         gridTemplateColumns: '1fr 460px',
         maxWidth: 1100,
         margin: '0 auto',

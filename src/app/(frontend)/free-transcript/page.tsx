@@ -3,22 +3,29 @@ import { getPageBySlug } from '@/lib/cache/queries'
 import { RenderBlocks } from '@/components/blocks/RenderBlocks'
 import { faqPageSchema, breadcrumbSchema, JsonLd } from '@/lib/seo/jsonld'
 import { FREE_TRANSCRIPT_FAQS } from '@/lib/seo/faq-data'
-import { FaqAccordion } from '@/components/seo/FaqAccordion'
 import { canonical } from '@/lib/seo/metadata'
 
 export const revalidate = 86400
 
-export const metadata: Metadata = {
-  title: 'Get a Free Expert Call Transcript',
-  description:
-    'Get one MNPI-screened expert call transcript matched to your sector. No credit card, no subscription. Work email only. Delivered within one business day.',
-  alternates: { canonical: canonical('/free-transcript') },
-  openGraph: {
-    title: 'Get a Free Expert Call Transcript | Transcript IQ',
-    description: 'Free full transcript matched to your sector. No credit card. No subscription.',
-    url: canonical('/free-transcript'),
-    type: 'website',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPageBySlug('free-transcript')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const p = page as any
+  const defaultTitle = 'Get a Free Expert Call Transcript'
+  const defaultDesc = 'Get one MNPI-screened expert call transcript matched to your sector. No credit card, no subscription. Work email only. Delivered within one business day.'
+  const title = p?.metaTitle || defaultTitle
+  const description = p?.metaDescription || defaultDesc
+  return {
+    title,
+    description,
+    alternates: { canonical: canonical('/free-transcript') },
+    openGraph: {
+      title: p?.metaTitle || 'Get a Free Expert Call Transcript | Transcript IQ',
+      description,
+      url: canonical('/free-transcript'),
+      type: 'website',
+    },
+  }
 }
 
 export default async function FreeTranscriptRoute() {
@@ -58,7 +65,6 @@ export default async function FreeTranscriptRoute() {
         { name: 'Free Transcript', url: 'https://transcript-iq.com/free-transcript' },
       ])} />
       <RenderBlocks blocks={blocks} />
-      <FaqAccordion faqs={FREE_TRANSCRIPT_FAQS} />
     </>
   )
 }

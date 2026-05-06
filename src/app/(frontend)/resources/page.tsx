@@ -5,17 +5,25 @@ import { canonical } from '@/lib/seo/metadata'
 
 export const revalidate = 3600
 
-export const metadata: Metadata = {
-  title: 'Expert Network Research & Insights',
-  description:
-    'Practical guides on expert call transcripts, MNPI compliance, primary research workflows, and institutional research practices.',
-  alternates: { canonical: canonical('/resources') },
-  openGraph: {
-    title: 'Expert Network Research & Insights | Transcript IQ',
-    description: 'Research guides for analysts, portfolio managers, and deal teams.',
-    url: canonical('/resources'),
-    type: 'website',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPageBySlug('resources')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const p = page as any
+  const defaultTitle = 'Expert Network Research & Insights'
+  const defaultDesc = 'Practical guides on expert call transcripts, MNPI compliance, primary research workflows, and institutional research practices.'
+  const title = p?.metaTitle || defaultTitle
+  const description = p?.metaDescription || defaultDesc
+  return {
+    title,
+    description,
+    alternates: { canonical: canonical('/resources') },
+    openGraph: {
+      title: p?.metaTitle || 'Expert Network Research & Insights | Transcript IQ',
+      description,
+      url: canonical('/resources'),
+      type: 'website',
+    },
+  }
 }
 
 export default async function ResourcesRoute() {

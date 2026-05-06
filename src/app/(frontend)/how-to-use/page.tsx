@@ -6,17 +6,25 @@ import { canonical } from '@/lib/seo/metadata'
 
 export const revalidate = 86400
 
-export const metadata: Metadata = {
-  title: 'How to Use Expert Transcripts for Research',
-  description:
-    'From PDF download to investment memo. A 6-step guide for analysts, portfolio managers, and consultants to extract maximum value from expert call transcripts.',
-  alternates: { canonical: canonical('/how-to-use') },
-  openGraph: {
-    title: 'How to Use Expert Call Transcripts | Transcript IQ',
-    description: 'Step-by-step workflow guide for integrating transcripts into research.',
-    url: canonical('/how-to-use'),
-    type: 'website',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPageBySlug('how-to-use')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const p = page as any
+  const defaultTitle = 'How to Use Expert Transcripts for Research'
+  const defaultDesc = 'From PDF download to investment memo. A 6-step guide for analysts, portfolio managers, and consultants to extract maximum value from expert call transcripts.'
+  const title = p?.metaTitle || defaultTitle
+  const description = p?.metaDescription || defaultDesc
+  return {
+    title,
+    description,
+    alternates: { canonical: canonical('/how-to-use') },
+    openGraph: {
+      title: p?.metaTitle || 'How to Use Expert Call Transcripts | Transcript IQ',
+      description,
+      url: canonical('/how-to-use'),
+      type: 'website',
+    },
+  }
 }
 
 const HOW_TO = howToSchema({

@@ -5,11 +5,25 @@ import { canonical } from '@/lib/seo/metadata'
 
 export const revalidate = 86400
 
-export const metadata: Metadata = {
-  title: 'Custom Expert Network Research',
-  description:
-    'Commission bespoke expert call research through the Nextyn network. Sector specialists, former executives, C-suite. Delivered within 3–5 business days.',
-  alternates: { canonical: canonical('/custom-reports') },
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPageBySlug('custom-reports')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const p = page as any
+  const defaultTitle = 'Custom Expert Network Research'
+  const defaultDesc = 'Commission bespoke expert call research through the Nextyn network. Sector specialists, former executives, C-suite. Delivered within 3–5 business days.'
+  const title = p?.metaTitle || defaultTitle
+  const description = p?.metaDescription || defaultDesc
+  return {
+    title,
+    description,
+    alternates: { canonical: canonical('/custom-reports') },
+    openGraph: {
+      title: p?.metaTitle || 'Custom Expert Network Research | Transcript IQ',
+      description,
+      url: canonical('/custom-reports'),
+      type: 'website',
+    },
+  }
 }
 
 export default async function CustomReportsRoute() {
