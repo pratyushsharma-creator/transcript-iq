@@ -7,7 +7,6 @@ export const Users: CollectionConfig = {
     cookies: { secure: true, sameSite: 'Lax' },
     tokenExpiration: 60 * 60 * 24 * 30,
     useAPIKey: true,
-    apiKeyIndex: true,
   },
   admin: {
     useAsTitle: 'email',
