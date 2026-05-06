@@ -3,7 +3,6 @@ import { RenderBlocks } from '@/components/blocks/RenderBlocks'
 import { organizationSchema, websiteSchema, faqPageSchema, JsonLd } from '@/lib/seo/jsonld'
 import { HOME_FAQS } from '@/lib/seo/faq-data'
 import { canonical } from '@/lib/seo/metadata'
-import { FaqAccordion } from '@/components/seo/FaqAccordion'
 
 export const revalidate = 3600
 
@@ -52,7 +51,6 @@ export default async function HomePage() {
       <JsonLd schema={websiteSchema()} />
       <JsonLd schema={faqPageSchema(HOME_FAQS)} />
       <RenderBlocks blocks={blocks} />
-      <FaqAccordion faqs={HOME_FAQS} />
     </>
   )
 }

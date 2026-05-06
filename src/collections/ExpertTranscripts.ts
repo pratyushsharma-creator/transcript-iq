@@ -72,14 +72,12 @@ export const ExpertTranscripts: CollectionConfig = {
     {
       name: 'summary',
       type: 'textarea',
-      maxLength: 500,
       admin: { description: 'One-paragraph public summary shown on listings.' },
     },
     {
       name: 'executiveSummaryPreview',
       type: 'textarea',
-      maxLength: 800,
-      admin: { description: 'Shown locked on the product detail page before purchase.' },
+      admin: { description: 'Shown locked on the product detail page before purchase. Separate paragraphs with a blank line.' },
     },
     {
       name: 'topicsCovered',
@@ -147,6 +145,18 @@ export const ExpertTranscripts: CollectionConfig = {
       name: 'stripePriceId',
       type: 'text',
       admin: { readOnly: true, position: 'sidebar', description: 'Auto-synced via Stripe plugin (Phase G).' },
+    },
+    {
+      name: 'metaTitle',
+      type: 'text',
+      maxLength: 70,
+      admin: { position: 'sidebar', description: 'SEO / OG title override (max 70 chars). Leave blank to auto-generate.' },
+    },
+    {
+      name: 'metaDescription',
+      type: 'textarea',
+      maxLength: 160,
+      admin: { position: 'sidebar', description: 'SEO / OG description override (max 160 chars). Leave blank to auto-generate from summary.' },
     },
 
     // ── Compliance & engagement ────────────────────────────────────────

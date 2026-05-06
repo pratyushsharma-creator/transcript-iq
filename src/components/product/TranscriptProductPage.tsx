@@ -356,8 +356,12 @@ export function TranscriptProductPage({
                         Free
                       </span>
                     </div>
-                    <div className="px-6 py-6 text-[15px] text-[var(--ink-2)] leading-[1.75]">
-                      {transcript.executiveSummaryPreview ?? transcript.summary ?? 'Executive summary available after purchase.'}
+                    <div className="px-6 py-6 text-[15px] text-[var(--ink-2)] leading-[1.75] space-y-4">
+                      {(transcript.executiveSummaryPreview ?? transcript.summary ?? 'Executive summary available after purchase.')
+                        .split(/\n\n+/)
+                        .map((para, i) => (
+                          <p key={i}>{para}</p>
+                        ))}
                     </div>
                   </div>
                 </div>

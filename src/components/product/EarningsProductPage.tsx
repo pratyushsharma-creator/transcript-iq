@@ -154,9 +154,11 @@ function RelatedCard({ doc }: { doc: RelatedEarnings }) {
 export function EarningsProductPage({
   analysis,
   related,
+  executiveSummaryHtml,
 }: {
   analysis: EarningsDoc
   related: RelatedEarnings[]
+  executiveSummaryHtml?: string
 }) {
   const [tab, setTab] = useState<TabId>('summary')
   const [cartAdded, setCartAdded] = useState(false)
@@ -395,8 +397,12 @@ export function EarningsProductPage({
                         Free
                       </span>
                     </div>
-                    <div className="px-[22px] py-[22px] text-[15px] text-[var(--ink-2)] leading-[1.75]">
-                      {analysis.executiveSummaryPreview ?? analysis.summary ?? 'Analysis summary available after purchase.'}
+                    <div className="px-[22px] py-[22px] text-[15px] text-[var(--ink-2)] leading-[1.75] prose prose-invert prose-sm max-w-none [&>p]:mb-4 [&>p:last-child]:mb-0 [&>h2]:text-[var(--ink)] [&>h3]:text-[var(--ink)] [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5">
+                      {executiveSummaryHtml ? (
+                        <div dangerouslySetInnerHTML={{ __html: executiveSummaryHtml }} />
+                      ) : (
+                        <p>{analysis.summary ?? 'Analysis summary available after purchase.'}</p>
+                      )}
                     </div>
                   </div>
 

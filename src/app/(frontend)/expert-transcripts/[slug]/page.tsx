@@ -19,17 +19,21 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     ? `${transcript.tier.charAt(0).toUpperCase()}${transcript.tier.slice(1)}`
     : 'Expert'
   const price = transcript.priceUsd ?? 349
-  const description =
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const t = transcript as any
+  const autoDescription =
     transcript.summary
       ? truncate(transcript.summary, 155)
       : `${tier} expert call transcript. MNPI-screened, compliance certified. Available from $${price}.`
+  const title = t.metaTitle || `${transcript.title} — Expert Call Transcript`
+  const description = t.metaDescription ? truncate(t.metaDescription, 160) : autoDescription
 
   return {
-    title: `${transcript.title} — Expert Call Transcript`,
+    title,
     description,
     alternates: { canonical: canonical(`/expert-transcripts/${slug}`) },
     openGraph: {
-      title: `${transcript.title} | Expert Transcript — Transcript IQ`,
+      title: t.metaTitle || `${transcript.title} | Expert Transcript — Transcript IQ`,
       description,
       url: canonical(`/expert-transcripts/${slug}`),
       type: 'website',

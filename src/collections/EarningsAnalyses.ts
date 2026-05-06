@@ -56,6 +56,18 @@ export const EarningsAnalyses: CollectionConfig = {
       admin: { readOnly: true, position: 'sidebar', description: 'Auto-synced via Stripe (Phase G). Do not edit manually.' },
     },
     { name: 'pageCount', type: 'number', label: 'Page count', admin: { position: 'sidebar' } },
+    {
+      name: 'metaTitle',
+      type: 'text',
+      maxLength: 70,
+      admin: { position: 'sidebar', description: 'SEO / OG title override (max 70 chars). Leave blank to auto-generate.' },
+    },
+    {
+      name: 'metaDescription',
+      type: 'textarea',
+      maxLength: 160,
+      admin: { position: 'sidebar', description: 'SEO / OG description override (max 160 chars). Leave blank to auto-generate from summary.' },
+    },
 
     // ── Tabbed main area ──────────────────────────────────────────────────
     {
@@ -197,7 +209,6 @@ export const EarningsAnalyses: CollectionConfig = {
             {
               name: 'summary',
               type: 'textarea',
-              maxLength: 500,
               admin: {
                 description:
                   'Public one-paragraph summary — shown on the listing card and in search engine results. Keep it analytical and buyer-focused.',
@@ -205,11 +216,10 @@ export const EarningsAnalyses: CollectionConfig = {
             },
             {
               name: 'executiveSummaryPreview',
-              type: 'textarea',
-              maxLength: 800,
+              type: 'richText',
               admin: {
                 description:
-                  'Shown blurred/locked on the product detail page before purchase. Should be compelling enough to convert — 3–4 substantive sentences.',
+                  'Shown blurred/locked on the product detail page before purchase. Use headings, bullet lists, and multiple paragraphs — this is rich text so the full Lexical editor is available.',
               },
             },
             {
