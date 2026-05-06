@@ -26,7 +26,7 @@ async function verifyAuth(authHeader: string): Promise<boolean> {
       const payload = await getPayload({ config: await config })
       const users = await payload.find({
         collection: 'users',
-        where: { apiKey: { equals: apiKey } },
+        where: { mcpApiKey: { equals: apiKey } },
         limit: 1,
         overrideAccess: true,
       })

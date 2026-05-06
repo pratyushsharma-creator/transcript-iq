@@ -6,7 +6,6 @@ export const Users: CollectionConfig = {
   auth: {
     cookies: { secure: true, sameSite: 'Lax' },
     tokenExpiration: 60 * 60 * 24 * 30,
-    useAPIKey: true,
   },
   admin: {
     useAsTitle: 'email',
@@ -22,13 +21,27 @@ export const Users: CollectionConfig = {
   fields: [
     { name: 'name', type: 'text' },
     {
-      // Override the auto-generated apiKey field so only admin/editor roles see it in the admin UI.
-      // Payload generates this field when useAPIKey: true — we override it here to add the condition.
-      name: 'apiKey',
+      // Personal MCP/Claude API key — auto-generated for admin/editor accounts.
+      // Only visible to admin and editor roles in the Payload admin UI.
+      name: 'mcpApiKey',
       type: 'text',
       admin: {
+        readOnly: true,
+        description: 'Your personal API key for MCP and Claude integration. Auto-generated — copy this into your Claude Desktop config as TIQ_API_KEY.',
         condition: (_, siblingData) =>
           siblingData?.role === 'admin' || siblingData?.role === 'editor',
+      },
+      hooks: {
+        beforeChange: [
+          ({ value, siblingData }) => {
+            const role = (siblingData as Record<string, unknown>)?.role
+            // Auto-generate a UUID key for admin/editor users who don't have one yet
+            if (!value && (role === 'admin' || role === 'editor')) {
+              return crypto.randomUUID()
+            }
+            return value
+          },
+        ],
       },
     },
     {

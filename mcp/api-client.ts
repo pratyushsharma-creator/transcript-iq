@@ -7,7 +7,7 @@
  *
  * Configuration (env vars):
  *   TIQ_API_URL    Base URL for the Next.js app (default: http://localhost:3000)
- *   TIQ_API_KEY    PAYLOAD_SECRET value — used for admin routes only
+ *   TIQ_API_KEY    Your personal MCP API key from /admin/account — used for admin routes and write tools
  */
 
 export const BASE_URL = (process.env.TIQ_API_URL ?? 'http://localhost:3000').replace(/\/$/, '')
@@ -124,20 +124,7 @@ export async function payloadCreate<T>(
   collection: string,
   data: Record<string, unknown>,
 ): Promise<T> {
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    'Authorization': `users API-Key ${API_KEY}`,
-  }
-  const res = await fetch(`${BASE_URL}/api/${collection}`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(data),
-  })
-  if (!res.ok) {
-    const text = await res.text().catch(() => '')
-    throw new Error(`API error ${res.status}: ${text}`)
-  }
-  return res.json() as Promise<T>
+  return apiPost<T>('/api/payload-write', { collection, operation: 'create', data }, true)
 }
 
 export async function payloadPatch<T>(
@@ -145,20 +132,7 @@ export async function payloadPatch<T>(
   id: string,
   data: Record<string, unknown>,
 ): Promise<T> {
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    'Authorization': `users API-Key ${API_KEY}`,
-  }
-  const res = await fetch(`${BASE_URL}/api/${collection}/${id}`, {
-    method: 'PATCH',
-    headers,
-    body: JSON.stringify(data),
-  })
-  if (!res.ok) {
-    const text = await res.text().catch(() => '')
-    throw new Error(`API error ${res.status}: ${text}`)
-  }
-  return res.json() as Promise<T>
+  return apiPost<T>('/api/payload-write', { collection, operation: 'patch', id, data }, true)
 }
 
 export function textToLexical(text: string): object {
