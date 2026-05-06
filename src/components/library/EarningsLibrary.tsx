@@ -466,7 +466,7 @@ function EarningsCard({ doc, view }: { doc: EarningsDoc; view: 'grid' | 'list' }
         </div>
         <button
           onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
-          className="text-[12px] font-medium text-black bg-[var(--accent-deep)] px-3.5 py-1.5 rounded-[7px] border-none cursor-pointer transition-all duration-150 hover:bg-[var(--accent)] whitespace-nowrap shrink-0"
+          className="text-[12px] font-medium text-white bg-[var(--accent-deep)] px-3.5 py-1.5 rounded-[7px] border-none cursor-pointer transition-all duration-150 hover:bg-[var(--accent)] whitespace-nowrap shrink-0"
         >
           Buy →
         </button>
@@ -856,7 +856,7 @@ export function EarningsLibrary({ initialDocs, totalDocs, industries }: Earnings
             <div className="px-5 py-4 border-t border-[var(--border)]">
               <button
                 onClick={() => setMobileFiltersOpen(false)}
-                className="w-full rounded-xl bg-[var(--accent)] py-3 text-[14px] font-semibold text-black transition-all hover:bg-[var(--accent-bright)]"
+                className="w-full rounded-xl bg-[var(--accent)] py-3 text-[14px] font-semibold text-white transition-all hover:bg-[var(--accent-bright)]"
               >
                 Show results →
               </button>
