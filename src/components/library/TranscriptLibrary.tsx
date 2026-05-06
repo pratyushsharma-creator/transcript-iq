@@ -95,20 +95,155 @@ function TierBadge({ tier }: { tier: string }) {
   )
 }
 
-function FilterPill({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+// ── Sidebar filter group (checkbox-style rows) ────────────────────────────
+
+function FilterGroup({
+  label,
+  items,
+  active,
+  onToggle,
+}: {
+  label: string
+  items: { label: string; value: string }[]
+  active: Set<string>
+  onToggle: (value: string) => void
+}) {
+  const [open, setOpen] = useState(true)
+  const hasActive = items.some((i) => active.has(i.value))
+
   return (
-    <button
-      onClick={onClick}
-      className={[
-        'inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.06em] uppercase px-3 py-1.5 rounded-full border cursor-pointer transition-all duration-150 whitespace-nowrap shrink-0',
-        active
-          ? 'text-[var(--accent)] bg-[var(--accent-tint)] border-[var(--accent-border)]'
-          : 'text-[var(--mist)] bg-transparent border-[var(--border)] hover:text-[var(--ink-2)] hover:border-[var(--border-md)]',
-      ].join(' ')}
-    >
-      <span className="w-1 h-1 rounded-full bg-current shrink-0" />
-      {label}
-    </button>
+    <div className="border-b border-[var(--border)]">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center justify-between py-3.5 text-left"
+      >
+        <span
+          className={`font-mono text-[10px] tracking-[0.12em] uppercase transition-colors ${
+            hasActive ? 'text-[var(--accent)]' : 'text-[var(--ink-2)]'
+          }`}
+        >
+          {label}
+          {hasActive && (
+            <span className="ml-1.5 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[var(--accent)] text-[7px] text-black font-semibold">
+              {items.filter((i) => active.has(i.value)).length}
+            </span>
+          )}
+        </span>
+        <svg
+          viewBox="0 0 10 6"
+          fill="none"
+          className={`w-2.5 h-2.5 text-[var(--mist)] transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+        >
+          <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="pb-3 flex flex-col gap-0.5">
+          {items.map((item) => {
+            const checked = active.has(item.value)
+            return (
+              <button
+                key={item.value}
+                onClick={() => onToggle(item.value)}
+                className="group flex items-center gap-2.5 w-full rounded-md px-1 py-1.5 text-left transition-colors hover:bg-[var(--surface-2)]"
+              >
+                {/* Checkbox */}
+                <span
+                  className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-all ${
+                    checked
+                      ? 'bg-[var(--accent)] border-[var(--accent)]'
+                      : 'border-[var(--border-2)] bg-transparent group-hover:border-[var(--accent-border)]'
+                  }`}
+                >
+                  {checked && (
+                    <svg viewBox="0 0 10 8" fill="none" className="w-2.5 h-2">
+                      <path
+                        d="M1 4l2.5 2.5L9 1"
+                        stroke="white"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  )}
+                </span>
+                <span
+                  className={`text-[13px] leading-[1.3] transition-colors ${
+                    checked ? 'text-[var(--ink)] font-medium' : 'text-[var(--ink-2)] group-hover:text-[var(--ink)]'
+                  }`}
+                >
+                  {item.label}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ── Sidebar panel (shared between desktop sidebar and mobile drawer) ───────
+
+function FilterPanel({
+  industries,
+  filters,
+  onToggle,
+  onClearAll,
+}: {
+  industries: Industry[]
+  filters: ActiveFilters
+  onToggle: (group: keyof ActiveFilters, value: string) => void
+  onClearAll: () => void
+}) {
+  const hasFilters =
+    filters.industry.size > 0 ||
+    filters.geography.size > 0 ||
+    filters.level.size > 0 ||
+    filters.tier.size > 0
+
+  return (
+    <div className="flex flex-col">
+      <div className="flex items-center justify-between pb-3 border-b border-[var(--border)] mb-1">
+        <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--mist)]">Filter by</span>
+        {hasFilters && (
+          <button
+            onClick={onClearAll}
+            className="font-mono text-[10px] tracking-[0.08em] uppercase text-[var(--mist)] transition-colors hover:text-[#F87171]"
+          >
+            Clear all
+          </button>
+        )}
+      </div>
+
+      {industries.length > 0 && (
+        <FilterGroup
+          label="Industry"
+          items={industries.map((i) => ({ label: i.name, value: i.slug }))}
+          active={filters.industry}
+          onToggle={(v) => onToggle('industry', v)}
+        />
+      )}
+      <FilterGroup
+        label="Geography"
+        items={GEO_OPTIONS}
+        active={filters.geography}
+        onToggle={(v) => onToggle('geography', v)}
+      />
+      <FilterGroup
+        label="Expert Level"
+        items={LEVEL_OPTIONS}
+        active={filters.level}
+        onToggle={(v) => onToggle('level', v)}
+      />
+      <FilterGroup
+        label="Tier"
+        items={TIER_OPTIONS}
+        active={filters.tier}
+        onToggle={(v) => onToggle('tier', v)}
+      />
+    </div>
   )
 }
 
@@ -297,6 +432,14 @@ function ListIcon() {
   )
 }
 
+function FilterIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-3.5 h-3.5">
+      <path d="M2 4h12M5 8h6M8 12h0" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 // ── Main export ───────────────────────────────────────────────────────────
 
 interface TranscriptLibraryProps {
@@ -314,6 +457,7 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
   const [page, setPage] = useState(1)
   const [hasNext, setHasNext] = useState(initialDocs.length < totalDocs)
   const [loading, setLoading] = useState(false)
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 
   const buildParams = useCallback((f: ActiveFilters, s: string, p: number) => {
     const params = new URLSearchParams()
@@ -354,7 +498,12 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
   )
 
   function toggleFilter(group: keyof ActiveFilters, value: string) {
-    const next: ActiveFilters = { industry: new Set(filters.industry), geography: new Set(filters.geography), level: new Set(filters.level), tier: new Set(filters.tier) }
+    const next: ActiveFilters = {
+      industry: new Set(filters.industry),
+      geography: new Set(filters.geography),
+      level: new Set(filters.level),
+      tier: new Set(filters.tier),
+    }
     if (next[group].has(value)) next[group].delete(value)
     else next[group].add(value)
     setFilters(next)
@@ -372,7 +521,7 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
     fetchDocs(filters, val, 1)
   }
 
-  // Active chips
+  // Active chips for the results bar
   const activeChips: { group: keyof ActiveFilters; value: string; label: string }[] = []
   ;(Object.keys(filters) as Array<keyof ActiveFilters>).forEach((group) => {
     filters[group].forEach((value) => {
@@ -385,6 +534,7 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
     })
   })
   const hasFilters = activeChips.length > 0
+  const activeCount = activeChips.length
 
   return (
     <>
@@ -419,7 +569,7 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
             <div className="flex items-center gap-4 shrink-0 pb-1">
               <span className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--accent)] px-2.5 py-1.5 bg-[var(--accent-tint)] border border-[var(--accent-border)] rounded-full">
                 <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
-                {total} transcripts
+                Expert Research
               </span>
               <span className="hidden sm:inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--mist)] px-2.5 py-1.5 bg-[var(--surface)] border border-[var(--border)] rounded-full">
                 100% MNPI Screened
@@ -432,80 +582,66 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
         </div>
       </div>
 
-      {/* ── Filter bar ─────────────────────────────────────────────────── */}
-      <div className="sticky top-16 z-40 border-b border-[var(--border)] backdrop-blur-[16px]" style={{ background: 'color-mix(in srgb, var(--bg) 92%, transparent)' }}>
-        <div className="mx-auto max-w-[1280px] px-4 sm:px-6 md:px-10">
-          {/* Filter tabs */}
-          <div className="flex gap-0 border-b border-[var(--border)] overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-            {[
-              { label: 'All Filters', id: 'all' },
-              { label: 'Industry', id: 'industry' },
-              { label: 'Geography', id: 'geography' },
-              { label: 'Expert Level', id: 'level' },
-              { label: 'Tier', id: 'tier' },
-            ].map(({ label, id }) => (
+      {/* ── Body: sidebar + content ─────────────────────────────────────── */}
+      <div className="mx-auto max-w-[1280px] px-4 sm:px-6 md:px-10 py-8 pb-20 flex gap-8 items-start">
+
+        {/* ── Desktop sidebar ───────────────────────────────────────────── */}
+        <aside className="hidden lg:block w-[220px] shrink-0 sticky top-[72px]">
+          <FilterPanel
+            industries={industries}
+            filters={filters}
+            onToggle={toggleFilter}
+            onClearAll={clearAll}
+          />
+        </aside>
+
+        {/* ── Content column ────────────────────────────────────────────── */}
+        <div className="flex-1 min-w-0">
+
+          {/* Toolbar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-5 border-b border-[var(--border)]">
+            {/* Left: mobile filter button + count + active chips */}
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* Mobile "Filters" button */}
               <button
-                key={id}
-                onClick={() => id !== 'all' && document.getElementById(`group-${id}`)?.scrollIntoView({ inline: 'start', behavior: 'smooth' })}
-                className="font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--mist)] px-5 py-3.5 bg-none border-none cursor-pointer transition-colors duration-150 whitespace-nowrap hover:text-[var(--slate)]"
-                style={{ borderBottom: '1.5px solid transparent' }}
+                onClick={() => setMobileFiltersOpen(true)}
+                className="lg:hidden inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.08em] uppercase text-[var(--ink-2)] bg-[var(--surface)] border border-[var(--border)] px-3 py-2 rounded-lg transition-all hover:border-[var(--border-2)]"
               >
-                {label}
+                <FilterIcon />
+                Filters
+                {activeCount > 0 && (
+                  <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[var(--accent)] text-[8px] font-semibold text-black">
+                    {activeCount}
+                  </span>
+                )}
               </button>
-            ))}
-          </div>
 
-          {/* Pills row */}
-          <div className="flex items-center gap-0 py-3 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-            {industries.length > 0 && (
-              <div id="group-industry" className="flex items-center gap-1.5 pr-5 mr-5 border-r border-[var(--border)] shrink-0">
-                <span className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--mist)] whitespace-nowrap mr-0.5">Industry</span>
-                {industries.map((ind) => (
-                  <FilterPill key={ind.slug} label={ind.name} active={filters.industry.has(ind.slug)} onClick={() => toggleFilter('industry', ind.slug)} />
-                ))}
-              </div>
-            )}
-            <div id="group-geography" className="flex items-center gap-1.5 pr-5 mr-5 border-r border-[var(--border)] shrink-0">
-              <span className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--mist)] whitespace-nowrap mr-0.5">Geography</span>
-              {GEO_OPTIONS.map((o) => (
-                <FilterPill key={o.value} label={o.label} active={filters.geography.has(o.value)} onClick={() => toggleFilter('geography', o.value)} />
-              ))}
-            </div>
-            <div id="group-level" className="flex items-center gap-1.5 pr-5 mr-5 border-r border-[var(--border)] shrink-0">
-              <span className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--mist)] whitespace-nowrap mr-0.5">Expert Level</span>
-              {LEVEL_OPTIONS.map((o) => (
-                <FilterPill key={o.value} label={o.label} active={filters.level.has(o.value)} onClick={() => toggleFilter('level', o.value)} />
-              ))}
-            </div>
-            <div id="group-tier" className="flex items-center gap-1.5 shrink-0">
-              <span className="font-mono text-[9px] tracking-[0.12em] uppercase text-[var(--mist)] whitespace-nowrap mr-0.5">Tier</span>
-              {TIER_OPTIONS.map((o) => (
-                <FilterPill key={o.value} label={o.label} active={filters.tier.has(o.value)} onClick={() => toggleFilter('tier', o.value)} />
-              ))}
-            </div>
-          </div>
-
-          {/* Results bar */}
-          <div className="flex flex-wrap items-center justify-between py-2.5 gap-3 border-t border-[var(--border)]">
-            <div className="flex items-center gap-2.5 flex-wrap">
               <span className="font-mono text-[11px] text-[var(--mist)] tracking-[0.06em] whitespace-nowrap">
-                Showing <strong className="text-[var(--ink)]">{docs.length}</strong> of <strong className="text-[var(--ink)]">{total}</strong> transcripts
+                <strong className="text-[var(--ink)]">{docs.length}</strong>
+                {hasFilters ? ' matching' : ''} transcript{docs.length !== 1 ? 's' : ''}
               </span>
+
+              {/* Active filter chips */}
               {activeChips.map(({ group, value, label }) => (
                 <button
                   key={`${group}:${value}`}
                   onClick={() => toggleFilter(group, value)}
-                  className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.06em] text-[var(--accent)] bg-[var(--accent-tint)] border border-[var(--accent-border)] px-2.5 py-0.5 rounded-full cursor-pointer transition-all duration-150 hover:bg-[rgba(52,211,153,0.2)]"
+                  className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.06em] text-[var(--accent)] bg-[var(--accent-tint)] border border-[var(--accent-border)] px-2.5 py-0.5 rounded-full cursor-pointer transition-all hover:bg-[rgba(52,211,153,0.2)]"
                 >
                   {label} <span className="text-[12px] leading-none">×</span>
                 </button>
               ))}
               {hasFilters && (
-                <button onClick={clearAll} className="font-mono text-[10px] tracking-[0.08em] uppercase text-[var(--mist)] bg-none border-none cursor-pointer transition-colors duration-150 hover:text-[#F87171]">
+                <button
+                  onClick={clearAll}
+                  className="font-mono text-[10px] tracking-[0.08em] uppercase text-[var(--mist)] bg-none border-none cursor-pointer transition-colors hover:text-[#F87171]"
+                >
                   Clear all
                 </button>
               )}
             </div>
+
+            {/* Right: sort + view toggle */}
             <div className="flex items-center gap-2 shrink-0">
               <span className="font-mono text-[10px] tracking-[0.08em] uppercase text-[var(--mist)]">Sort</span>
               <select
@@ -523,7 +659,9 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
                     title={`${v === 'grid' ? 'Grid' : 'List'} view`}
                     className={[
                       'w-7 h-7 rounded-md flex items-center justify-center cursor-pointer transition-all duration-150 border',
-                      view === v ? 'bg-[var(--surface)] border-[var(--border-md)] text-[var(--ink)]' : 'bg-transparent border-[var(--border)] text-[var(--mist)]',
+                      view === v
+                        ? 'bg-[var(--surface)] border-[var(--border-2)] text-[var(--ink)]'
+                        : 'bg-transparent border-[var(--border)] text-[var(--mist)]',
                     ].join(' ')}
                   >
                     {v === 'grid' ? <GridIcon /> : <ListIcon />}
@@ -532,50 +670,118 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
               </div>
             </div>
           </div>
+
+          {/* Cards */}
+          {loading && docs.length === 0 ? (
+            <div className="py-20 text-center font-mono text-[11px] text-[var(--mist)]">Loading…</div>
+          ) : docs.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-[var(--border-2)] rounded-[18px] bg-[var(--surface)]">
+              <div className="w-[52px] h-[52px] rounded-[14px] bg-[var(--accent-tint)] border border-[var(--accent-border)] flex items-center justify-center mb-5">
+                <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-[22px] h-[22px] text-[var(--accent)]">
+                  <circle cx="10" cy="10" r="7" /><path d="m15 15 4 4" /><path d="M10 7v3M10 13h.01" />
+                </svg>
+              </div>
+              <div className="text-[18px] font-medium tracking-[-0.02em] mb-2">No transcripts match these filters</div>
+              <p className="text-[14px] text-[var(--ink-2)] leading-[1.6] mb-6">
+                Try adjusting or clearing your active filters to see more results.
+              </p>
+              <button
+                onClick={clearAll}
+                className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.08em] uppercase text-[var(--accent)] bg-[var(--accent-tint)] border border-[var(--accent-border)] px-5 py-2.5 rounded-lg cursor-pointer transition-all hover:bg-[rgba(52,211,153,0.14)]"
+              >
+                Clear all filters →
+              </button>
+            </div>
+          ) : (
+            <div className={view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3' : 'flex flex-col gap-3'}>
+              {docs.map((doc) => <TranscriptCard key={doc.id} doc={doc} view={view} />)}
+            </div>
+          )}
+
+          {/* Load more */}
+          {hasNext && docs.length > 0 && (
+            <div className="flex justify-center pt-10 mt-10 border-t border-[var(--border)]">
+              <button
+                onClick={() => fetchDocs(filters, sort, page + 1, true)}
+                disabled={loading}
+                className="inline-flex items-center gap-2 text-[13px] font-medium text-[var(--ink-2)] bg-[var(--surface)] border border-[var(--border)] px-7 py-2.5 rounded-[9px] cursor-pointer transition-all hover:border-[var(--border-2)] hover:text-[var(--ink)] disabled:opacity-50"
+              >
+                {loading ? 'Loading…' : 'Load more transcripts →'}
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* ── Main content ───────────────────────────────────────────────── */}
-      <div className="mx-auto max-w-[1280px] px-4 sm:px-6 md:px-10 py-8 pb-20">
-        {loading && docs.length === 0 ? (
-          <div className="py-20 text-center font-mono text-[11px] text-[var(--mist)]">Loading…</div>
-        ) : docs.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-[var(--border-md)] rounded-[18px] bg-[var(--surface)]">
-            <div className="w-[52px] h-[52px] rounded-[14px] bg-[var(--accent-tint)] border border-[var(--accent-border)] flex items-center justify-center mb-5">
-              <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-[22px] h-[22px] text-[var(--accent)]">
-                <circle cx="10" cy="10" r="7" /><path d="m15 15 4 4" /><path d="M10 7v3M10 13h.01" />
-              </svg>
-            </div>
-            <div className="text-[18px] font-medium tracking-[-0.02em] mb-2">No transcripts match these filters</div>
-            <p className="text-[14px] text-[var(--ink-2)] leading-[1.6] mb-6">Try adjusting or clearing your active filters to see more results.</p>
-            <button
-              onClick={clearAll}
-              className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.08em] uppercase text-[var(--accent)] bg-[var(--accent-tint)] border border-[var(--accent-border)] px-5 py-2.5 rounded-lg cursor-pointer transition-all duration-150 hover:bg-[rgba(52,211,153,0.14)]"
-            >
-              Clear all filters →
-            </button>
-          </div>
-        ) : (
-          <div className={view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3' : 'flex flex-col gap-3'}>
-            {docs.map((doc) => <TranscriptCard key={doc.id} doc={doc} view={view} />)}
-          </div>
-        )}
+      {/* ── Mobile filter drawer ───────────────────────────────────────────── */}
+      {mobileFiltersOpen && (
+        <div className="fixed inset-0 z-50 flex flex-col justify-end lg:hidden">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setMobileFiltersOpen(false)}
+          />
 
-        {hasNext && docs.length > 0 && (
-          <div className="flex justify-center pt-10 mt-10 border-t border-[var(--border)]">
-            <button
-              onClick={() => fetchDocs(filters, sort, page + 1, true)}
-              disabled={loading}
-              className="inline-flex items-center gap-2 text-[13px] font-medium text-[var(--ink-2)] bg-[var(--surface)] border border-[var(--border)] px-7 py-2.5 rounded-[9px] cursor-pointer transition-all duration-150 hover:border-[var(--border-md)] hover:text-[var(--ink)] disabled:opacity-50"
-            >
-              {loading ? 'Loading…' : 'Load more transcripts'}
-              {!loading && (
-                <span className="font-mono text-[10px] text-[var(--mist)] tracking-[0.06em]">{total - docs.length} remaining</span>
-              )}
-            </button>
+          {/* Sheet */}
+          <div className="relative flex max-h-[85vh] flex-col rounded-t-2xl bg-[var(--bg)] border-t border-[var(--border)] shadow-2xl">
+            {/* Handle */}
+            <div className="flex justify-center pt-3 pb-1">
+              <span className="h-1 w-10 rounded-full bg-[var(--border-2)]" />
+            </div>
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-[var(--border)]">
+              <span className="text-[15px] font-semibold tracking-[-0.01em]">
+                Filters
+                {activeCount > 0 && (
+                  <span className="ml-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-[var(--accent)] text-[9px] font-semibold text-black">
+                    {activeCount}
+                  </span>
+                )}
+              </span>
+              <div className="flex items-center gap-4">
+                {hasFilters && (
+                  <button
+                    onClick={clearAll}
+                    className="font-mono text-[10px] tracking-[0.08em] uppercase text-[var(--mist)] transition-colors hover:text-[#F87171]"
+                  >
+                    Clear all
+                  </button>
+                )}
+                <button
+                  onClick={() => setMobileFiltersOpen(false)}
+                  className="text-[var(--mist)] transition-colors hover:text-[var(--ink)]"
+                  aria-label="Close filters"
+                >
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+                    <path d="M3 3l10 10M13 3L3 13" strokeLinecap="round" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Scrollable filter content */}
+            <div className="overflow-y-auto flex-1 px-5">
+              <FilterPanel
+                industries={industries}
+                filters={filters}
+                onToggle={toggleFilter}
+                onClearAll={clearAll}
+              />
+            </div>
+
+            {/* Footer CTA */}
+            <div className="px-5 py-4 border-t border-[var(--border)]">
+              <button
+                onClick={() => setMobileFiltersOpen(false)}
+                className="w-full rounded-xl bg-[var(--accent)] py-3 text-[14px] font-semibold text-black transition-all hover:bg-[var(--accent-bright)]"
+              >
+                Show results →
+              </button>
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </>
   )
 }
