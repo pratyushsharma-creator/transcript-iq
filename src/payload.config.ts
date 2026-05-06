@@ -32,7 +32,11 @@ const dirname = path.dirname(filename)
 
 const plugins: Plugin[] = [
   seoPlugin({
-    collections: ['pages', 'blog-posts', 'expert-transcripts', 'earnings-analyses', 'bundles'],
+    // 'pages', 'expert-transcripts', 'earnings-analyses' intentionally excluded:
+    // those collections define standalone metaTitle/metaDescription fields, and the
+    // seoPlugin's meta.* group maps to the same DB columns (meta_title, meta_description),
+    // causing a duplicate-column SQL error on every INSERT/draft creation.
+    collections: ['blog-posts', 'bundles'],
     uploadsCollection: 'media',
     generateTitle: ({ doc }) =>
       doc?.title || doc?.name ? `${doc?.title ?? doc?.name} — Transcript IQ` : 'Transcript IQ',
