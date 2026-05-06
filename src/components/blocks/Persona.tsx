@@ -1,9 +1,9 @@
 'use client'
 
 import Image from 'next/image'
-import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react'
+import { motion, AnimatePresence } from 'motion/react'
 import Link from 'next/link'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { SectionShell, SectionHeader, MintGradientHeading } from './SectionShell'
 import { CTAButtons } from './CTAButtons'
@@ -418,9 +418,9 @@ function PersonaGuidebookLayout({
 }
 
 /**
- * Desktop pinned scrollytelling. Only mounts when isLg is true. The section
- * ref is attached on first render of this component, so useScroll's target
- * is always hydrated before useScroll subscribes.
+ * Desktop click/autoplay-driven carousel. Replaces the broken scroll-pinning
+ * approach that inflated the section to N×90vh. Section now fits its content
+ * (~700px). Cards advance via progress-bar clicks or auto-cycle every 4 s.
  */
 function PersonaGuidebookDesktop({
   block,
@@ -431,7 +431,6 @@ function PersonaGuidebookDesktop({
   personas: Persona[]
   renderCardContent: (p: Persona, i: number) => React.ReactNode
 }) {
-  const sectionRef = useRef<HTMLElement>(null)
   const [activeIdx, setActiveIdx] = useState(0)
 
   const TRACK_HEIGHT = 380
@@ -440,163 +439,160 @@ function PersonaGuidebookDesktop({
   const STRIDE = CARD_HEIGHT + CARD_GAP
   const INITIAL_OFFSET = (TRACK_HEIGHT - CARD_HEIGHT) / 2
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end end'],
-  })
-
-  const totalY = -(personas.length - 1) * STRIDE
-  const y = useTransform(scrollYProgress, [0.05, 0.95], [0, totalY])
-
+  // Auto-advance every 4 s; resets when user clicks a segment
   useEffect(() => {
-    return scrollYProgress.on('change', (v) => {
-      const clamped = Math.max(0, Math.min(1, v))
-      const idx = Math.round(clamped * (personas.length - 1))
-      setActiveIdx(idx)
-    })
-  }, [scrollYProgress, personas.length])
+    const id = setInterval(() => {
+      setActiveIdx((prev) => (prev + 1) % personas.length)
+    }, 4000)
+    return () => clearInterval(id)
+  }, [personas.length])
 
-  const sectionMinHeight = `${personas.length * 90}vh`
+  const goTo = (idx: number) => {
+    setActiveIdx(idx)
+  }
+
+  // Translate the card stack so the active card is centred in the track
+  const y = -(activeIdx * STRIDE)
 
   return (
     <section
-      ref={sectionRef}
       id={block.anchorId}
-      className="relative bg-[var(--bg)]"
-      style={{ minHeight: sectionMinHeight }}
+      className="relative bg-[var(--bg)] py-24"
     >
-      <div className="sticky top-0 flex h-screen items-center">
-        <div className="mx-auto w-full max-w-[1240px] px-6">
-          <div className="grid items-center gap-16 lg:grid-cols-[1fr_1.4fr]">
-            {/* LEFT — static text + CTA + progress */}
-            <div>
-              {block.eyebrow && (
-                <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--accent)]">
-                  {block.eyebrow}
-                </span>
-              )}
-              {block.heading && (
-                <h2 className="mt-3 text-[40px] xl:text-[52px] leading-[1.05] tracking-[-0.025em] font-semibold text-[var(--ink)] text-balance">
-                  <MintGradientHeading text={block.heading} />
-                </h2>
-              )}
-              {block.description && (
-                <p className="mt-5 max-w-md text-[16px] leading-[1.65] text-[var(--ink-2)]">
-                  {block.description}
-                </p>
-              )}
-              {block.guidebookCta?.label && block.guidebookCta?.url && (
-                <Link
-                  href={block.guidebookCta.url}
-                  className="mt-8 inline-flex items-center gap-2 rounded-full bg-btn-primary px-7 py-3.5 text-[14px] font-medium text-btn-primary-fg shadow-cta transition-all duration-base ease-out hover:-translate-y-px hover:bg-btn-primary-hover"
-                >
-                  {block.guidebookCta.label}
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              )}
+      <div className="mx-auto w-full max-w-[1240px] px-6">
+        <div className="grid items-center gap-16 lg:grid-cols-[1fr_1.4fr]">
+          {/* LEFT — static text + CTA + clickable progress */}
+          <div>
+            {block.eyebrow && (
+              <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--accent)]">
+                {block.eyebrow}
+              </span>
+            )}
+            {block.heading && (
+              <h2 className="mt-3 text-[40px] xl:text-[52px] leading-[1.05] tracking-[-0.025em] font-semibold text-[var(--ink)] text-balance">
+                <MintGradientHeading text={block.heading} />
+              </h2>
+            )}
+            {block.description && (
+              <p className="mt-5 max-w-md text-[16px] leading-[1.65] text-[var(--ink-2)]">
+                {block.description}
+              </p>
+            )}
+            {block.guidebookCta?.label && block.guidebookCta?.url && (
+              <Link
+                href={block.guidebookCta.url}
+                className="mt-8 inline-flex items-center gap-2 rounded-full bg-btn-primary px-7 py-3.5 text-[14px] font-medium text-btn-primary-fg shadow-cta transition-all duration-base ease-out hover:-translate-y-px hover:bg-btn-primary-hover"
+              >
+                {block.guidebookCta.label}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
 
-              {/* Progress indicator */}
-              <div className="mt-12">
-                <div className="mb-3 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--mist)]">
-                  <span className="text-[var(--accent)] tabular-nums">
-                    {String(activeIdx + 1).padStart(2, '0')}
-                  </span>
-                  <span>/</span>
-                  <span className="tabular-nums">{String(personas.length).padStart(2, '0')}</span>
-                  <span className="ml-2 truncate text-[var(--ink-2)]">
-                    {personas[activeIdx]?.title?.split(' — ')[0]?.split('—')[0]?.trim()}
-                  </span>
-                </div>
-                <div className="flex gap-1.5">
-                  {personas.map((_, idx) => (
-                    <span
-                      key={idx}
-                      className="relative h-[3px] flex-1 overflow-hidden rounded-full bg-[var(--border)]"
+            {/* Clickable progress indicator */}
+            <div className="mt-12">
+              <div className="mb-3 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--mist)]">
+                <span className="text-[var(--accent)] tabular-nums">
+                  {String(activeIdx + 1).padStart(2, '0')}
+                </span>
+                <span>/</span>
+                <span className="tabular-nums">{String(personas.length).padStart(2, '0')}</span>
+                <span className="ml-2 truncate text-[var(--ink-2)]">
+                  {personas[activeIdx]?.title?.split(' — ')[0]?.split('—')[0]?.trim()}
+                </span>
+              </div>
+              <div className="flex gap-1.5">
+                {personas.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => goTo(idx)}
+                    aria-label={`Go to persona ${idx + 1}`}
+                    className="relative h-[3px] flex-1 overflow-hidden rounded-full bg-[var(--border)] cursor-pointer"
+                  >
+                    <motion.span
+                      aria-hidden
+                      className="absolute inset-y-0 left-0 bg-[var(--accent)]"
+                      animate={{
+                        width:
+                          idx < activeIdx ? '100%' : idx === activeIdx ? '100%' : '0%',
+                      }}
+                      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT — fixed-height track, cards translate via activeIdx */}
+          <div
+            className="relative overflow-hidden"
+            style={{ height: `${TRACK_HEIGHT}px` }}
+          >
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 top-0 z-10 h-16"
+              style={{
+                background:
+                  'linear-gradient(180deg, var(--bg) 0%, transparent 100%)',
+              }}
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-16"
+              style={{
+                background:
+                  'linear-gradient(0deg, var(--bg) 0%, transparent 100%)',
+              }}
+            />
+            <motion.div
+              animate={{ y }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              style={{ paddingTop: INITIAL_OFFSET }}
+              className="flex flex-col"
+            >
+              {personas.map((p, i) => {
+                const isActive = i === activeIdx
+                return (
+                  <div
+                    key={i}
+                    style={{
+                      height: CARD_HEIGHT,
+                      marginBottom: i < personas.length - 1 ? CARD_GAP : 0,
+                    }}
+                    className="shrink-0"
+                  >
+                    <motion.div
+                      animate={{
+                        opacity: isActive ? 1 : 0.35,
+                        scale: isActive ? 1 : 0.97,
+                      }}
+                      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                      className={`relative h-full overflow-hidden rounded-2xl border p-7 transition-colors duration-base ${
+                        isActive
+                          ? 'border-[var(--accent-border)] bg-[var(--surface)]'
+                          : 'border-[var(--border)] bg-[var(--surface)]'
+                      }`}
+                      style={{
+                        boxShadow: isActive
+                          ? '0 16px 48px -12px rgba(14, 217, 138, 0.22)'
+                          : 'none',
+                      }}
                     >
                       <motion.span
                         aria-hidden
-                        className="absolute inset-y-0 left-0 bg-[var(--accent)]"
+                        className="pointer-events-none absolute inset-y-6 left-0 w-[2px] origin-top bg-[var(--accent)]"
                         animate={{
-                          width:
-                            idx < activeIdx ? '100%' : idx === activeIdx ? '60%' : '0%',
+                          scaleY: isActive ? 1 : 0,
+                          opacity: isActive ? 1 : 0,
                         }}
                         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                       />
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* RIGHT — fixed-height track, cards translate via scroll */}
-            <div
-              className="relative overflow-hidden"
-              style={{ height: `${TRACK_HEIGHT}px` }}
-            >
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-x-0 top-0 z-10 h-16"
-                style={{
-                  background:
-                    'linear-gradient(180deg, var(--bg) 0%, transparent 100%)',
-                }}
-              />
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-16"
-                style={{
-                  background:
-                    'linear-gradient(0deg, var(--bg) 0%, transparent 100%)',
-                }}
-              />
-              <motion.div
-                style={{ y, paddingTop: INITIAL_OFFSET }}
-                className="flex flex-col"
-              >
-                {personas.map((p, i) => {
-                  const isActive = i === activeIdx
-                  return (
-                    <div
-                      key={i}
-                      style={{
-                        height: CARD_HEIGHT,
-                        marginBottom: i < personas.length - 1 ? CARD_GAP : 0,
-                      }}
-                      className="shrink-0"
-                    >
-                      <motion.div
-                        animate={{
-                          opacity: isActive ? 1 : 0.35,
-                          scale: isActive ? 1 : 0.97,
-                        }}
-                        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                        className={`relative h-full overflow-hidden rounded-2xl border p-7 transition-colors duration-base ${
-                          isActive
-                            ? 'border-[var(--accent-border)] bg-[var(--surface)]'
-                            : 'border-[var(--border)] bg-[var(--surface)]'
-                        }`}
-                        style={{
-                          boxShadow: isActive
-                            ? '0 16px 48px -12px rgba(14, 217, 138, 0.22)'
-                            : 'none',
-                        }}
-                      >
-                        <motion.span
-                          aria-hidden
-                          className="pointer-events-none absolute inset-y-6 left-0 w-[2px] origin-top bg-[var(--accent)]"
-                          animate={{
-                            scaleY: isActive ? 1 : 0,
-                            opacity: isActive ? 1 : 0,
-                          }}
-                          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                        />
-                        {renderCardContent(p, i)}
-                      </motion.div>
-                    </div>
-                  )
-                })}
-              </motion.div>
-            </div>
+                      {renderCardContent(p, i)}
+                    </motion.div>
+                  </div>
+                )
+              })}
+            </motion.div>
           </div>
         </div>
       </div>
