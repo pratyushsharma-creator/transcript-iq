@@ -67,7 +67,7 @@ function HeroHeading({ text }: { text: string }) {
                     key={j}
                     style={{
                       color: 'transparent',
-                      WebkitTextStroke: '1.5px rgba(255,255,255,0.22)',
+                      WebkitTextStroke: '1.5px var(--mist)',
                     }}
                   >
                     {ghost[1]}
@@ -246,7 +246,7 @@ function PhoneField() {
           style={{
             width: '100%',
             height: '100%',
-            background: 'rgba(0,0,0,0.32)',
+            background: 'var(--surface-2)',
             border: '1px solid var(--border)',
             borderRadius: 9,
             padding: '10px 8px',
@@ -275,10 +275,10 @@ function PhoneField() {
               left: 0,
               zIndex: 200,
               width: 240,
-              background: '#111713',
-              border: '1px solid rgba(255,255,255,0.12)',
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
               borderRadius: 10,
-              boxShadow: '0 16px 48px rgba(0,0,0,0.7)',
+              boxShadow: '0 16px 48px rgba(0,0,0,0.25)',
               overflow: 'hidden',
             }}
           >
@@ -292,12 +292,12 @@ function PhoneField() {
                 placeholder="Search country…"
                 style={{
                   width: '100%',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'var(--surface-2)',
+                  border: '1px solid var(--border)',
                   borderRadius: 7,
                   padding: '7px 10px',
                   fontSize: 12,
-                  color: '#e2e8f0',
+                  color: 'var(--ink)',
                   outline: 'none',
                   fontFamily: 'var(--font-sans)',
                 }}
@@ -306,7 +306,7 @@ function PhoneField() {
             {/* List */}
             <div style={{ maxHeight: 220, overflowY: 'auto', padding: '6px 0' }}>
               {filtered.length === 0 ? (
-                <div style={{ padding: '10px 14px', fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>
+                <div style={{ padding: '10px 14px', fontSize: 12, color: 'var(--mist)' }}>
                   No results
                 </div>
               ) : (
@@ -327,12 +327,12 @@ function PhoneField() {
                       textAlign: 'left',
                       transition: 'background 0.1s',
                     }}
-                    onMouseEnter={(e) => { if (!(selected[0] === code && selected[1] === iso)) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)' }}
+                    onMouseEnter={(e) => { if (!(selected[0] === code && selected[1] === iso)) (e.currentTarget as HTMLButtonElement).style.background = 'var(--surface-2)' }}
                     onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = selected[0] === code && selected[1] === iso ? 'rgba(52,211,153,0.08)' : 'transparent' }}
                   >
                     <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--accent)', minWidth: 34 }}>{code}</span>
-                    <span style={{ fontSize: 12, color: '#e2e8f0' }}>{name}</span>
-                    <span style={{ marginLeft: 'auto', fontSize: 10, color: 'rgba(255,255,255,0.28)', fontFamily: 'var(--font-mono)' }}>{iso}</span>
+                    <span style={{ fontSize: 12, color: 'var(--ink)' }}>{name}</span>
+                    <span style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--mist)', fontFamily: 'var(--font-mono)' }}>{iso}</span>
                   </button>
                 ))
               )}
@@ -497,12 +497,12 @@ export function CustomTranscriptHeroRenderer({ block }: { block: CustomTranscrip
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.14, ease: [0.16, 1, 0.3, 1] }}
-                className="mb-11 flex overflow-hidden rounded-[14px] border border-[var(--border)] bg-[rgba(255,255,255,0.02)]"
+                className="mb-11 flex overflow-hidden rounded-[14px] border border-[var(--border)] bg-[var(--surface-2)]"
               >
                 {stats.map((s, i) => (
                   <div
                     key={i}
-                    className={`flex-1 cursor-default px-5 py-[18px] transition-colors hover:bg-[rgba(255,255,255,0.03)] ${i < stats.length - 1 ? 'border-r border-[var(--border)]' : ''}`}
+                    className={`flex-1 cursor-default px-5 py-[18px] transition-colors hover:bg-[var(--surface)] ${i < stats.length - 1 ? 'border-r border-[var(--border)]' : ''}`}
                   >
                     <div className="font-mono text-[22px] font-medium leading-tight tracking-[-0.03em] text-[var(--accent)]">
                       {s.value}
@@ -572,7 +572,7 @@ export function CustomTranscriptHeroRenderer({ block }: { block: CustomTranscrip
                         'inline-flex items-center gap-2.5 rounded-[11px] px-[26px] py-[13px] text-[14px] font-semibold tracking-[-0.01em] transition-all duration-200',
                         isPrimary
                           ? 'bg-[var(--accent)] text-[#050A07] shadow-[0_0_0_1px_var(--accent-border),0_8px_28px_-8px_var(--accent-glow)] hover:-translate-y-px hover:bg-[var(--accent-deep)]'
-                          : 'border border-[rgba(255,255,255,0.12)] bg-transparent text-[var(--ink-2)] hover:bg-[rgba(255,255,255,0.04)] hover:text-[var(--ink)]',
+                          : 'border border-[var(--border)] bg-transparent text-[var(--ink-2)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]',
                       ].join(' ')}
                     >
                       {isPrimary && <ArrowIcon />}
@@ -593,12 +593,12 @@ export function CustomTranscriptHeroRenderer({ block }: { block: CustomTranscrip
             className="lg:sticky lg:top-[72px]"
           >
             <div
-              className="relative overflow-hidden rounded-[20px] border border-[rgba(255,255,255,0.12)]"
+              className="relative overflow-hidden rounded-[20px] border border-[var(--border)]"
               style={{
-                background: 'rgba(255,255,255,0.035)',
+                background: 'var(--surface)',
                 backdropFilter: 'blur(28px)',
                 WebkitBackdropFilter: 'blur(28px)',
-                boxShadow: '0 0 0 1px rgba(52,211,153,0.05), 0 32px 96px -24px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.07)',
+                boxShadow: '0 0 0 1px var(--accent-border), 0 32px 96px -24px rgba(0,0,0,0.35)',
               }}
             >
               {/* Top-edge mint glow line */}
@@ -611,7 +611,7 @@ export function CustomTranscriptHeroRenderer({ block }: { block: CustomTranscrip
               {/* Card header */}
               <div
                 className="flex items-center justify-between border-b border-[var(--border)] px-[22px] py-[15px]"
-                style={{ background: 'rgba(0,0,0,0.25)' }}
+                style={{ background: 'var(--surface-2)' }}
               >
                 <div className="flex items-center gap-2.5">
                   <span className="relative flex h-[7px] w-[7px]">
@@ -732,7 +732,7 @@ export function CustomTranscriptHeroRenderer({ block }: { block: CustomTranscrip
                   className="grid border-t border-[var(--border)]"
                   style={{
                     gridTemplateColumns: `repeat(${formStats.length}, 1fr)`,
-                    background: 'rgba(0,0,0,0.2)',
+                    background: 'var(--surface-2)',
                   }}
                 >
                   {formStats.map((s, i) => (
@@ -760,7 +760,7 @@ export function CustomTranscriptHeroRenderer({ block }: { block: CustomTranscrip
 }
 
 const inputCls =
-  'w-full rounded-[9px] border border-[var(--border)] bg-[rgba(0,0,0,0.32)] px-[13px] py-[10px] font-sans text-[13px] text-[var(--ink)] outline-none placeholder:text-[rgba(255,255,255,0.2)] transition-all duration-200 focus:border-[rgba(52,211,153,0.42)] focus:bg-[rgba(52,211,153,0.04)] focus:shadow-[0_0_0_3px_rgba(52,211,153,0.07)]'
+  'w-full rounded-[9px] border border-[var(--border)] bg-[var(--surface-2)] px-[13px] py-[10px] font-sans text-[13px] text-[var(--ink)] outline-none placeholder:text-[var(--mist)] transition-all duration-200 focus:border-[rgba(52,211,153,0.42)] focus:bg-[rgba(52,211,153,0.04)] focus:shadow-[0_0_0_3px_rgba(52,211,153,0.07)]'
 
 function FormField({
   label,
@@ -1073,7 +1073,7 @@ export function UseCasesBentoRenderer({ block }: { block: UseCasesBentoBlock }) 
               'group relative cursor-default overflow-hidden rounded-[16px] border px-7 py-[26px] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_48px_-16px_rgba(0,0,0,0.4)]',
               c.featured
                 ? 'border-[rgba(52,211,153,0.22)] hover:border-[rgba(52,211,153,0.22)]'
-                : 'border-[var(--border)] bg-[var(--surface)] hover:border-[rgba(255,255,255,0.12)]',
+                : 'border-[var(--border)] bg-[var(--surface)] hover:border-[var(--accent-border)]',
             ].join(' ')}
             style={c.featured
               ? { background: 'linear-gradient(145deg, rgba(52,211,153,0.07) 0%, var(--surface) 55%)' }
@@ -1219,7 +1219,7 @@ export function PricingComparisonRenderer({ block }: { block: PricingComparisonB
             <ul className="flex flex-col gap-[10px]">
               {(rp.features ?? []).map((f, i) => (
                 <li key={i} className="flex items-start gap-[9px] text-[13px] leading-[1.4] text-[var(--mist)]">
-                  <div className="mt-px flex h-4 w-4 shrink-0 items-center justify-center rounded border border-[var(--border)] bg-[rgba(255,255,255,0.03)]">
+                  <div className="mt-px flex h-4 w-4 shrink-0 items-center justify-center rounded border border-[var(--border)] bg-[var(--surface-2)]">
                     <X className="h-2 w-2 text-[var(--mist)]" strokeWidth={2} />
                   </div>
                   {f.text}
