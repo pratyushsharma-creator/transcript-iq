@@ -25,9 +25,9 @@ export function revalidateOnPublish(
   doc: { _status?: string },
 ): void {
   if (doc._status !== 'published') return
-  revalidateTag(tag, 'default')
+  revalidateTag(tag, 'max')
   // llms-full.txt aggregates all content — always bust it on any publish
   if (tag !== CACHE_TAGS.llmsFull) {
-    revalidateTag(CACHE_TAGS.llmsFull, 'default')
+    revalidateTag(CACHE_TAGS.llmsFull, 'max')
   }
 }

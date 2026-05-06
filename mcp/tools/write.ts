@@ -61,7 +61,6 @@ export async function updateBlogPost(input: z.infer<typeof updateBlogPostSchema>
 
 export const createTranscriptSchema = z.object({
   title: z.string().min(5).describe('Transcript title, e.g. "Former VP Engineering (Major SaaS Co) — AI Infrastructure Strategy"'),
-  expertId: z.string().describe('Anonymised expert ID, format EXP-001'),
   expertFormerTitle: z.string().describe('e.g. "Former VP Engineering, Major SaaS Co" — never name companies'),
   expertLevel: z.enum(['c-suite', 'vp', 'director']).describe('Expert seniority'),
   dateConducted: z.string().describe('ISO date string YYYY-MM-DD'),
@@ -88,7 +87,6 @@ export async function createTranscript(input: z.infer<typeof createTranscriptSch
 export const updateTranscriptSchema = z.object({
   id: z.string().describe('The Payload document ID of the expert transcript to update'),
   title: z.string().min(5).optional(),
-  expertId: z.string().optional(),
   expertFormerTitle: z.string().optional(),
   expertLevel: z.enum(['c-suite', 'vp', 'director']).optional(),
   dateConducted: z.string().optional(),
