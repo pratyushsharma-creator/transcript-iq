@@ -13,9 +13,35 @@ import config from '@/payload.config'
 export const runtime = 'nodejs'
 export const maxDuration = 30
 
+async function verifyAuth(authHeader: string): Promise<boolean> {
+  // Legacy: PAYLOAD_SECRET bearer token
+  if (authHeader.startsWith('Bearer ') && authHeader.slice(7) === process.env.PAYLOAD_SECRET) {
+    return true
+  }
+  // Payload API key (format: "users API-Key <key>")
+  if (authHeader.startsWith('users API-Key ')) {
+    const apiKey = authHeader.slice('users API-Key '.length).trim()
+    if (!apiKey) return false
+    try {
+      const payload = await getPayload({ config: await config })
+      const users = await payload.find({
+        collection: 'users',
+        where: { apiKey: { equals: apiKey } },
+        limit: 1,
+        overrideAccess: true,
+      })
+      const user = users.docs[0] as { role?: string } | undefined
+      return user?.role === 'admin' || user?.role === 'editor'
+    } catch {
+      return false
+    }
+  }
+  return false
+}
+
 export async function POST(req: NextRequest) {
   const auth = req.headers.get('Authorization') ?? ''
-  if (!auth.startsWith('Bearer ') || auth.replace('Bearer ', '') !== process.env.PAYLOAD_SECRET) {
+  if (!(await verifyAuth(auth))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

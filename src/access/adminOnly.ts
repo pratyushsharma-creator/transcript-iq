@@ -7,3 +7,6 @@ export const adminOrSelf: Access = ({ req }) => {
   if (!req.user) return false
   return { id: { equals: req.user.id } }
 }
+
+export const adminOrEditor: Access = ({ req }) =>
+  req.user?.role === 'admin' || req.user?.role === 'editor'

@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
 import { publishedOnly } from '../access/publishedOnly'
+import { adminOrEditor } from '../access/adminOnly'
 import { CACHE_TAGS, revalidateOnPublish } from '@/lib/cache/revalidation'
 import { pingCollectionPage } from '@/lib/indexnow'
 
@@ -14,7 +15,7 @@ export const EarningsAnalyses: CollectionConfig = {
     description: 'Each document = one earnings analysis product. Fill in all Basics first, then add Content, then publish.',
   },
   versions: { drafts: true },
-  access: { read: publishedOnly },
+  access: { read: publishedOnly, create: adminOrEditor, update: adminOrEditor },
   fields: [
     // ── Sidebar ───────────────────────────────────────────────────────────
     {

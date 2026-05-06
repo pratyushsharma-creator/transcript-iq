@@ -82,7 +82,7 @@ export async function apiGet<T>(path: string, params?: Record<string, string>): 
 export async function apiPost<T>(path: string, body: unknown, adminAuth = false): Promise<T> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' }
   if (adminAuth && API_KEY) {
-    headers['Authorization'] = `Bearer ${API_KEY}`
+    headers['Authorization'] = `users API-Key ${API_KEY}`
   }
   const res = await fetch(`${BASE_URL}${path}`, {
     method: 'POST',
@@ -118,4 +118,66 @@ export function buildPayloadQuery(where: Record<string, string>, extra?: Record<
   }
   if (extra) Object.assign(params, extra)
   return params
+}
+
+export async function payloadCreate<T>(
+  collection: string,
+  data: Record<string, unknown>,
+): Promise<T> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'Authorization': `users API-Key ${API_KEY}`,
+  }
+  const res = await fetch(`${BASE_URL}/api/${collection}`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) {
+    const text = await res.text().catch(() => '')
+    throw new Error(`API error ${res.status}: ${text}`)
+  }
+  return res.json() as Promise<T>
+}
+
+export async function payloadPatch<T>(
+  collection: string,
+  id: string,
+  data: Record<string, unknown>,
+): Promise<T> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'Authorization': `users API-Key ${API_KEY}`,
+  }
+  const res = await fetch(`${BASE_URL}/api/${collection}/${id}`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) {
+    const text = await res.text().catch(() => '')
+    throw new Error(`API error ${res.status}: ${text}`)
+  }
+  return res.json() as Promise<T>
+}
+
+export function textToLexical(text: string): object {
+  const paragraphs = text.split(/\n{2,}/).filter(Boolean)
+  return {
+    root: {
+      type: 'root',
+      children: paragraphs.map((para) => ({
+        type: 'paragraph',
+        version: 1,
+        indent: 0,
+        format: '',
+        direction: 'ltr',
+        children: [{ type: 'text', text: para.trim(), format: 0, mode: 'normal', style: '', version: 1 }],
+      })),
+      direction: 'ltr',
+      format: '',
+      indent: 0,
+      version: 1,
+    },
+  }
 }

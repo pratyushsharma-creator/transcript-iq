@@ -70,6 +70,17 @@ import {
   suggestTags,   suggestTagsSchema,
 } from './tools/admin.js'
 
+import {
+  createBlogPost,      createBlogPostSchema,
+  updateBlogPost,      updateBlogPostSchema,
+  createTranscript,    createTranscriptSchema,
+  updateTranscript,    updateTranscriptSchema,
+  createEarnings,      createEarningsSchema,
+  updateEarnings,      updateEarningsSchema,
+  publishContent,      publishContentSchema,
+  unpublishContent,    unpublishContentSchema,
+} from './tools/write.js'
+
 import { BASE_URL } from './api-client.js'
 
 // ── Server declaration ─────────────────────────────────────────────────────────
@@ -137,6 +148,46 @@ const TOOLS = [
     description: '[ADMIN] Suggest industry and category tags for content using Claude. Requires TIQ_API_KEY.',
     inputSchema: suggestTagsSchema,
   },
+  {
+    name: 'create_blog_post',
+    description: '[WRITE] Create a new blog post draft in Payload. Requires TIQ_API_KEY (admin or editor).',
+    inputSchema: createBlogPostSchema,
+  },
+  {
+    name: 'update_blog_post',
+    description: '[WRITE] Update fields on an existing blog post. Requires TIQ_API_KEY (admin or editor).',
+    inputSchema: updateBlogPostSchema,
+  },
+  {
+    name: 'create_transcript',
+    description: '[WRITE] Create a new expert transcript draft in Payload. Requires TIQ_API_KEY (admin or editor).',
+    inputSchema: createTranscriptSchema,
+  },
+  {
+    name: 'update_transcript',
+    description: '[WRITE] Update fields on an existing expert transcript. Requires TIQ_API_KEY (admin or editor).',
+    inputSchema: updateTranscriptSchema,
+  },
+  {
+    name: 'create_earnings',
+    description: '[WRITE] Create a new earnings analysis draft in Payload. Requires TIQ_API_KEY (admin or editor).',
+    inputSchema: createEarningsSchema,
+  },
+  {
+    name: 'update_earnings',
+    description: '[WRITE] Update fields on an existing earnings analysis. Requires TIQ_API_KEY (admin or editor).',
+    inputSchema: updateEarningsSchema,
+  },
+  {
+    name: 'publish_content',
+    description: '[WRITE] Publish a draft document (blog post, transcript, or earnings analysis). Requires TIQ_API_KEY (admin or editor).',
+    inputSchema: publishContentSchema,
+  },
+  {
+    name: 'unpublish_content',
+    description: '[WRITE] Revert a published document back to draft. Requires TIQ_API_KEY (admin or editor).',
+    inputSchema: unpublishContentSchema,
+  },
 ] as const
 
 // ── Handler: list tools ────────────────────────────────────────────────────────
@@ -203,6 +254,30 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         break
       case 'suggest_tags':
         result = await suggestTags(suggestTagsSchema.parse(args))
+        break
+      case 'create_blog_post':
+        result = await createBlogPost(createBlogPostSchema.parse(args))
+        break
+      case 'update_blog_post':
+        result = await updateBlogPost(updateBlogPostSchema.parse(args))
+        break
+      case 'create_transcript':
+        result = await createTranscript(createTranscriptSchema.parse(args))
+        break
+      case 'update_transcript':
+        result = await updateTranscript(updateTranscriptSchema.parse(args))
+        break
+      case 'create_earnings':
+        result = await createEarnings(createEarningsSchema.parse(args))
+        break
+      case 'update_earnings':
+        result = await updateEarnings(updateEarningsSchema.parse(args))
+        break
+      case 'publish_content':
+        result = await publishContent(publishContentSchema.parse(args))
+        break
+      case 'unpublish_content':
+        result = await unpublishContent(unpublishContentSchema.parse(args))
         break
       default:
         return {

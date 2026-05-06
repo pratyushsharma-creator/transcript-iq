@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
 import { publishedOnly } from '../access/publishedOnly'
+import { adminOrEditor } from '../access/adminOnly'
 import { CACHE_TAGS, revalidateOnPublish } from '@/lib/cache/revalidation'
 import { pingCollectionPage } from '@/lib/indexnow'
 
@@ -14,6 +15,8 @@ export const BlogPosts: CollectionConfig = {
   versions: { drafts: true },
   access: {
     read: publishedOnly,
+    create: adminOrEditor,
+    update: adminOrEditor,
   },
   fields: [
     { name: 'title', type: 'text', required: true },
