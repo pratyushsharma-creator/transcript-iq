@@ -788,7 +788,7 @@ export function EarningsLibrary({ initialDocs, totalDocs, industries }: Earnings
               </button>
             </div>
           ) : (
-            <div className={view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3' : 'flex flex-col gap-3'}>
+            <div className={view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 gap-3' : 'flex flex-col gap-3'}>
               {docs.map((doc) => <EarningsCard key={doc.id} doc={doc} view={view} />)}
             </div>
           )}
