@@ -346,7 +346,7 @@ function TranscriptCard({ doc, view }: { doc: TranscriptDoc; view: 'grid' | 'lis
             </span>
             <span className="flex-1 truncate">{doc.expertFormerTitle}</span>
             {doc.expertLevel && (
-              <span className="font-mono text-[9px] tracking-[0.08em] uppercase text-[var(--mist)] dark:text-[#A0A0AA] bg-[var(--surface-2)] px-1.5 py-0.5 rounded shrink-0 ml-auto">
+              <span className="font-mono text-[9px] tracking-[0.08em] text-[var(--mist)] dark:text-[#A0A0AA] bg-[var(--surface-2)] px-1.5 py-0.5 rounded shrink-0 ml-auto">
                 {LEVEL_LABELS[doc.expertLevel] ?? doc.expertLevel}
               </span>
             )}
