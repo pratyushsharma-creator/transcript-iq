@@ -9,6 +9,11 @@
 }
 
 @layer base {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
   :root {
     /* Light mode (default) — verbatim from design system */
     --bg: #FAFAF9;

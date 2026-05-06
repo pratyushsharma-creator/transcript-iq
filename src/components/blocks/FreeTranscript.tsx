@@ -172,14 +172,11 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
 
   return (
     <section
+      className="flex flex-col gap-10 px-4 py-12 lg:grid lg:items-center lg:gap-[72px] lg:px-12 lg:py-16"
       style={{
         position: 'relative',
         minHeight: 'calc(100vh - 54px)',
-        display: 'grid',
         gridTemplateColumns: '1fr 460px',
-        gap: 72,
-        alignItems: 'center',
-        padding: '64px 48px',
         maxWidth: 1100,
         margin: '0 auto',
         zIndex: 1,

@@ -473,7 +473,7 @@ export function FeatureSpotlightRenderer({ block }: { block: FeatureSpotlightBlo
         </motion.div>
       )}
       {block.supporting && block.supporting.length > 0 && (
-        <div className="mt-6 grid gap-px overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--border)] sm:grid-cols-3">
+        <div className="mt-6 grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--border)] sm:grid-cols-3">
           {block.supporting.map((s, i) => {
             const Icon = getIcon(s.icon)
             return (

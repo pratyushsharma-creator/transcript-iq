@@ -244,8 +244,7 @@ export function PersonaGridRenderer({ block }: { block: PersonaGridBlock }) {
           {/* Remaining personas — equal cards in a row */}
           {rest.length > 0 && (
             <div
-              className="grid gap-px bg-[var(--border)] sm:grid-cols-2 lg:grid-cols-3"
-              style={{ gridTemplateColumns: `repeat(${Math.min(rest.length, 3)}, minmax(0, 1fr))` }}
+              className="grid grid-cols-1 gap-px bg-[var(--border)] sm:grid-cols-2 lg:grid-cols-3"
             >
               {rest.map((p, i) => (
                 <motion.div

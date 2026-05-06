@@ -366,11 +366,7 @@ export function ResourcesHubClient({
             All Articles
           </span>
           <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: 12,
-            }}
+            className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
           >
             {filtered.map((post) => (
               <ArticleCard key={post.id} post={post} />

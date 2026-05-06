@@ -89,8 +89,13 @@ export function ProcessStepsRenderer({ block }: { block: ProcessStepsBlock }) {
       />
       {variant === 'horizontal' && (
         <div
-          className="grid gap-px overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--border)]"
-          style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}
+          className={`grid gap-px overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--border)] grid-cols-1 ${
+            steps.length <= 2
+              ? 'sm:grid-cols-2'
+              : steps.length === 3
+              ? 'sm:grid-cols-3'
+              : 'sm:grid-cols-2 lg:grid-cols-4'
+          }`}
         >
           {steps.map((s, i) => {
             const Icon = getIcon(s.icon)
@@ -101,7 +106,7 @@ export function ProcessStepsRenderer({ block }: { block: ProcessStepsBlock }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
                 transition={{ duration: 0.5, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                className="group flex flex-col bg-[var(--surface)] p-9 transition-colors duration-base hover:bg-[var(--surface-2)]"
+                className="group flex flex-col bg-[var(--surface)] p-6 sm:p-9 transition-colors duration-base hover:bg-[var(--surface-2)]"
               >
                 {/* Step number — top, mono, with mint accent on number */}
                 <div className="mb-5 font-mono text-[11px] tracking-[0.12em] text-[var(--mist)]">

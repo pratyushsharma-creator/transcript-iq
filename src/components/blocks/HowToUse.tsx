@@ -95,12 +95,7 @@ export function HowToUseHeroRenderer({ block }: { block: HowToUseHeroBlock }) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.28, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-14 grid max-w-[720px] overflow-hidden rounded-xl border border-[var(--border)]"
-            style={{
-              gridTemplateColumns: `repeat(${Math.min(block.stats.length, 4)}, 1fr)`,
-              gap: '1px',
-              background: 'var(--border)',
-            }}
+            className="mt-14 grid max-w-[720px] grid-cols-2 gap-px overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--border)] sm:grid-cols-4"
           >
             {block.stats.map((s) => (
               <div key={s.label} className="bg-[var(--surface)] px-6 py-5">

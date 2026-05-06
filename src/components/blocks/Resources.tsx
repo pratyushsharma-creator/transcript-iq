@@ -87,14 +87,11 @@ export function ResourcesHeroRenderer({ block }: { block: ResourcesHeroBlock }) 
       }}
     >
       <div
+        className="flex flex-col gap-10 px-4 pb-16 lg:grid lg:items-end lg:gap-[80px] lg:px-12"
         style={{
           maxWidth: 1200,
           margin: '0 auto',
-          padding: '0 48px 64px',
-          display: 'grid',
           gridTemplateColumns: '1fr 340px',
-          gap: 80,
-          alignItems: 'end',
         }}
       >
         {/* Left */}
