@@ -49,13 +49,13 @@ export const EarningsAnalyses: CollectionConfig = {
       max: 90,
       admin: { position: 'sidebar', description: 'Leave blank if no discount badge needed.' },
     },
-    { name: 'priceInr', type: 'number', admin: { position: 'sidebar', label: 'Price (INR)' } },
+    { name: 'priceInr', type: 'number', label: 'Price (INR)', admin: { position: 'sidebar' } },
     {
       name: 'stripePriceId',
       type: 'text',
       admin: { readOnly: true, position: 'sidebar', description: 'Auto-synced via Stripe (Phase G). Do not edit manually.' },
     },
-    { name: 'pageCount', type: 'number', admin: { position: 'sidebar', label: 'Page count' } },
+    { name: 'pageCount', type: 'number', label: 'Page count', admin: { position: 'sidebar' } },
 
     // ── Tabbed main area ──────────────────────────────────────────────────
     {
