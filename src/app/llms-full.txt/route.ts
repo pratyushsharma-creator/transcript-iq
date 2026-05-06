@@ -85,8 +85,9 @@ const getLlmsFullContent = unstable_cache(
     for (const a of analyses.docs) {
       lines.push(`### ${a.title}`)
       lines.push(`URL: ${BASE_URL}/earnings-analysis/${a.slug}`)
-      if (typeof a.executiveSummaryPreview === 'string') {
-        lines.push(`Summary: ${a.executiveSummaryPreview.slice(0, 300)}`)
+      const earningsSummary = (a as Record<string, unknown>).executiveSummaryPreview
+      if (typeof earningsSummary === 'string') {
+        lines.push(`Summary: ${earningsSummary.slice(0, 300)}`)
       }
       lines.push('')
     }

@@ -99,7 +99,6 @@ export async function FeaturedProductsRenderer({ block }: { block: FeaturedProdu
         tier: d.tier,
         dateConducted: d.dateConducted,
         duration: d.duration,
-        summary: d.summary,
         priceUsd: d.priceUsd,
         originalPriceUsd: d.originalPriceUsd,
         discountPercent: d.discountPercent,
