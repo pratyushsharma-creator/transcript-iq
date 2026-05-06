@@ -291,7 +291,7 @@ export function TranscriptProductPage({
             {metaCells.map((cell, i) => (
               <div
                 key={cell.label}
-                className="px-4 md:px-[18px] py-3 border-r border-[var(--border)] last:border-r-0 border-b border-[var(--border)] md:border-b-0"
+                className={`px-4 md:px-[18px] py-3 border-r border-[var(--border)] last:border-r-0 border-b border-[var(--border)] md:border-b-0${i === metaCells.length - 1 && metaCells.length % 2 !== 0 ? ' col-span-2 md:col-span-1' : ''}`}
               >
                 <div className="font-mono text-[8px] tracking-[0.14em] uppercase text-[var(--mist)] mb-1">{cell.label}</div>
                 <div className={`text-[13px] font-medium tracking-[-0.01em] ${cell.accent ? 'text-[var(--accent)] font-mono' : 'text-[var(--ink-2)]'}`}>
