@@ -2,6 +2,8 @@
 
 import { useState, useCallback } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useCart } from '@/context/CartContext'
 
 // ── Types ─────────────────────────────────────────────────────────────────
 
@@ -24,6 +26,7 @@ export type TranscriptDoc = {
   sectors?: Array<Industry | string> | null
   geography?: string[] | null
   companies?: Array<Company | string> | null
+  complianceBadges?: string[] | null
   engagementCopy?: string | null
   featured?: boolean | null
 }
@@ -92,6 +95,26 @@ function TierBadge({ tier }: { tier: string }) {
     <span className={`font-mono text-[9px] tracking-[0.1em] uppercase font-medium px-2 py-0.5 rounded ${cls}`}>
       {tier}
     </span>
+  )
+}
+
+// ── Icons ─────────────────────────────────────────────────────────────────
+
+function CartIcon() {
+  return (
+    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" className="h-[11px] w-[11px] shrink-0">
+      <path d="M1 1h1.5l1.5 6h6l1-4H4" />
+      <circle cx="5.5" cy="10.5" r="1" />
+      <circle cx="9.5" cy="10.5" r="1" />
+    </svg>
+  )
+}
+
+function PlusIcon() {
+  return (
+    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="h-[11px] w-[11px] shrink-0">
+      <path d="M6 2v8M2 6h8" />
+    </svg>
   )
 }
 
@@ -252,36 +275,62 @@ function isPopulated<T extends object>(val: T | string | null | undefined): val 
 }
 
 function TranscriptCard({ doc, view }: { doc: TranscriptDoc; view: 'grid' | 'list' }) {
+  const { addItem, openCart, hasItem } = useCart()
+  const inCart = hasItem(doc.slug)
+  const router = useRouter()
+
   const firstSector = doc.sectors?.find(isPopulated) as Industry | undefined
   const sectorName = firstSector?.name ?? null
   const hasElite = doc.tier === 'elite'
 
   const firstGeo = doc.geography?.[0]
-  const geoLabel = firstGeo ? (GEO_LABELS[firstGeo] ?? firstGeo) : null
+  const geoPart = firstGeo ? (GEO_LABELS[firstGeo] ?? firstGeo) : null
 
   const tickers = (doc.companies ?? [])
     .filter(isPopulated)
     .map((c: Company) => c.ticker)
     .filter(Boolean) as string[]
-  const displayTickers = tickers.slice(0, 3)
+  const displayTickers = tickers.slice(0, 4)
   const extraTickers = tickers.length - displayTickers.length
 
-  const dateStr = doc.dateConducted
-    ? new Date(doc.dateConducted).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-    : null
+  const datePart = doc.dateConducted
+    ? new Date(doc.dateConducted).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+    : ''
+  const metaRight = [datePart, geoPart].filter(Boolean).join(' · ')
+
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
+    if (!inCart) {
+      addItem({ id: doc.slug, slug: doc.slug, type: 'transcript', title: doc.title, tier: doc.tier, priceUsd: doc.priceUsd, originalPriceUsd: doc.originalPriceUsd ?? undefined })
+    }
+    router.push('/checkout')
+  }
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
+    if (inCart) { openCart(); return }
+    addItem({ id: doc.slug, slug: doc.slug, type: 'transcript', title: doc.title, tier: doc.tier, priceUsd: doc.priceUsd, originalPriceUsd: doc.originalPriceUsd ?? undefined })
+    openCart()
+  }
 
   return (
     <Link
       href={`/expert-transcripts/${doc.slug}`}
       className={[
-        'group relative flex overflow-hidden rounded-[14px] border border-[var(--accent-border)] transition-all duration-200 no-underline text-[var(--ink)]',
+        'group relative flex flex-col overflow-hidden no-underline text-[var(--ink)] cursor-pointer',
+        'shadow-[0_2px_8px_-2px_rgba(0,0,0,.08),0_8px_24px_-8px_rgba(0,0,0,.08)]',
         'hover:-translate-y-[3px] hover:shadow-[0_4px_16px_-4px_rgba(0,0,0,.16),0_20px_48px_-12px_rgba(0,0,0,.18)]',
-        view === 'list' ? 'flex-row' : 'flex-col',
+        'transition-[box-shadow,transform,border-color] duration-[280ms] [transition-timing-function:cubic-bezier(.22,1,.36,1)]',
       ].join(' ')}
       style={{
         background: hasElite
           ? 'linear-gradient(180deg, rgba(16,185,129,0.06) 0%, transparent 50%), var(--surface)'
           : 'var(--surface)',
+        border: '1px solid var(--accent-border)',
+        borderRadius: 14,
+        padding: '28px 25px 24px 25px',
       }}
     >
       {hasElite && (
@@ -291,116 +340,124 @@ function TranscriptCard({ doc, view }: { doc: TranscriptDoc; view: 'grid' | 'lis
           style={{ background: 'linear-gradient(90deg, transparent, var(--accent), transparent)', opacity: 0.6 }}
         />
       )}
-      {/* Body */}
-      <div className="flex flex-col flex-1 p-[22px] pb-4">
-        {/* Sector + discount */}
-        <div className="flex items-center justify-between gap-2 mb-3">
-          {sectorName ? (
-            <span className="inline-flex items-center gap-1.5 font-mono text-[9px] tracking-[0.1em] uppercase text-[var(--accent)] px-2 py-0.5 bg-[var(--accent-tint)] border border-[var(--accent-border)] rounded-full">
-              <span className="w-1 h-1 rounded-full bg-[var(--accent)]" />
-              {sectorName}
-            </span>
-          ) : (
-            <span />
-          )}
-          {!!doc.discountPercent && (
-            <span className="font-mono text-[9px] tracking-[0.08em] font-semibold text-[#FBBF24] bg-[rgba(251,191,36,0.1)] border border-[rgba(251,191,36,0.25)] px-1.5 py-0.5 rounded">
-              {doc.discountPercent}% OFF
-            </span>
-          )}
-        </div>
 
-        {/* Title */}
-        <div className="text-[17px] font-semibold tracking-[-0.02em] leading-[1.3] text-[var(--ink)] mb-3 line-clamp-3 group-hover:text-[var(--accent)] transition-colors">
-          {doc.title}
-        </div>
-
-        {/* Meta row */}
-        <div className="flex items-center gap-3 font-mono text-[10px] text-[var(--mist)] dark:text-[#A0A0AA] mb-2.5 flex-wrap">
-          {dateStr && <span>{dateStr}</span>}
-          {geoLabel && (
-            <>
-              <span className="text-[var(--border-2)]">·</span>
-              <span className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] opacity-70" />
-                {geoLabel}
-              </span>
-            </>
-          )}
-          {!!doc.duration && (
-            <>
-              <span className="text-[var(--border-2)]">·</span>
-              <span>{doc.duration} min</span>
-            </>
-          )}
-        </div>
-
-        {/* Expert */}
-        {doc.expertFormerTitle && (
-          <div className="flex items-center gap-1.5 text-[11px] text-[var(--slate)] dark:text-[#A0A0AA] mb-3">
-            <span
-              className="rounded-full flex items-center justify-center font-mono text-[6px] text-[#064E3B] font-semibold shrink-0"
-              style={{ width: 18, height: 18, background: 'linear-gradient(135deg, var(--accent-deep), var(--accent))' }}
-            >
-              EXP
-            </span>
-            <span className="flex-1 truncate">{doc.expertFormerTitle}</span>
-            {doc.expertLevel && (
-              <span className="font-mono text-[9px] tracking-[0.08em] text-[var(--mist)] dark:text-[#A0A0AA] bg-[var(--surface-2)] px-1.5 py-0.5 rounded shrink-0 ml-auto">
-                {LEVEL_LABELS[doc.expertLevel] ?? doc.expertLevel}
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Tickers */}
-        {displayTickers.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {displayTickers.map((t) => (
-              <span key={t} className="font-mono text-[9px] tracking-[0.04em] text-[var(--slate)] dark:text-[#A0A0AA] bg-[var(--bg)] border border-[var(--border)] px-1.5 py-0.5 rounded">
-                ${t}
-              </span>
-            ))}
-            {extraTickers > 0 && (
-              <span className="font-mono text-[9px] text-[var(--mist)] dark:text-[#A0A0AA] self-center">+{extraTickers} more</span>
-            )}
-          </div>
-        )}
+      {/* ── Card header: sector + date/region ─────────────────────────── */}
+      <div className="mb-[14px] flex items-center justify-between">
+        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--accent)]">
+          {sectorName ?? ''}
+        </span>
+        <span className="font-mono text-[10px] tracking-[0.06em] text-[var(--mist)]">
+          {metaRight}
+        </span>
       </div>
 
-      {/* Footer */}
-      <div
-        className={[
-          'flex items-center justify-between gap-3 px-[22px] py-3 border-t border-[var(--border)]',
-          view === 'list' ? 'border-t-0 border-l flex-col justify-center min-w-[160px] gap-3 py-5' : '',
-        ].join(' ')}
-      >
-        <div className="flex items-center gap-[7px]">
-          <span className="font-mono text-[18px] font-medium leading-none text-[var(--accent)] tracking-[-0.02em]">
-            ${doc.priceUsd}
+      {/* ── Title ──────────────────────────────────────────────────────── */}
+      <h3 className="mb-[14px] line-clamp-3 text-[19px] font-semibold leading-[1.3] tracking-[-0.025em] text-[var(--ink)] transition-colors group-hover:text-[var(--accent)]">
+        {doc.title}
+      </h3>
+
+      {/* ── Expert designation ─────────────────────────────────────────── */}
+      {doc.expertFormerTitle && (
+        <div className="mb-[18px] flex items-center gap-[9px]">
+          <span
+            className="shrink-0 rounded-full flex items-center justify-center font-mono text-[6px] font-semibold tracking-[0.04em] text-[#064E3B]"
+            style={{ width: 22, height: 22, background: 'linear-gradient(135deg, var(--accent-deep), var(--accent))' }}
+          >
+            EXP
           </span>
-          {!!doc.originalPriceUsd && (
-            <span className="font-mono text-[12px] leading-none text-[var(--mist)] line-through">${doc.originalPriceUsd}</span>
-          )}
-          {!!doc.discountPercent && (
-            <span className="font-mono text-[9px] font-bold leading-none uppercase tracking-[0.08em] text-white bg-[var(--accent)] px-[6px] py-[2px] rounded-[3px]">
-              {doc.discountPercent}% OFF
+          <span className="flex-1 text-[12px] leading-[1.45] text-[var(--ink-2)] line-clamp-2">
+            {doc.expertFormerTitle}
+          </span>
+        </div>
+      )}
+
+      {/* ── Meta band: Level | Duration | Compliance ───────────────────── */}
+      <div className="mb-[14px] flex items-stretch">
+        {/* Expert Level */}
+        <div className="flex-1 border-r border-[var(--border)] pr-[14px]">
+          <div className="mb-[4px] font-mono text-[8px] uppercase tracking-[0.16em] text-[var(--mist)]">Expert Level</div>
+          <div className="text-[12px] font-medium text-[var(--ink)]">
+            {doc.expertLevel ? (LEVEL_LABELS[doc.expertLevel] ?? doc.expertLevel) : '—'}
+          </div>
+        </div>
+        {/* Duration */}
+        <div className="flex-1 border-r border-[var(--border)] px-[14px]">
+          <div className="mb-[4px] font-mono text-[8px] uppercase tracking-[0.16em] text-[var(--mist)]">Duration</div>
+          <div className="text-[12px] font-medium text-[var(--ink)]">
+            {doc.duration ? `${doc.duration} min` : '—'}
+          </div>
+        </div>
+        {/* Compliance */}
+        <div className="flex-1 pl-[14px]">
+          <div className="mb-[4px] font-mono text-[8px] uppercase tracking-[0.16em] text-[var(--mist)]">Compliance</div>
+          <div className="text-[12px] font-medium text-[var(--accent)]">
+            {doc.complianceBadges?.includes('mnpi-screened') ? 'MNPI Screened' : 'Verified'}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Ticker symbols ─────────────────────────────────────────────── */}
+      {displayTickers.length > 0 && (
+        <div className="mb-[20px] flex flex-wrap gap-[6px]">
+          {displayTickers.map((t) => (
+            <span key={t} className="font-mono text-[10px] tracking-[0.04em] text-[var(--ink-2)] bg-[var(--surface-2)] border border-[var(--border)] px-[9px] py-[3px] rounded-[5px]">
+              ${t}
+            </span>
+          ))}
+          {extraTickers > 0 && (
+            <span className="font-mono text-[10px] text-[var(--mist)] bg-[var(--surface-2)] border border-[var(--border)] px-[9px] py-[3px] rounded-[5px]">
+              +{extraTickers} more
             </span>
           )}
         </div>
-        <TierBadge tier={doc.tier} />
-        <button
-          onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
-          className="text-[12px] font-medium text-white bg-[var(--accent-deep)] px-3.5 py-1.5 rounded-[7px] border-none cursor-pointer transition-all duration-150 hover:bg-[var(--accent)] whitespace-nowrap shrink-0"
-        >
-          Buy →
-        </button>
+      )}
+
+      {/* ── Footer: price + tier · buttons ────────────────────────────── */}
+      <div className="mt-auto border-t border-[var(--border)] pt-[16px] flex flex-col gap-[10px]">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-[8px]">
+            <span className="font-mono text-[24px] font-medium leading-none tracking-[-0.04em] text-[var(--accent)]">
+              ${doc.priceUsd}
+            </span>
+            {!!doc.originalPriceUsd && doc.originalPriceUsd > doc.priceUsd && (
+              <span className="font-mono text-[13px] leading-none text-[var(--mist)] line-through">${doc.originalPriceUsd}</span>
+            )}
+            {!!doc.discountPercent && doc.discountPercent > 0 && (
+              <span className="font-mono text-[9px] font-bold uppercase tracking-[0.08em] leading-none text-btn-primary-fg bg-[var(--accent)] px-[7px] py-[3px] rounded-[4px]">
+                {doc.discountPercent}% OFF
+              </span>
+            )}
+          </div>
+          <TierBadge tier={doc.tier} />
+        </div>
+        <div className="flex gap-[8px]">
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            className={`flex-1 flex items-center justify-center gap-1 rounded-[8px] border py-[9px] font-sans text-[12px] font-medium tracking-[-0.01em] transition-all duration-150 ${
+              inCart
+                ? 'border-[var(--accent-border)] bg-[var(--accent-tint)] text-[var(--accent)]'
+                : 'border-[var(--border)] bg-transparent text-[var(--ink-2)] hover:border-[var(--border-2)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]'
+            }`}
+          >
+            <PlusIcon />
+            {inCart ? 'In Cart' : 'Add to Cart'}
+          </button>
+          <button
+            type="button"
+            onClick={handleBuyNow}
+            className="flex-1 flex items-center justify-center gap-1.5 rounded-[8px] bg-btn-primary py-[9px] font-sans text-[12px] font-semibold tracking-[-0.01em] text-btn-primary-fg shadow-cta transition-all duration-base ease-out hover:-translate-y-px hover:bg-btn-primary-hover"
+          >
+            <CartIcon />
+            Buy Now
+          </button>
+        </div>
       </div>
 
-      {/* Social proof */}
-      {doc.engagementCopy && view !== 'list' && (
-        <div className="flex items-center gap-1.5 bg-[var(--bg)] px-[22px] py-2 text-[11px] text-[var(--mist)] dark:text-[#A0A0AA] border-t border-[var(--border)]">
-          <span className="w-1 h-1 rounded-full bg-[var(--accent)] opacity-60" />
+      {/* ── Social proof (optional) ───────────────────────────────────── */}
+      {doc.engagementCopy && (
+        <div className="mt-[12px] flex items-center gap-1.5 text-[11px] text-[var(--mist)] border-t border-[var(--border)] pt-[10px]">
+          <span className="w-1 h-1 rounded-full bg-[var(--accent)] opacity-60 shrink-0" />
           {doc.engagementCopy}
         </div>
       )}

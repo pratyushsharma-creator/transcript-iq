@@ -227,7 +227,7 @@ export function TranscriptCard({
       )}
 
       {/* ── Meta band: Level | Duration | Compliance ───────────────────── */}
-      <div className="mb-[16px] flex items-stretch border-y border-[var(--border)] py-[12px]">
+      <div className="mb-[14px] flex items-stretch">
         {/* Expert Level */}
         <div className="flex-1 border-r border-[var(--border)] pr-[14px]">
           <div className="mb-[4px] font-mono text-[8px] uppercase tracking-[0.16em] text-[var(--mist)]">
