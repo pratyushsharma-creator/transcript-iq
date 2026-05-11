@@ -194,10 +194,11 @@ export const ExpertTranscripts: CollectionConfig = {
     },
     {
       name: 'companies',
-      type: 'relationship',
-      relationTo: 'companies',
-      hasMany: true,
-      admin: { description: 'Companies discussed in this transcript.' },
+      type: 'text',
+      label: 'Companies discussed',
+      admin: {
+        description: 'Comma-separated company names discussed in this transcript — e.g. "Apple Inc., NVIDIA Corp., Microsoft Corp." No pre-setup required; just type the names.',
+      },
     },
   ],
   hooks: {

@@ -18,7 +18,7 @@ export type TranscriptCardData = {
   discountPercent?: number | null
   geography?: string[] | null
   sectorNames?: string[]
-  tickerSymbols?: string[]
+  companyNames?: string[]
   engagementCopy?: string | null
   complianceBadges?: string[] | null
 }
@@ -257,20 +257,20 @@ export function TranscriptCard({
         </div>
       </div>
 
-      {/* ── Ticker symbols ─────────────────────────────────────────────── */}
-      {(data.tickerSymbols?.length || data.geography?.length) ? (
+      {/* ── Company names ──────────────────────────────────────────────── */}
+      {(data.companyNames?.length ?? 0) > 0 ? (
         <div className="mb-[20px] flex flex-wrap gap-[6px]">
-          {data.tickerSymbols?.slice(0, 4).map((t) => (
+          {data.companyNames!.slice(0, 4).map((name) => (
             <span
-              key={t}
+              key={name}
               className="font-mono text-[10px] tracking-[0.04em] text-[var(--ink-2)] bg-[var(--surface-2)] border border-[var(--border)] px-[9px] py-[3px] rounded-[5px]"
             >
-              ${t}
+              {name}
             </span>
           ))}
-          {(data.tickerSymbols?.length ?? 0) > 4 && (
+          {(data.companyNames!.length) > 4 && (
             <span className="font-mono text-[10px] text-[var(--mist)] bg-[var(--surface-2)] border border-[var(--border)] px-[9px] py-[3px] rounded-[5px]">
-              +{(data.tickerSymbols?.length ?? 0) - 4} more
+              +{data.companyNames!.length - 4} more
             </span>
           )}
         </div>

@@ -92,6 +92,15 @@ export default buildConfig({
     meta: {
       titleSuffix: ' — Transcript IQ Admin',
     },
+    components: {
+      views: {
+        bulkUpload: {
+          Component: '@/components/admin/BulkUploader#BulkUploaderPage',
+          path: '/bulk-import',
+          exact: true,
+        },
+      },
+    },
   },
   collections: [
     Users,

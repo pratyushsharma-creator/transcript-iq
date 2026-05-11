@@ -21,15 +21,9 @@ function namesFromRelationship(rel: unknown): string[] {
     .filter((x): x is string => Boolean(x))
 }
 
-function tickersFromRelationship(rel: unknown): string[] {
-  if (!Array.isArray(rel)) return []
-  return rel
-    .map((r) => {
-      if (!r) return null
-      if (typeof r === 'object' && 'ticker' in r) return (r as { ticker?: string }).ticker ?? null
-      return null
-    })
-    .filter((x): x is string => Boolean(x))
+function companyNamesFromText(companies: unknown): string[] {
+  if (typeof companies !== 'string' || !companies.trim()) return []
+  return companies.split(',').map((s) => s.trim()).filter(Boolean)
 }
 
 // ── FeaturedProducts ──────────────────────────────────────────────────────
@@ -104,7 +98,7 @@ export async function FeaturedProductsRenderer({ block }: { block: FeaturedProdu
         discountPercent: d.discountPercent,
         geography: d.geography,
         sectorNames: namesFromRelationship(d.sectors),
-        tickerSymbols: tickersFromRelationship(d.companies),
+        companyNames: companyNamesFromText(d.companies),
         engagementCopy: d.engagementCopy,
         complianceBadges: Array.isArray(d.complianceBadges) ? d.complianceBadges : null,
       })

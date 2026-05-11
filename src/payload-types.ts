@@ -215,7 +215,7 @@ export interface ExpertTranscript {
    */
   summary?: string | null;
   /**
-   * Shown locked on the product detail page before purchase.
+   * Shown locked on the product detail page before purchase. Separate paragraphs with a blank line.
    */
   executiveSummaryPreview?: string | null;
   topicsCovered?:
@@ -262,6 +262,14 @@ export interface ExpertTranscript {
    * Auto-synced via Stripe plugin (Phase G).
    */
   stripePriceId?: string | null;
+  /**
+   * SEO / OG title override (max 70 chars). Leave blank to auto-generate.
+   */
+  metaTitle?: string | null;
+  /**
+   * SEO / OG description override (max 160 chars). Leave blank to auto-generate from summary.
+   */
+  metaDescription?: string | null;
   complianceBadges?: ('mnpi-screened' | 'pii-redacted' | 'compliance-certified' | 'expert-anonymised')[] | null;
   /**
    * Optional social-proof line: e.g. "100+ buyers last 30 days · Popular among PE investors".
@@ -400,49 +408,108 @@ export interface Company {
   createdAt: string;
 }
 /**
+ * Each document = one earnings analysis product. Fill in all Basics first, then add Content, then publish.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "earnings-analyses".
  */
 export interface EarningsAnalysis {
   id: number;
   /**
+   * Auto-generated from title. Edit only if needed.
+   */
+  slug: string;
+  /**
+   * Pin to top of listing page.
+   */
+  featured?: boolean | null;
+  /**
+   * Earnings analyses are flat-priced. Default $99.
+   */
+  priceUsd: number;
+  /**
+   * Optional struck-through price shown beside the live price.
+   */
+  originalPriceUsd?: number | null;
+  /**
+   * Leave blank if no discount badge needed.
+   */
+  discountPercent?: number | null;
+  priceInr?: number | null;
+  /**
+   * Auto-synced via Stripe (Phase G). Do not edit manually.
+   */
+  stripePriceId?: string | null;
+  pageCount?: number | null;
+  /**
+   * SEO / OG title override (max 70 chars). Leave blank to auto-generate.
+   */
+  metaTitle?: string | null;
+  /**
+   * SEO / OG description override (max 160 chars). Leave blank to auto-generate from summary.
+   */
+  metaDescription?: string | null;
+  /**
    * e.g. "Apple — Q2 FY2026 Earnings Analysis"
    */
   title: string;
-  slug: string;
-  coverImage?: (number | null) | Media;
   /**
-   * e.g. "Apple Inc."
+   * Full legal / trading name, e.g. "Apple Inc."
    */
   companyName: string;
   /**
-   * e.g. AAPL — uppercase, no $.
+   * Uppercase, no $ — e.g. AAPL
    */
   ticker: string;
   exchange: 'NASDAQ' | 'NYSE' | 'NSE' | 'BSE' | 'LSE' | 'HKEX' | 'SGX' | 'TSE' | 'ASX';
   quarter: 'Q1' | 'Q2' | 'Q3' | 'Q4' | 'FY';
   fiscalYear: number;
   reportDate: string;
+  /**
+   * Primary sectors this company operates in.
+   */
+  sectors?: (number | Industry)[] | null;
+  /**
+   * Other companies discussed — peers, suppliers, customers.
+   */
+  companies?: (number | Company)[] | null;
+  coverImage?: (number | null) | Media;
+  /**
+   * Select every badge that applies. These appear as coloured chips on the card (green = beat, red = miss, grey = in-line). Tip: click the field to open the dropdown, then tick each applicable option.
+   */
   performanceBadges?: ('eps-beat' | 'eps-miss' | 'eps-in-line' | 'rev-beat' | 'rev-miss' | 'rev-in-line')[] | null;
   /**
-   * One-paragraph public summary shown on listings.
+   * Compliance certifications shown on the product detail page. All three are pre-selected by default — remove only if this analysis is an exception.
+   */
+  complianceBadges?: ('mnpi-screened' | 'pii-redacted' | 'compliance-certified')[] | null;
+  /**
+   * Social-proof line shown at the bottom of the listing card. e.g. "Same-day delivery · Buy-side ready"
+   */
+  engagementCopy?: string | null;
+  /**
+   * Public one-paragraph summary — shown on the listing card and in search engine results. Keep it analytical and buyer-focused.
    */
   summary?: string | null;
   /**
-   * Shown locked on the product detail page before purchase.
+   * Shown blurred/locked on the product detail page before purchase. Use headings, bullet lists, and multiple paragraphs — this is rich text so the full Lexical editor is available.
    */
-  executiveSummaryPreview?: string | null;
+  executiveSummaryPreview?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   /**
-   * e.g. iPhone Demand, Services Revenue, Apple Intelligence, India Growth.
-   */
-  keyTopics?:
-    | {
-        topic: string;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Headline metrics surfaced on the analysis (e.g. Services revenue $24.2B, +14% YoY).
+   * Headline financials shown in the mini-table on the listing card (max 3 visible). e.g. Services Revenue → $24.2B → +14% YoY
    */
   keyMetrics?:
     | {
@@ -452,10 +519,25 @@ export interface EarningsAnalysis {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Themes covered in the analysis — shown as tags on the card. e.g. iPhone Demand, Services Revenue, India Growth, AI Investment.
+   */
+  keyTopics?:
+    | {
+        topic: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * A representative Q&A shown blurred on the product page to demonstrate analysis depth. Pick something substantive — not a softball question.
+   */
   sampleQA?: {
     question?: string | null;
     answer?: string | null;
   };
+  /**
+   * Use headings, bullet lists, and callout blocks to structure the analysis. This is the buyer-facing document delivered in the PDF.
+   */
   fullAnalysis?: {
     root: {
       type: string;
@@ -471,33 +553,10 @@ export interface EarningsAnalysis {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Upload the final PDF once generated. Buyers receive a download link for this file immediately after purchase.
+   */
   pdfFile?: (number | null) | Media;
-  pageCount?: number | null;
-  /**
-   * Earnings analyses are flat-priced by default.
-   */
-  priceUsd: number;
-  /**
-   * Optional struck-through price for promo display.
-   */
-  originalPriceUsd?: number | null;
-  discountPercent?: number | null;
-  priceInr?: number | null;
-  /**
-   * Auto-synced via Stripe plugin (Phase G).
-   */
-  stripePriceId?: string | null;
-  complianceBadges?: ('mnpi-screened' | 'pii-redacted' | 'compliance-certified')[] | null;
-  /**
-   * Optional social-proof line (e.g. "Same-day delivery · Buy-side ready").
-   */
-  engagementCopy?: string | null;
-  featured?: boolean | null;
-  sectors?: (number | Industry)[] | null;
-  /**
-   * Other companies discussed (peers, suppliers, customers).
-   */
-  companies?: (number | Company)[] | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -536,6 +595,14 @@ export interface Page {
    * Page route. "home" is special — renders at /.
    */
   slug: string;
+  /**
+   * OG / SEO title override (max 70 chars). Leave blank to use the default for this page.
+   */
+  metaTitle?: string | null;
+  /**
+   * OG / SEO meta description (max 160 chars). Leave blank to use the default.
+   */
+  metaDescription?: string | null;
   layout?:
     | (
         | {
@@ -1912,7 +1979,7 @@ export interface Page {
               sortBy?: ('newest' | 'featuredFirst' | 'priceDesc') | null;
             };
             limit?: number | null;
-            layout?: ('grid-3' | 'grid-2' | 'grid-4' | 'list' | 'carousel') | null;
+            layout?: ('grid-2' | 'grid-3' | 'grid-4' | 'list' | 'carousel') | null;
             cardHover?: ('none' | 'lift' | 'moving-border' | 'spotlight') | null;
             showAllCta?: {
               enabled?: boolean | null;
@@ -3271,6 +3338,8 @@ export interface UsersSelect<T extends boolean = true> {
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  metaTitle?: T;
+  metaDescription?: T;
   layout?:
     | T
     | {
@@ -5118,6 +5187,8 @@ export interface ExpertTranscriptsSelect<T extends boolean = true> {
   discountPercent?: T;
   priceInr?: T;
   stripePriceId?: T;
+  metaTitle?: T;
+  metaDescription?: T;
   complianceBadges?: T;
   engagementCopy?: T;
   featured?: T;
@@ -5140,30 +5211,43 @@ export interface ExpertTranscriptsSelect<T extends boolean = true> {
  * via the `definition` "earnings-analyses_select".
  */
 export interface EarningsAnalysesSelect<T extends boolean = true> {
-  title?: T;
   slug?: T;
-  coverImage?: T;
+  featured?: T;
+  priceUsd?: T;
+  originalPriceUsd?: T;
+  discountPercent?: T;
+  priceInr?: T;
+  stripePriceId?: T;
+  pageCount?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  title?: T;
   companyName?: T;
   ticker?: T;
   exchange?: T;
   quarter?: T;
   fiscalYear?: T;
   reportDate?: T;
+  sectors?: T;
+  companies?: T;
+  coverImage?: T;
   performanceBadges?: T;
+  complianceBadges?: T;
+  engagementCopy?: T;
   summary?: T;
   executiveSummaryPreview?: T;
-  keyTopics?:
-    | T
-    | {
-        topic?: T;
-        id?: T;
-      };
   keyMetrics?:
     | T
     | {
         metric?: T;
         value?: T;
         yoyChange?: T;
+        id?: T;
+      };
+  keyTopics?:
+    | T
+    | {
+        topic?: T;
         id?: T;
       };
   sampleQA?:
@@ -5174,17 +5258,6 @@ export interface EarningsAnalysesSelect<T extends boolean = true> {
       };
   fullAnalysis?: T;
   pdfFile?: T;
-  pageCount?: T;
-  priceUsd?: T;
-  originalPriceUsd?: T;
-  discountPercent?: T;
-  priceInr?: T;
-  stripePriceId?: T;
-  complianceBadges?: T;
-  engagementCopy?: T;
-  featured?: T;
-  sectors?: T;
-  companies?: T;
   meta?:
     | T
     | {

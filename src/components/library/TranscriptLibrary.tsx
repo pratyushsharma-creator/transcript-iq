@@ -8,7 +8,6 @@ import { useCart } from '@/context/CartContext'
 // ── Types ─────────────────────────────────────────────────────────────────
 
 type Industry = { id: string; name: string; slug: string }
-type Company = { id: string; name: string; ticker?: string }
 
 export type TranscriptDoc = {
   id: string
@@ -25,7 +24,7 @@ export type TranscriptDoc = {
   expertLevel: 'c-suite' | 'vp' | 'director'
   sectors?: Array<Industry | string> | null
   geography?: string[] | null
-  companies?: Array<Company | string> | null
+  companies?: string | null
   complianceBadges?: string[] | null
   engagementCopy?: string | null
   featured?: boolean | null
@@ -274,6 +273,8 @@ function isPopulated<T extends object>(val: T | string | null | undefined): val 
   return typeof val === 'object' && val !== null
 }
 
+// ── TranscriptCard ────────────────────────────────────────────────────────
+
 function TranscriptCard({ doc, view }: { doc: TranscriptDoc; view: 'grid' | 'list' }) {
   const { addItem, openCart, hasItem } = useCart()
   const inCart = hasItem(doc.slug)
@@ -286,12 +287,11 @@ function TranscriptCard({ doc, view }: { doc: TranscriptDoc; view: 'grid' | 'lis
   const firstGeo = doc.geography?.[0]
   const geoPart = firstGeo ? (GEO_LABELS[firstGeo] ?? firstGeo) : null
 
-  const tickers = (doc.companies ?? [])
-    .filter(isPopulated)
-    .map((c: Company) => c.ticker)
-    .filter(Boolean) as string[]
-  const displayTickers = tickers.slice(0, 4)
-  const extraTickers = tickers.length - displayTickers.length
+  const companyNames = doc.companies
+    ? doc.companies.split(',').map((s) => s.trim()).filter(Boolean)
+    : []
+  const displayCompanies = companyNames.slice(0, 4)
+  const extraCompanies = companyNames.length - displayCompanies.length
 
   const datePart = doc.dateConducted
     ? new Date(doc.dateConducted).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -396,17 +396,17 @@ function TranscriptCard({ doc, view }: { doc: TranscriptDoc; view: 'grid' | 'lis
         </div>
       </div>
 
-      {/* ── Ticker symbols ─────────────────────────────────────────────── */}
-      {displayTickers.length > 0 && (
+      {/* ── Company names ──────────────────────────────────────────────── */}
+      {displayCompanies.length > 0 && (
         <div className="mb-[20px] flex flex-wrap gap-[6px]">
-          {displayTickers.map((t) => (
-            <span key={t} className="font-mono text-[10px] tracking-[0.04em] text-[var(--ink-2)] bg-[var(--surface-2)] border border-[var(--border)] px-[9px] py-[3px] rounded-[5px]">
-              ${t}
+          {displayCompanies.map((name) => (
+            <span key={name} className="font-mono text-[10px] tracking-[0.04em] text-[var(--ink-2)] bg-[var(--surface-2)] border border-[var(--border)] px-[9px] py-[3px] rounded-[5px]">
+              {name}
             </span>
           ))}
-          {extraTickers > 0 && (
+          {extraCompanies > 0 && (
             <span className="font-mono text-[10px] text-[var(--mist)] bg-[var(--surface-2)] border border-[var(--border)] px-[9px] py-[3px] rounded-[5px]">
-              +{extraTickers} more
+              +{extraCompanies} more
             </span>
           )}
         </div>

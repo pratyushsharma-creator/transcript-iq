@@ -140,10 +140,11 @@ export const EarningsAnalyses: CollectionConfig = {
             },
             {
               name: 'companies',
-              type: 'relationship',
-              relationTo: 'companies',
-              hasMany: true,
-              admin: { description: 'Other companies discussed — peers, suppliers, customers.' },
+              type: 'text',
+              label: 'Other companies discussed',
+              admin: {
+                description: 'Comma-separated names of other companies discussed — peers, suppliers, customers. e.g. "NVIDIA Corp., AMD Inc., Qualcomm Inc."',
+              },
             },
             { name: 'coverImage', type: 'upload', relationTo: 'media' },
           ],
