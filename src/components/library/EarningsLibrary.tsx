@@ -2,6 +2,8 @@
 
 import { useState, useCallback } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useCart } from '@/context/CartContext'
 
 // ── Types ─────────────────────────────────────────────────────────────────
 
@@ -329,6 +331,27 @@ function FilterPanel({
 // ── Card ──────────────────────────────────────────────────────────────────
 
 function EarningsCard({ doc, view }: { doc: EarningsDoc; view: 'grid' | 'list' }) {
+  const { addItem, openCart, hasItem } = useCart()
+  const inCart = hasItem(doc.slug)
+  const router = useRouter()
+
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
+    if (!inCart) {
+      addItem({ id: doc.slug, slug: doc.slug, type: 'earnings', title: doc.title, ticker: doc.ticker, quarter: doc.quarter ?? undefined, priceUsd: doc.priceUsd })
+    }
+    router.push('/checkout')
+  }
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
+    if (inCart) { openCart(); return }
+    addItem({ id: doc.slug, slug: doc.slug, type: 'earnings', title: doc.title, ticker: doc.ticker, quarter: doc.quarter ?? undefined, priceUsd: doc.priceUsd })
+    openCart()
+  }
+
   const badges = doc.performanceBadges ?? []
   const hasBeat = badges.some((b) => b.includes('beat'))
   const hasMiss = !hasBeat && badges.some((b) => b.includes('miss'))
@@ -464,12 +487,26 @@ function EarningsCard({ doc, view }: { doc: EarningsDoc; view: 'grid' | 'list' }
             <div className="font-mono text-[10px] text-[var(--mist)] dark:text-[#A0A0AA] tracking-[0.06em] mt-0.5">{reportDateStr}</div>
           )}
         </div>
-        <button
-          onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
-          className="text-[12px] font-medium text-white bg-[var(--accent-deep)] px-3.5 py-1.5 rounded-[7px] border-none cursor-pointer transition-all duration-150 hover:bg-[var(--accent)] whitespace-nowrap shrink-0"
-        >
-          Buy →
-        </button>
+        <div className="flex items-center gap-[6px]">
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            className={`inline-flex items-center gap-1 rounded-[7px] border px-2.5 py-1.5 font-mono text-[10px] font-medium transition-all duration-150 whitespace-nowrap ${
+              inCart
+                ? 'border-[var(--accent-border)] bg-[var(--accent-tint)] text-[var(--accent)]'
+                : 'border-[var(--border)] text-[var(--mist)] hover:border-[var(--accent-border)] hover:text-[var(--accent)]'
+            }`}
+          >
+            {inCart ? 'In Cart' : '+ Cart'}
+          </button>
+          <button
+            type="button"
+            onClick={handleBuyNow}
+            className="inline-flex items-center rounded-[7px] bg-btn-primary px-3 py-1.5 font-mono text-[10px] font-semibold text-btn-primary-fg shadow-cta transition-all duration-150 hover:-translate-y-px hover:bg-btn-primary-hover whitespace-nowrap"
+          >
+            Buy Now →
+          </button>
+        </div>
       </div>
 
       {/* Social proof */}
