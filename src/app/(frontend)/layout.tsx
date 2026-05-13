@@ -90,7 +90,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <CookieBanner />
             <Analytics />
             <main className="flex-1">{children}</main>
-            <Footer />
+            <Footer logoUrl={logoUrl} logoDarkUrl={logoDarkUrl} />
           </CartProvider>
         </ThemeProvider>
       </body>
