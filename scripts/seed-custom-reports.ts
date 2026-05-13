@@ -50,7 +50,7 @@ async function main() {
         formEndpoint: '',
       },
       trustStats: [
-        { value: '$599', label: 'Starting\nflat fee' },
+        { value: '$899', label: 'Starting\nflat fee' },
         { value: '135K+', label: 'Expert\nnetwork' },
         { value: '36hr', label: 'Max\nturnaround' },
         { value: '40+', label: 'Sectors\ncovered' },
@@ -70,7 +70,7 @@ async function main() {
         { label: '✓ 40+ sectors globally' },
         { label: '✓ Same institutional quality as library' },
         { label: '✓ USA · EMEA · APAC coverage' },
-        { label: '✓ $599 flat · one-time fee' },
+        { label: '✓ $899 flat · one-time fee' },
         { label: '✓ C-suite · VP · Director experts' },
       ],
       speedSeconds: 24,
@@ -259,9 +259,9 @@ async function main() {
         'One price. No platform fee. No subscription. No minimum volume. Compare to what you\'d pay on a traditional expert network.',
       leftPanel: {
         panelLabel: 'Custom Transcript — Starting price',
-        amount: '$599',
+        amount: '$899',
         period: '· one-time',
-        note: 'One flat fee per commissioned transcript. No platform fee, no annual commitment, no expert network membership required.',
+        note: 'One flat fee per commissioned transcript. No platform fee, no annual commitment, no expert network membership required. Volume pricing from $699/transcript for 5+ commissions.',
         features: [
           { text: 'Full verbatim transcript (PDF)' },
           { text: 'Executive summary & compliance cert' },
@@ -349,7 +349,7 @@ async function main() {
           },
         },
         {
-          question: 'How is the $599 price structured — are there additional fees?',
+          question: 'How is the $899 price structured — are there additional fees?',
           answer: {
             root: {
               type: 'root',
@@ -357,7 +357,7 @@ async function main() {
                 {
                   type: 'paragraph',
                   children: [
-                    { type: 'text', text: '$599 is the all-in starting price for a standard custom transcript. There are no platform fees, no expert network membership fees, no subscription, and no per-hour charges on top. The price includes: expert sourcing, call moderation, verbatim transcription, MNPI screening, PII redaction, executive summary, and compliance certification. Complex briefs requiring C-suite experts or very specific geographies may be priced higher — we\'ll confirm before you commit.' },
+                    { type: 'text', text: '$899 is the all-in starting price for a standard custom transcript. There are no platform fees, no expert network membership fees, no subscription, and no per-hour charges on top. The price includes: expert sourcing, call moderation, verbatim transcription, MNPI screening, PII redaction, executive summary, and compliance certification. Complex briefs requiring C-suite experts or very specific geographies may be priced higher — we\'ll confirm before you commit. Volume pricing from $699/transcript is available for commissions of 5 or more.' },
                   ],
                   version: 1,
                 },
@@ -441,7 +441,7 @@ async function main() {
                 {
                   type: 'paragraph',
                   children: [
-                    { type: 'text', text: 'Yes. Multi-transcript commissions on the same thesis are common — typically used to triangulate across 2–3 experts from different vantage points (e.g. supply side vs. demand side, or different geographies). Volume pricing is available for 3+ commissions. Mention this in your brief and we\'ll include pricing options in our response.' },
+                    { type: 'text', text: 'Yes. Multi-transcript commissions on the same thesis are common — typically used to triangulate across 2–3 experts from different vantage points (e.g. supply side vs. demand side, or different geographies). Volume pricing from $699/transcript is available for 5 or more custom commissions. Mention this in your brief and we\'ll include pricing options in our response.' },
                   ],
                   version: 1,
                 },
@@ -469,7 +469,7 @@ async function main() {
         { label: 'Submit Research Brief', url: '#brief-form', variant: 'primary' },
         { label: 'Browse library instead', url: '/expert-transcripts', variant: 'secondary' },
       ],
-      complianceNote: '$599 flat · No subscription · MNPI screened · 36hr turnaround',
+      complianceNote: '$899 flat · No subscription · MNPI screened · 36hr turnaround',
       background: 'glow',
       spacing: 'spacious',
     },

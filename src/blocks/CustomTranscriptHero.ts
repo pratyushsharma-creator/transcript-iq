@@ -32,7 +32,7 @@ export const CustomTranscriptHero: Block = {
       type: 'group',
       label: 'Price strip',
       fields: [
-        { name: 'amount', type: 'text', defaultValue: '$599', required: true },
+        { name: 'amount', type: 'text', defaultValue: '$899', required: true },
         { name: 'label', type: 'text', defaultValue: 'Starting price · one-time flat fee' },
         { name: 'note', type: 'text', defaultValue: 'No subscription · No platform fee · No minimum volume' },
       ],
