@@ -20,6 +20,13 @@ export const FeatureSpotlight: Block = {
         // ── Pricing card (right panel) ──────────────────────────────────────
         {
           name: 'pricingCard',
+          // dbName shortens the Drizzle-generated identifiers.
+          // Without this, the versions table name would be:
+          //   _pages_v_blocks_feature_spotlight_spotlight_pricing_card_features
+          // = 65 chars — over PostgreSQL's 63-char identifier limit.
+          // With dbName: 'pc' it becomes:
+          //   _pages_v_blocks_feature_spotlight_spotlight_pc_features = 55 chars ✓
+          dbName: 'pc',
           type: 'group',
           label: 'Pricing card (right panel)',
           admin: {
