@@ -428,48 +428,63 @@ export function FeatureSpotlightRenderer({ block }: { block: FeatureSpotlightBlo
           </div>
 
           {/* RIGHT — visual: pricing card with checkmark feature list */}
-          <div className="relative flex flex-col justify-center border-t border-[var(--border)] bg-[var(--surface)] p-8 lg:border-l lg:border-t-0 lg:p-10">
-            <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--accent)]">
-              Custom Transcript
-            </span>
-            <div className="mt-3 flex items-baseline gap-2">
-              <span className="font-mono text-[40px] sm:text-[56px] leading-none font-semibold tabular-nums text-[var(--ink)]">$599</span>
-              <span className="text-[13px] text-[var(--mist)]">per transcript · one-time fee</span>
-            </div>
-            <ul className="mt-6 space-y-2.5">
-              {[
-                '1 expert call with vetted industry specialist',
-                'Custom discussion guide built for your topic',
-                'MNPI-screened & PII-redacted transcript',
-                'Full editorial review and formatting',
-                'Tagged with companies, keywords, metadata',
-                'Delivered in as low as 36 hours',
-              ].map((line, i) => (
-                <motion.li
-                  key={i}
-                  initial={{ opacity: 0, x: -4 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex items-start gap-2.5 text-[13px] text-[var(--ink-2)]"
-                >
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 14 14"
-                    className="mt-0.5 shrink-0 text-[var(--accent)]"
-                  >
-                    <circle cx="7" cy="7" r="6" fill="var(--accent-tint)" stroke="currentColor" strokeWidth="1" />
-                    <path d="M4.5 7L6 8.5L9.5 5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                  {line}
-                </motion.li>
-              ))}
-            </ul>
-            <p className="mt-5 border-t border-[var(--border)] pt-4 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--mist)]">
-              Volume pricing from $499/transcript for 5+ commissions
-            </p>
-          </div>
+          {(() => {
+            // Pull from Payload pricingCard fields; fall back to defaults for legacy documents
+            const pc = (block.spotlight as { pricingCard?: Record<string, unknown> }).pricingCard
+            const eyebrow   = (pc?.eyebrow   as string | undefined) ?? 'Custom Transcript'
+            const price     = (pc?.price     as string | undefined) ?? '$899'
+            const priceLabel = (pc?.priceLabel as string | undefined) ?? 'per transcript · one-time fee'
+            const volumeNote = (pc?.volumeNote as string | undefined) ?? 'Volume pricing from $699/transcript for 5+ commissions'
+            const defaultBullets = [
+              '1 expert call with vetted industry specialist',
+              'Custom discussion guide built for your topic',
+              'MNPI-screened & PII-redacted transcript',
+              'Full editorial review and formatting',
+              'Tagged with companies, keywords, metadata',
+              'Delivered in as low as 36 hours',
+            ]
+            const bullets: string[] =
+              Array.isArray(pc?.features) && (pc.features as {line:string}[]).length > 0
+                ? (pc.features as {line:string}[]).map((f) => f.line)
+                : defaultBullets
+            return (
+              <div className="relative flex flex-col justify-center border-t border-[var(--border)] bg-[var(--surface)] p-8 lg:border-l lg:border-t-0 lg:p-10">
+                <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--accent)]">
+                  {eyebrow}
+                </span>
+                <div className="mt-3 flex items-baseline gap-2">
+                  <span className="font-mono text-[40px] sm:text-[56px] leading-none font-semibold tabular-nums text-[var(--ink)]">{price}</span>
+                  <span className="text-[13px] text-[var(--mist)]">{priceLabel}</span>
+                </div>
+                <ul className="mt-6 space-y-2.5">
+                  {bullets.map((line, i) => (
+                    <motion.li
+                      key={i}
+                      initial={{ opacity: 0, x: -4 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
+                      className="flex items-start gap-2.5 text-[13px] text-[var(--ink-2)]"
+                    >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 14 14"
+                        className="mt-0.5 shrink-0 text-[var(--accent)]"
+                      >
+                        <circle cx="7" cy="7" r="6" fill="var(--accent-tint)" stroke="currentColor" strokeWidth="1" />
+                        <path d="M4.5 7L6 8.5L9.5 5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      {line}
+                    </motion.li>
+                  ))}
+                </ul>
+                <p className="mt-5 border-t border-[var(--border)] pt-4 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--mist)]">
+                  {volumeNote}
+                </p>
+              </div>
+            )
+          })()}
         </motion.div>
       )}
       {block.supporting && block.supporting.length > 0 && (
