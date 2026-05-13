@@ -18,8 +18,12 @@ export const FeatureSpotlight: Block = {
         { name: 'image', type: 'upload', relationTo: 'media' },
         ctaArrayField,
         // ── Pricing card (right panel) ──────────────────────────────────────
+        // Field name is 'pc' (not 'pricingCard') to keep Drizzle table names
+        // within PostgreSQL's 63-char identifier limit.
+        // 'pricingCard' → spotlight_pricing_card_features table = 65 chars (rejected)
+        // 'pc'          → spotlight_pc_features table           = 55 chars ✓
         {
-          name: 'pricingCard',
+          name: 'pc',
           type: 'group',
           label: 'Pricing card (right panel)',
           admin: {
@@ -47,14 +51,6 @@ export const FeatureSpotlight: Block = {
             },
             {
               name: 'features',
-              // dbName on the ARRAY controls the table-name suffix Drizzle generates.
-              // Without this the versions table name is:
-              //   _pages_v_blocks_feature_spotlight_spotlight_pricing_card_features
-              //   = 65 chars — PostgreSQL rejects names > 63 chars.
-              // 'feats' shortens it to:
-              //   _pages_v_blocks_feature_spotlight_spotlight_pricing_card_feats
-              //   = 62 chars ✓
-              dbName: 'feats',
               type: 'array',
               label: 'Feature bullets',
               admin: { description: 'Checkmark list shown under the price.' },

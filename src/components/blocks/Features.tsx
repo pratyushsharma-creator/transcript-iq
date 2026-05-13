@@ -430,7 +430,8 @@ export function FeatureSpotlightRenderer({ block }: { block: FeatureSpotlightBlo
           {/* RIGHT — visual: pricing card with checkmark feature list */}
           {(() => {
             // Pull from Payload pricingCard fields; fall back to defaults for legacy documents
-            const pc = (block.spotlight as { pricingCard?: Record<string, unknown> }).pricingCard
+            // Field was named 'pc' (not 'pricingCard') to stay under PG's 63-char identifier limit
+            const pc = (block.spotlight as { pc?: Record<string, unknown> }).pc
             const eyebrow   = (pc?.eyebrow   as string | undefined) ?? 'Custom Transcript'
             const price     = (pc?.price     as string | undefined) ?? '$899'
             const priceLabel = (pc?.priceLabel as string | undefined) ?? 'per transcript · one-time fee'
