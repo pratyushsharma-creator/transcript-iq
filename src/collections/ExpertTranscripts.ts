@@ -12,6 +12,9 @@ export const ExpertTranscripts: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'expertFormerTitle', 'tier', 'priceUsd', 'dateConducted', 'featured', '_status'],
     group: 'Catalog',
+    components: {
+      beforeList: ['@/components/admin/BulkImportBanner#BulkImportBanner'],
+    },
   },
   versions: { drafts: true },
   access: { read: publishedOnly, create: adminOrEditor, update: adminOrEditor },

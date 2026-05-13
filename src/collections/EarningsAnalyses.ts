@@ -13,6 +13,9 @@ export const EarningsAnalyses: CollectionConfig = {
     defaultColumns: ['title', 'ticker', 'quarter', 'fiscalYear', 'priceUsd', 'featured', '_status'],
     group: 'Catalog',
     description: 'Each document = one earnings analysis product. Fill in all Basics first, then add Content, then publish.',
+    components: {
+      beforeList: ['@/components/admin/BulkImportBanner#BulkImportBanner'],
+    },
   },
   versions: { drafts: true },
   access: { read: publishedOnly, create: adminOrEditor, update: adminOrEditor },
