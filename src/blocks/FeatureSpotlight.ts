@@ -50,20 +50,6 @@ export const FeatureSpotlight: Block = {
               admin: { description: 'Subtext next to the price (e.g. "per transcript · one-time fee").' },
             },
             {
-              name: 'features',
-              type: 'array',
-              label: 'Feature bullets',
-              admin: { description: 'Checkmark list shown under the price.' },
-              fields: [
-                {
-                  name: 'line',
-                  type: 'text',
-                  required: true,
-                  admin: { placeholder: 'e.g. "MNPI-screened & PII-redacted transcript"' },
-                },
-              ],
-            },
-            {
               name: 'volumeNote',
               type: 'text',
               defaultValue: 'Volume pricing from $699/transcript for 5+ commissions',
