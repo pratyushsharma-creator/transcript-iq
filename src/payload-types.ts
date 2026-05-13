@@ -281,7 +281,7 @@ export interface ExpertTranscript {
   /**
    * Companies discussed in this transcript.
    */
-  companies?: (number | Company)[] | null;
+  companies?: string | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -472,7 +472,7 @@ export interface EarningsAnalysis {
   /**
    * Other companies discussed — peers, suppliers, customers.
    */
-  companies?: (number | Company)[] | null;
+  companies?: string | null;
   coverImage?: (number | null) | Media;
   /**
    * Select every badge that applies. These appear as coloured chips on the card (green = beat, red = miss, grey = in-line). Tip: click the field to open the dropdown, then tick each applicable option.
