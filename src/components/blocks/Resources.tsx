@@ -54,8 +54,7 @@ function HeroHeading({ raw }: { raw: string }) {
             <span
               key={i}
               style={{
-                color: 'transparent',
-                WebkitTextStroke: '1.5px rgba(255,255,255,0.2)',
+                color: 'var(--ink-2)',
                 display: 'block',
               }}
             >
@@ -149,10 +148,10 @@ export function ResourcesHeroRenderer({ block }: { block: ResourcesHeroBlock }) 
             style={{
               display: 'flex',
               gap: 0,
-              border: '1px solid rgba(255,255,255,0.07)',
+              border: '1px solid var(--border)',
               borderRadius: 14,
               overflow: 'hidden',
-              background: 'rgba(255,255,255,0.02)',
+              background: 'var(--surface)',
             }}
           >
             {stats.map((s, i) => (
@@ -161,7 +160,7 @@ export function ResourcesHeroRenderer({ block }: { block: ResourcesHeroBlock }) 
                 style={{
                   flex: 1,
                   padding: '18px 20px',
-                  borderRight: i < stats.length - 1 ? '1px solid rgba(255,255,255,0.07)' : 'none',
+                  borderRight: i < stats.length - 1 ? '1px solid var(--border)' : 'none',
                 }}
               >
                 <div
@@ -183,7 +182,7 @@ export function ResourcesHeroRenderer({ block }: { block: ResourcesHeroBlock }) 
                     fontSize: 9,
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',
-                    color: 'var(--ink-3)',
+                    color: 'var(--mist)',
                   }}
                 >
                   {s.label}

@@ -76,8 +76,7 @@ function HeroHeading({ raw }: { raw: string }) {
             <span
               key={i}
               style={{
-                color: 'transparent',
-                WebkitTextStroke: '1.5px rgba(255,255,255,0.2)',
+                color: 'var(--ink-2)',
                 display: 'block',
               }}
             >
@@ -268,7 +267,7 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
               alignItems: 'center',
               gap: 16,
               padding: '16px 0',
-              borderTop: '1px solid rgba(255,255,255,0.07)',
+              borderTop: '1px solid var(--border)',
             }}
           >
             {/* Avatar stack */}
@@ -310,14 +309,11 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
       <div>
         <div
           style={{
-            background: 'rgba(255,255,255,0.035)',
-            border: '1px solid rgba(255,255,255,0.13)',
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
             borderRadius: 20,
             overflow: 'hidden',
-            backdropFilter: 'blur(28px)',
-            WebkitBackdropFilter: 'blur(28px)',
-            boxShadow:
-              '0 0 0 1px rgba(52,211,153,0.05), 0 32px 96px -24px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.07)',
+            boxShadow: '0 0 0 1px rgba(52,211,153,0.05), 0 16px 48px -12px rgba(0,0,0,0.18)',
             position: 'relative',
           }}
         >
@@ -339,8 +335,8 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
           <div
             style={{
               padding: '16px 24px',
-              borderBottom: '1px solid rgba(255,255,255,0.07)',
-              background: 'rgba(0,0,0,0.25)',
+              borderBottom: '1px solid var(--border)',
+              background: 'var(--surface-2)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
@@ -391,8 +387,8 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
               {/* Transcript preview */}
               <div
                 style={{
-                  background: 'rgba(0,0,0,0.35)',
-                  border: '1px solid rgba(255,255,255,0.07)',
+                  background: 'var(--surface-2)',
+                  border: '1px solid var(--border)',
                   borderRadius: 12,
                   overflow: 'hidden',
                   marginBottom: 22,
@@ -401,7 +397,7 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
                 <div
                   style={{
                     padding: '10px 16px',
-                    borderBottom: '1px solid rgba(255,255,255,0.07)',
+                    borderBottom: '1px solid var(--border)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -434,8 +430,8 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
                       fontFamily: 'var(--font-mono)',
                       fontSize: 9,
                       letterSpacing: '0.1em',
-                      color: 'rgba(68,68,64,1)',
-                      background: 'var(--s2)',
+                      color: 'var(--mist)',
+                      background: 'var(--surface-2)',
                       padding: '2px 7px',
                       borderRadius: 3,
                     }}
@@ -460,7 +456,7 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
                       fontFamily: 'var(--font-mono)',
                       fontSize: 9,
                       letterSpacing: '0.08em',
-                      color: 'var(--ink-3)',
+                      color: 'var(--mist)',
                       marginBottom: 10,
                     }}
                   >
@@ -473,9 +469,9 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
                         style={{
                           fontFamily: 'var(--font-mono)',
                           fontSize: 9,
-                          color: 'var(--ink-3)',
-                          background: 'var(--s3)',
-                          border: '1px solid rgba(255,255,255,0.07)',
+                          color: 'var(--mist)',
+                          background: 'var(--bg)',
+                          border: '1px solid var(--border)',
                           padding: '2px 7px',
                           borderRadius: 3,
                         }}
@@ -487,13 +483,13 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
                   <div
                     style={{
                       fontSize: 11,
-                      color: 'rgba(68,68,64,1)',
+                      color: 'var(--mist)',
                       paddingTop: 10,
-                      borderTop: '1px solid rgba(255,255,255,0.07)',
+                      borderTop: '1px solid var(--border)',
                       lineHeight: 1.6,
                     }}
                   >
-                    Full transcript unlocked on signup. Preview: <span style={{ background: 'var(--s3)', color: 'transparent', borderRadius: 2, padding: '0 2px' }}>████████████</span> infrastructure economics in ASEAN <span style={{ background: 'var(--s3)', color: 'transparent', borderRadius: 2, padding: '0 2px' }}>██████</span> hyperscaler demand…
+                    Full transcript unlocked on signup. Preview: <span style={{ background: 'var(--border)', color: 'transparent', borderRadius: 2, padding: '0 2px' }}>████████████</span> infrastructure economics in ASEAN <span style={{ background: 'var(--border)', color: 'transparent', borderRadius: 2, padding: '0 2px' }}>██████</span> hyperscaler demand…
                   </div>
                 </div>
               </div>
@@ -505,7 +501,7 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
                   fontSize: 9,
                   letterSpacing: '0.14em',
                   textTransform: 'uppercase',
-                  color: 'var(--ink-3)',
+                  color: 'var(--mist)',
                   marginBottom: 10,
                   display: 'block',
                 }}
@@ -529,11 +525,11 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
                       fontSize: 10,
                       letterSpacing: '0.06em',
                       textTransform: 'uppercase',
-                      color: activeSector === i ? 'var(--accent)' : 'var(--ink-3)',
-                      background: activeSector === i ? 'rgba(52,211,153,0.08)' : 'rgba(0,0,0,0.3)',
+                      color: activeSector === i ? 'var(--accent)' : 'var(--ink-2)',
+                      background: activeSector === i ? 'var(--accent-tint)' : 'var(--surface-2)',
                       border: activeSector === i
-                        ? '1px solid rgba(52,211,153,0.26)'
-                        : '1px solid rgba(255,255,255,0.07)',
+                        ? '1px solid var(--accent-border)'
+                        : '1px solid var(--border)',
                       padding: '9px 12px',
                       borderRadius: 8,
                       cursor: 'pointer',
@@ -554,7 +550,7 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
                     fontSize: 9,
                     letterSpacing: '0.14em',
                     textTransform: 'uppercase',
-                    color: 'var(--ink-3)',
+                    color: 'var(--mist)',
                     marginBottom: 7,
                     display: 'block',
                   }}
@@ -569,8 +565,8 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
                   placeholder="you@fund.com"
                   style={{
                     width: '100%',
-                    background: 'rgba(0,0,0,0.32)',
-                    border: emailError ? '1px solid rgba(239,68,68,0.6)' : '1px solid rgba(255,255,255,0.07)',
+                    background: 'var(--surface-2)',
+                    border: emailError ? '1px solid rgba(239,68,68,0.6)' : '1px solid var(--border)',
                     borderRadius: 9,
                     padding: '11px 14px',
                     fontFamily: 'var(--font-sans)',
@@ -624,7 +620,7 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
                   fontSize: 9,
                   letterSpacing: '0.08em',
                   textTransform: 'uppercase',
-                  color: 'rgba(68,68,64,1)',
+                  color: 'var(--mist)',
                   textAlign: 'center',
                 }}
               >
@@ -680,13 +676,13 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
           {complianceItems.length > 0 && (
             <div
               style={{
-                borderTop: '1px solid rgba(255,255,255,0.07)',
+                borderTop: '1px solid var(--border)',
                 padding: '10px 24px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: 16,
-                background: 'rgba(0,0,0,0.15)',
+                background: 'var(--surface-2)',
                 flexWrap: 'wrap',
               }}
             >
@@ -698,7 +694,7 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
                     fontSize: 9,
                     letterSpacing: '0.1em',
                     textTransform: 'uppercase',
-                    color: 'rgba(68,68,64,1)',
+                    color: 'var(--mist)',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 5,
@@ -732,7 +728,7 @@ export function FreeTranscriptFeaturesRenderer({
     <section
       style={{
         padding: '96px 0',
-        borderTop: '1px solid rgba(255,255,255,0.07)',
+        borderTop: '1px solid var(--border)',
         position: 'relative',
         zIndex: 1,
       }}
@@ -749,18 +745,17 @@ export function FreeTranscriptFeaturesRenderer({
           {/* Left: document mockup */}
           <div
             style={{
-              background: 'rgba(255,255,255,0.035)',
-              border: '1px solid rgba(255,255,255,0.13)',
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
               borderRadius: 16,
               overflow: 'hidden',
-              backdropFilter: 'blur(20px)',
             }}
           >
             <div
               style={{
                 padding: '12px 18px',
-                borderBottom: '1px solid rgba(255,255,255,0.07)',
-                background: 'rgba(0,0,0,0.3)',
+                borderBottom: '1px solid var(--border)',
+                background: 'var(--surface-2)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 8,
@@ -811,8 +806,8 @@ export function FreeTranscriptFeaturesRenderer({
                     alignItems: 'center',
                     gap: 8,
                     padding: '10px 12px',
-                    background: 'rgba(0,0,0,0.3)',
-                    border: '1px solid rgba(255,255,255,0.07)',
+                    background: 'var(--surface-2)',
+                    border: '1px solid var(--border)',
                     borderRadius: 8,
                     marginTop: 8,
                   }}
@@ -822,13 +817,13 @@ export function FreeTranscriptFeaturesRenderer({
                     height={11}
                     viewBox="0 0 14 14"
                     fill="none"
-                    stroke="rgba(68,68,64,1)"
+                    stroke="var(--mist)"
                     strokeWidth={1.3}
                   >
                     <rect x="2" y="6" width="10" height="7" rx="1.5" />
                     <path d="M4.5 6V4.5a2.5 2.5 0 1 1 5 0V6" />
                   </svg>
-                  <span style={{ fontSize: 11, color: 'rgba(68,68,64,1)' }}>
+                  <span style={{ fontSize: 11, color: 'var(--mist)' }}>
                     Free transcript unlocks the full content
                   </span>
                 </div>
@@ -971,7 +966,7 @@ function Line({ accent, width }: { accent?: boolean; width?: string }) {
     <div
       style={{
         height: 8,
-        background: accent ? 'rgba(52,211,153,0.2)' : 'rgba(37,37,40,1)',
+        background: accent ? 'rgba(52,211,153,0.2)' : 'var(--border)',
         borderRadius: 4,
         marginBottom: 5,
         width: width ?? '100%',

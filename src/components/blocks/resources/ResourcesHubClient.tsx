@@ -65,12 +65,12 @@ export function ResourcesHubClient({
       {/* ── Category filter bar ── */}
       <div
         style={{
-          borderTop: '1px solid rgba(255,255,255,0.07)',
-          borderBottom: '1px solid rgba(255,255,255,0.07)',
+          borderTop: '1px solid var(--border)',
+          borderBottom: '1px solid var(--border)',
           position: 'sticky',
           top: 64,
           zIndex: 90,
-          background: 'rgba(9,9,11,0.9)',
+          background: 'var(--surface)',
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
         }}
@@ -96,7 +96,7 @@ export function ResourcesHubClient({
                 fontSize: 10,
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
-                color: activeCategory === cat.value ? 'var(--accent)' : 'var(--ink-3)',
+                color: activeCategory === cat.value ? 'var(--accent)' : 'var(--mist)',
                 padding: '14px 20px',
                 border: 'none',
                 borderBottom: activeCategory === cat.value
@@ -133,7 +133,7 @@ export function ResourcesHubClient({
                 fontSize: 9,
                 letterSpacing: '0.16em',
                 textTransform: 'uppercase',
-                color: 'var(--ink-3)',
+                color: 'var(--mist)',
                 marginBottom: 20,
                 display: 'block',
               }}
@@ -145,10 +145,10 @@ export function ResourcesHubClient({
               style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
-                border: '1px solid rgba(255,255,255,0.13)',
+                border: '1px solid var(--border)',
                 borderRadius: 18,
                 overflow: 'hidden',
-                background: 'var(--s1)',
+                background: 'var(--surface-2)',
                 transition: 'all 0.2s',
                 cursor: 'pointer',
                 textDecoration: 'none',
@@ -158,12 +158,12 @@ export function ResourcesHubClient({
               {/* Visual left */}
               <div
                 style={{
-                  background: 'linear-gradient(145deg,rgba(52,211,153,0.12) 0%,var(--s2) 60%)',
+                  background: 'linear-gradient(145deg,rgba(52,211,153,0.12) 0%,var(--surface) 60%)',
                   padding: 40,
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  borderRight: '1px solid rgba(255,255,255,0.07)',
+                  borderRight: '1px solid var(--border)',
                   position: 'relative',
                   overflow: 'hidden',
                 }}
@@ -192,8 +192,8 @@ export function ResourcesHubClient({
                 {/* Doc mockup */}
                 <div
                   style={{
-                    background: 'rgba(0,0,0,0.3)',
-                    border: '1px solid rgba(255,255,255,0.07)',
+                    background: 'var(--surface-2)',
+                    border: '1px solid var(--border)',
                     borderRadius: 10,
                     padding: 16,
                     marginTop: 24,
@@ -227,7 +227,7 @@ export function ResourcesHubClient({
                       key={i}
                       style={{
                         height: 7,
-                        background: i === 0 ? 'rgba(52,211,153,0.18)' : 'rgba(37,37,40,1)',
+                        background: i === 0 ? 'rgba(52,211,153,0.18)' : 'var(--border)',
                         borderRadius: 3,
                         marginBottom: 5,
                         width: `${w}%`,
@@ -320,7 +320,7 @@ export function ResourcesHubClient({
                       fontFamily: 'var(--font-mono)',
                       fontSize: 10,
                       letterSpacing: '0.08em',
-                      color: 'var(--ink-3)',
+                      color: 'var(--mist)',
                       marginLeft: 'auto',
                     }}
                   >
@@ -358,7 +358,7 @@ export function ResourcesHubClient({
               fontSize: 9,
               letterSpacing: '0.16em',
               textTransform: 'uppercase',
-              color: 'var(--ink-3)',
+              color: 'var(--mist)',
               marginBottom: 20,
               display: 'block',
             }}
@@ -374,8 +374,8 @@ export function ResourcesHubClient({
             {/* Placeholder "coming soon" card */}
             <div
               style={{
-                background: 'var(--s1)',
-                border: '1px dashed rgba(255,255,255,0.07)',
+                background: 'var(--surface-2)',
+                border: '1px dashed var(--border)',
                 borderRadius: 16,
                 overflow: 'hidden',
                 display: 'flex',
@@ -420,7 +420,7 @@ export function ResourcesHubClient({
                     <path d="M9 3v12M3 9h12" />
                   </svg>
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--ink-3)' }}>
+                <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--mist)' }}>
                   More articles coming soon
                 </div>
                 <div
@@ -429,7 +429,7 @@ export function ResourcesHubClient({
                     fontSize: 10,
                     letterSpacing: '0.08em',
                     textTransform: 'uppercase',
-                    color: 'rgba(68,68,64,1)',
+                    color: 'var(--mist)',
                   }}
                 >
                   Subscribe for updates →
@@ -442,8 +442,8 @@ export function ResourcesHubClient({
         {/* Newsletter */}
         <div
           style={{
-            borderTop: '1px solid rgba(255,255,255,0.07)',
-            background: 'var(--s1)',
+            borderTop: '1px solid var(--border)',
+            background: 'var(--surface-2)',
             marginTop: 64,
             borderRadius: 18,
             overflow: 'hidden',
@@ -513,7 +513,7 @@ export function ResourcesHubClient({
                     fontSize: 9,
                     letterSpacing: '0.14em',
                     textTransform: 'uppercase',
-                    color: 'var(--ink-3)',
+                    color: 'var(--mist)',
                     marginBottom: 8,
                   }}
                 >
@@ -553,8 +553,8 @@ export function ResourcesHubClient({
                         placeholder="you@fund.com"
                         style={{
                           flex: 1,
-                          background: 'rgba(0,0,0,0.32)',
-                          border: '1px solid rgba(255,255,255,0.07)',
+                          background: 'var(--surface)',
+                          border: '1px solid var(--border)',
                           borderRadius: 9,
                           padding: '12px 14px',
                           fontFamily: 'var(--font-sans)',
@@ -566,7 +566,7 @@ export function ResourcesHubClient({
                           e.currentTarget.style.borderColor = 'rgba(52,211,153,0.42)'
                         }}
                         onBlur={(e) => {
-                          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'
+                          e.currentTarget.style.borderColor = 'var(--border)'
                         }}
                       />
                       <button
@@ -597,7 +597,7 @@ export function ResourcesHubClient({
                     fontSize: 9,
                     letterSpacing: '0.08em',
                     textTransform: 'uppercase',
-                    color: 'rgba(68,68,64,1)',
+                    color: 'var(--mist)',
                   }}
                 >
                   No spam · Unsubscribe any time · Sent from the Nextyn research desk
@@ -621,8 +621,8 @@ function ArticleCard({ post }: { post: PostData }) {
     <Link
       href={`/resources/${post.slug}`}
       style={{
-        background: 'var(--s1)',
-        border: '1px solid rgba(255,255,255,0.07)',
+        background: 'var(--surface-2)',
+        border: '1px solid var(--border)',
         borderRadius: 16,
         overflow: 'hidden',
         transition: 'all 0.2s',
@@ -661,7 +661,7 @@ function ArticleCard({ post }: { post: PostData }) {
               fontFamily: 'var(--font-mono)',
               fontSize: 9,
               letterSpacing: '0.08em',
-              color: 'var(--ink-3)',
+              color: 'var(--mist)',
             }}
           >
             {post.readTime} min read
@@ -695,7 +695,7 @@ function ArticleCard({ post }: { post: PostData }) {
       <div
         style={{
           padding: '14px 22px',
-          borderTop: '1px solid rgba(255,255,255,0.07)',
+          borderTop: '1px solid var(--border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',

@@ -449,7 +449,7 @@ export function CustomTranscriptHeroRenderer({ block }: { block: CustomTranscrip
         }}
       />
 
-      <div className="relative z-10 mx-auto max-w-[1200px] px-12 pb-20">
+      <div className="relative z-10 mx-auto max-w-[1200px] px-4 sm:px-6 md:px-10 lg:px-12 pb-20">
         <div className="grid items-start gap-16 lg:grid-cols-[1fr_440px]">
 
           {/* ── LEFT: Content ──────────────────────────────────────────────── */}
@@ -572,7 +572,7 @@ export function CustomTranscriptHeroRenderer({ block }: { block: CustomTranscrip
                         'inline-flex items-center gap-2.5 rounded-[11px] px-[26px] py-[13px] text-[14px] font-semibold tracking-[-0.01em] transition-all duration-200',
                         isPrimary
                           ? 'bg-[var(--accent)] text-[#050A07] shadow-[0_0_0_1px_var(--accent-border),0_8px_28px_-8px_var(--accent-glow)] hover:-translate-y-px hover:bg-[var(--accent-deep)]'
-                          : 'border border-[var(--border)] bg-transparent text-[var(--ink-2)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]',
+                          : 'border border-[var(--border)] bg-[var(--surface-2)] text-[var(--ink-2)] hover:border-[var(--border-2)] hover:bg-[var(--surface)] hover:text-[var(--ink)]',
                       ].join(' ')}
                     >
                       {isPrimary && <ArrowIcon />}
@@ -1257,15 +1257,12 @@ export function PricingComparisonRenderer({ block }: { block: PricingComparisonB
               </a>
             )}
             {cp.browseLinkLabel && cp.browseLinkUrl && (
-              <p className="text-[12px] text-[var(--mist)]">
-                Or{' '}
-                <a
-                  href={cp.browseLinkUrl}
-                  className="border-b border-[var(--accent-border)] text-[var(--accent)] transition-opacity hover:opacity-80"
-                >
-                  {cp.browseLinkLabel}
-                </a>
-              </p>
+              <a
+                href={cp.browseLinkUrl}
+                className="inline-flex items-center gap-2 rounded-[11px] border border-[var(--border)] bg-[var(--surface-2)] px-[22px] py-[11px] text-[13px] font-medium tracking-[-0.01em] text-[var(--ink-2)] transition-all duration-200 hover:border-[var(--border-2)] hover:bg-[var(--surface)] hover:text-[var(--ink)]"
+              >
+                {cp.browseLinkLabel}
+              </a>
             )}
           </div>
         </div>

@@ -142,14 +142,24 @@ export function CartDrawer() {
                 Browse transcripts and add items to get started.
               </p>
             </div>
-            <Link
-              href="/expert-transcripts"
-              onClick={closeCart}
-              className="inline-flex items-center gap-2 rounded-lg bg-btn-primary px-5 py-2.5 text-[13px] font-medium text-btn-primary-fg shadow-cta transition-all duration-base ease-out hover:-translate-y-px hover:bg-btn-primary-hover"
-            >
-              Browse Transcripts
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
+            <div className="flex flex-col gap-2 w-full">
+              <Link
+                href="/expert-transcripts"
+                onClick={closeCart}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-btn-primary px-5 py-2.5 text-[13px] font-medium text-btn-primary-fg shadow-cta transition-all duration-base ease-out hover:-translate-y-px hover:bg-btn-primary-hover"
+              >
+                Browse Transcripts
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+              <Link
+                href="/earnings-analysis"
+                onClick={closeCart}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-5 py-2.5 text-[13px] font-medium text-[var(--ink-2)] transition-all duration-base ease-out hover:border-[var(--border-2)] hover:text-[var(--ink)]"
+              >
+                Browse Earnings Calls
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
           </div>
         ) : (
           <>

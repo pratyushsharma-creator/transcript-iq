@@ -284,7 +284,7 @@ function StencilHero({ block }: { block: HeroBlock }) {
               >
                 <div
                   className="font-mono uppercase"
-                  style={{ fontSize: 8, letterSpacing: '.14em', color: 'var(--mist)', marginBottom: 4 }}
+                  style={{ fontSize: 10, letterSpacing: '.12em', color: 'var(--ink-2)', marginBottom: 4 }}
                 >
                   {s.label}
                 </div>

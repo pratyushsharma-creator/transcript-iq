@@ -10,7 +10,6 @@ const FOOTER_COLUMNS = [
       { label: 'Earnings Analysis', href: '/earnings-analysis' },
       { label: 'Custom Reports', href: '/custom-reports' },
       { label: 'Free Transcript', href: '/free-transcript' },
-      { label: 'Contact', href: '/contact' },
     ],
   },
   {
