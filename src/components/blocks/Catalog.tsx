@@ -178,7 +178,7 @@ export async function FeaturedProductsRenderer({ block }: { block: FeaturedProdu
         </div>
       )}
       {block.showAllCta?.enabled && block.showAllCta?.label && block.showAllCta?.url && (
-        <div className="mt-10 flex justify-center">
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
           <Link
             href={block.showAllCta.url}
             className="inline-flex items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--surface)] px-5 py-3 text-sm font-medium text-[var(--ink)] transition-all duration-base ease-out hover:-translate-y-px hover:border-[var(--accent-border)]"
@@ -186,6 +186,24 @@ export async function FeaturedProductsRenderer({ block }: { block: FeaturedProdu
             {block.showAllCta.label}
             <ArrowRight className="h-4 w-4" />
           </Link>
+          {block.productSource === 'expert-transcripts' && (
+            <Link
+              href="/custom-reports"
+              className="inline-flex items-center gap-2 rounded-md border border-[var(--accent-border)] bg-[var(--accent-tint)] px-5 py-3 text-sm font-medium text-[var(--accent)] transition-all duration-base ease-out hover:-translate-y-px hover:bg-[var(--accent)] hover:text-[#050A07]"
+            >
+              Request a Custom Transcript
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          )}
+          {block.productSource === 'earnings-analyses' && (
+            <Link
+              href="/custom-reports"
+              className="inline-flex items-center gap-2 rounded-md border border-[var(--accent-border)] bg-[var(--accent-tint)] px-5 py-3 text-sm font-medium text-[var(--accent)] transition-all duration-base ease-out hover:-translate-y-px hover:bg-[var(--accent)] hover:text-[#050A07]"
+            >
+              Request a Custom Earnings Analysis
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          )}
         </div>
       )}
     </SectionShell>
