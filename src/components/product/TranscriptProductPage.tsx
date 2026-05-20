@@ -62,7 +62,7 @@ const TIER_LABELS: Record<TierKey, string> = {
 
 const LEVEL_LABELS: Record<string, string> = {
   'c-suite':  'C-Suite',
-  'vp':       'VP Level',
+  'vp':       'Vice President',
   'director': 'Director Level',
 }
 

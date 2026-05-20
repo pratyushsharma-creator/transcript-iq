@@ -64,6 +64,7 @@ export const TRANSCRIPT_SAMPLE_ROW = [
 
 // ── Allowed values ────────────────────────────────────────────────────────
 
+// Kept for reference; expertLevel is now a free-text field
 export const EXPERT_LEVELS = ['c-suite', 'vp', 'director'] as const
 export const TIERS = ['standard', 'premium', 'elite'] as const
 export const GEOGRAPHY_VALUES = ['north-america', 'europe', 'global', 'apac'] as const
@@ -145,12 +146,6 @@ export function validateTranscriptRow(
   const expertLevel = row['expertLevel']?.trim()
   if (!expertLevel) {
     errors.push({ row: rowNum, field: 'expertLevel', message: 'Required' })
-  } else if (!EXPERT_LEVELS.includes(expertLevel as typeof EXPERT_LEVELS[number])) {
-    errors.push({
-      row: rowNum,
-      field: 'expertLevel',
-      message: `Must be one of: ${EXPERT_LEVELS.join(', ')}`,
-    })
   }
 
   const dateConducted = row['dateConducted']?.trim()

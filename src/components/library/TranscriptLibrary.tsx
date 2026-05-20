@@ -21,7 +21,7 @@ export type TranscriptDoc = {
   dateConducted: string
   duration?: number | null
   expertFormerTitle: string
-  expertLevel: 'c-suite' | 'vp' | 'director'
+  expertLevel: string
   sectors?: Array<Industry | string> | null
   geography?: string[] | null
   companies?: string | null
@@ -51,7 +51,7 @@ const GEO_OPTIONS = [
 
 const LEVEL_OPTIONS = [
   { label: 'C-Suite', value: 'c-suite' },
-  { label: 'VP / SVP', value: 'vp' },
+  { label: 'Vice President', value: 'vp' },
   { label: 'Director', value: 'director' },
 ]
 
@@ -77,7 +77,7 @@ const GEO_LABELS: Record<string, string> = {
 
 const LEVEL_LABELS: Record<string, string> = {
   'c-suite': 'C-Suite',
-  'vp': 'VP',
+  'vp': 'Vice President',
   'director': 'Director',
 }
 

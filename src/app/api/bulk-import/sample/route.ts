@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
     '# • companies: comma-separated names in one cell, no pre-setup required.',
     ...(type === 'transcripts'
       ? [
-          '# • expertLevel values: c-suite | vp | director',
+          '# • expertLevel: free text, e.g. C-Suite | Vice President | Director | Managing Director',
           '# • tier values: standard | premium | elite',
           '# • geography values: north-america | europe | global | apac',
           '# • topicsCovered: pipe-separated topics, e.g.  AI Infrastructure|Vendor Strategy',

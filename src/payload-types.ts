@@ -154,6 +154,10 @@ export interface UserAuthOperations {
 export interface User {
   id: number;
   name?: string | null;
+  /**
+   * Your personal API key for MCP and Claude integration. Auto-generated — copy this into your Claude Desktop config as TIQ_API_KEY.
+   */
+  mcpApiKey?: string | null;
   role: 'customer' | 'editor' | 'admin';
   company?: string | null;
   stripeCustomerId?: string | null;
@@ -199,14 +203,10 @@ export interface ExpertTranscript {
   slug: string;
   coverImage?: (number | null) | Media;
   /**
-   * Format: EXP-001 (always anonymized).
-   */
-  expertId: string;
-  /**
    * e.g. "Former VP Engineering, Major SaaS Co" — never name companies.
    */
   expertFormerTitle: string;
-  expertLevel: 'c-suite' | 'vp' | 'director';
+  expertLevel: string;
   dateConducted: string;
   duration?: number | null;
   pageCount?: number | null;
@@ -263,11 +263,11 @@ export interface ExpertTranscript {
    */
   stripePriceId?: string | null;
   /**
-   * SEO / OG title override (max 70 chars). Leave blank to auto-generate.
+   * SEO / OG title override (max 120 chars). Leave blank to auto-generate.
    */
   metaTitle?: string | null;
   /**
-   * SEO / OG description override (max 160 chars). Leave blank to auto-generate from summary.
+   * SEO / OG description override (max 300 chars, displayed truncated to 160). Leave blank to auto-generate from summary.
    */
   metaDescription?: string | null;
   complianceBadges?: ('mnpi-screened' | 'pii-redacted' | 'compliance-certified' | 'expert-anonymised')[] | null;
@@ -279,17 +279,9 @@ export interface ExpertTranscript {
   sectors?: (number | Industry)[] | null;
   geography?: ('north-america' | 'europe' | 'global' | 'apac')[] | null;
   /**
-   * Companies discussed in this transcript.
+   * Comma-separated company names discussed in this transcript — e.g. "Apple Inc., NVIDIA Corp., Microsoft Corp." No pre-setup required; just type the names.
    */
   companies?: string | null;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (number | null) | Media;
-  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -389,25 +381,6 @@ export interface Industry {
   createdAt: string;
 }
 /**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "companies".
- */
-export interface Company {
-  id: number;
-  name: string;
-  slug: string;
-  /**
-   * e.g. AAPL — uppercase, no $
-   */
-  ticker?: string | null;
-  exchange?: ('NASDAQ' | 'NYSE' | 'NSE' | 'BSE' | 'LSE' | 'HKEX' | 'SGX' | 'TSE' | 'ASX' | 'PRIVATE') | null;
-  sector?: (number | null) | Industry;
-  logo?: (number | null) | Media;
-  description?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
  * Each document = one earnings analysis product. Fill in all Basics first, then add Content, then publish.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -442,11 +415,11 @@ export interface EarningsAnalysis {
   stripePriceId?: string | null;
   pageCount?: number | null;
   /**
-   * SEO / OG title override (max 70 chars). Leave blank to auto-generate.
+   * SEO / OG title override (max 120 chars). Leave blank to auto-generate.
    */
   metaTitle?: string | null;
   /**
-   * SEO / OG description override (max 160 chars). Leave blank to auto-generate from summary.
+   * SEO / OG description override (max 300 chars, displayed truncated to 160). Leave blank to auto-generate from summary.
    */
   metaDescription?: string | null;
   /**
@@ -470,7 +443,7 @@ export interface EarningsAnalysis {
    */
   sectors?: (number | Industry)[] | null;
   /**
-   * Other companies discussed — peers, suppliers, customers.
+   * Comma-separated names of other companies discussed — peers, suppliers, customers. e.g. "NVIDIA Corp., AMD Inc., Qualcomm Inc."
    */
   companies?: string | null;
   coverImage?: (number | null) | Media;
@@ -557,14 +530,6 @@ export interface EarningsAnalysis {
    * Upload the final PDF once generated. Buyers receive a download link for this file immediately after purchase.
    */
   pdfFile?: (number | null) | Media;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (number | null) | Media;
-  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -1544,6 +1509,27 @@ export interface Page {
                     id?: string | null;
                   }[]
                 | null;
+              /**
+               * Controls the price box shown to the right of the feature description. Leave fields blank to hide the card entirely.
+               */
+              pc?: {
+                /**
+                 * Small label above the price (e.g. "Custom Transcript").
+                 */
+                eyebrow?: string | null;
+                /**
+                 * Headline price — include the $ sign (e.g. "$899").
+                 */
+                price?: string | null;
+                /**
+                 * Subtext next to the price (e.g. "per transcript · one-time fee").
+                 */
+                priceLabel?: string | null;
+                /**
+                 * Small caps note at the bottom of the card (e.g. "Volume pricing from $699/…").
+                 */
+                volumeNote?: string | null;
+              };
             };
             supporting?:
               | {
@@ -2946,14 +2932,6 @@ export interface Page {
           }
       )[]
     | null;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (number | null) | Media;
-  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -3079,6 +3057,25 @@ export interface Category {
   id: number;
   name: string;
   slug: string;
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "companies".
+ */
+export interface Company {
+  id: number;
+  name: string;
+  slug: string;
+  /**
+   * e.g. AAPL — uppercase, no $
+   */
+  ticker?: string | null;
+  exchange?: ('NASDAQ' | 'NYSE' | 'NSE' | 'BSE' | 'LSE' | 'HKEX' | 'SGX' | 'TSE' | 'ASX' | 'PRIVATE') | null;
+  sector?: (number | null) | Industry;
+  logo?: (number | null) | Media;
   description?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -3309,6 +3306,7 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  mcpApiKey?: T;
   role?: T;
   company?: T;
   stripeCustomerId?: T;
@@ -4027,6 +4025,14 @@ export interface PagesSelect<T extends boolean = true> {
                           variant?: T;
                           magnetic?: T;
                           id?: T;
+                        };
+                    pc?:
+                      | T
+                      | {
+                          eyebrow?: T;
+                          price?: T;
+                          priceLabel?: T;
+                          volumeNote?: T;
                         };
                   };
               supporting?:
@@ -5112,13 +5118,6 @@ export interface PagesSelect<T extends boolean = true> {
               blockName?: T;
             };
       };
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -5159,7 +5158,6 @@ export interface ExpertTranscriptsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   coverImage?: T;
-  expertId?: T;
   expertFormerTitle?: T;
   expertLevel?: T;
   dateConducted?: T;
@@ -5195,13 +5193,6 @@ export interface ExpertTranscriptsSelect<T extends boolean = true> {
   sectors?: T;
   geography?: T;
   companies?: T;
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -5258,13 +5249,6 @@ export interface EarningsAnalysesSelect<T extends boolean = true> {
       };
   fullAnalysis?: T;
   pdfFile?: T;
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

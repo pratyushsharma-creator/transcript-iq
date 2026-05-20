@@ -46,14 +46,12 @@ export const ExpertTranscripts: CollectionConfig = {
     },
     {
       name: 'expertLevel',
-      type: 'select',
+      type: 'text',
       required: true,
-      options: [
-        { label: 'C-Suite', value: 'c-suite' },
-        { label: 'VP', value: 'vp' },
-        { label: 'Director', value: 'director' },
-      ],
-      admin: { position: 'sidebar' },
+      admin: {
+        position: 'sidebar',
+        description: 'e.g. "C-Suite", "Vice President", "Director", "Managing Director"',
+      },
     },
 
     // ── Call details ───────────────────────────────────────────────────

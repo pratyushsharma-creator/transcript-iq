@@ -27,7 +27,7 @@ export type TranscriptCardData = {
 
 const LEVEL_LABELS: Record<string, string> = {
   'c-suite': 'C-Suite',
-  'vp': 'VP',
+  'vp': 'Vice President',
   'director': 'Director',
 }
 
