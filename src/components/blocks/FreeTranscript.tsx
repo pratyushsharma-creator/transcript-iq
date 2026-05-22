@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useCallback } from 'react'
+import { TurnstileWidget } from '@/components/ui/Turnstile'
 
 // ── Corporate email validation ─────────────────────────────────────────────
 const BLOCKED_DOMAINS = new Set([
@@ -137,6 +138,9 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
   const [email, setEmail] = useState('')
   const [emailError, setEmailError] = useState('')
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [apiError, setApiError] = useState<string | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
 
   const sectors = block.sectors ?? [
     { label: 'Technology / SaaS', value: 'tech' },
@@ -160,13 +164,36 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
     }
   }, [])
 
-  function handleClaim() {
+  async function handleClaim() {
     if (!email) { setEmailError('Enter your work email'); return }
     if (!isCorporateEmail(email)) {
       setEmailError('Please use your corporate / work email')
       return
     }
-    setSubmitted(true)
+    setApiError(null)
+    setLoading(true)
+    try {
+      const res = await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'free-transcript',
+          email,
+          sector: sectors[activeSector]?.label ?? '',
+          turnstileToken,
+        }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setApiError(data?.error ?? 'Something went wrong. Please try again.')
+        return
+      }
+      setSubmitted(true)
+    } catch {
+      setApiError('Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -587,9 +614,24 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
                 )}
               </div>
 
+              {/* Turnstile widget */}
+              <TurnstileWidget
+                onSuccess={(token) => setTurnstileToken(token)}
+                onExpired={() => setTurnstileToken(null)}
+                className="mb-3"
+              />
+
+              {/* API error */}
+              {apiError && (
+                <div style={{ fontSize: 12, color: '#f87171', marginBottom: 10, lineHeight: 1.5 }}>
+                  {apiError}
+                </div>
+              )}
+
               {/* CTA */}
               <button
                 onClick={handleClaim}
+                disabled={loading}
                 style={{
                   width: '100%',
                   display: 'flex',
@@ -605,14 +647,22 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
                   padding: 14,
                   borderRadius: 11,
                   border: 'none',
-                  cursor: 'pointer',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  opacity: loading ? 0.7 : 1,
                   boxShadow:
                     '0 0 0 1px rgba(52,211,153,0.26), 0 8px 28px -8px rgba(52,211,153,0.28)',
                   marginBottom: 12,
                 }}
               >
-                <ArrowIcon />
-                {block.ctaLabel ?? 'Get My Free Transcript'}
+                {loading ? (
+                  <svg style={{ width: 14, height: 14, animation: 'spin 1s linear infinite' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 12a9 9 0 11-6.219-8.56" />
+                    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                  </svg>
+                ) : (
+                  <ArrowIcon />
+                )}
+                {loading ? 'Submitting…' : (block.ctaLabel ?? 'Get My Free Transcript')}
               </button>
               <div
                 style={{

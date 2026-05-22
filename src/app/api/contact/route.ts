@@ -35,8 +35,8 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Send email via Resend
-    const from = process.env.RESEND_FROM_EMAIL ?? 'hello@transcript-iq.com'
-    const to   = process.env.CONTACT_TO_EMAIL  ?? 'hello@transcript-iq.com'
+    const from = process.env.RESEND_FROM_EMAIL      ?? 'hello@transcript-iq.com'
+    const to   = process.env.LEAD_NOTIFICATION_EMAIL ?? 'pratyush.sharma@nextyn.com'
     const apiKey = process.env.RESEND_API_KEY
 
     if (apiKey) {

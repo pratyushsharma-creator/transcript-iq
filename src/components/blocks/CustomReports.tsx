@@ -4,6 +4,7 @@ import { useState, useRef, useCallback, useEffect, type FormEvent } from 'react'
 import { motion } from 'motion/react'
 import { Check, X } from 'lucide-react'
 import { SectionShell, MintGradientHeading } from './SectionShell'
+import { TurnstileWidget } from '@/components/ui/Turnstile'
 
 // ─── Shared animation preset ──────────────────────────────────────────────────
 
@@ -377,6 +378,8 @@ export function CustomTranscriptHeroRenderer({ block }: { block: CustomTranscrip
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [emailError, setEmailError] = useState('')
+  const [apiError, setApiError] = useState<string | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const formRef = useRef<HTMLFormElement>(null)
   const fc = block.formCard ?? {}
   const steps = block.processSteps ?? []
@@ -408,19 +411,40 @@ export function CustomTranscriptHeroRenderer({ block }: { block: CustomTranscrip
       return
     }
 
+    setApiError(null)
     setLoading(true)
+
+    // Collect all form fields into a plain object for JSON submission
+    const data = new FormData(form)
+    const countryCode = data.get('countryCode')?.toString() ?? ''
+    const phoneRaw    = data.get('phone')?.toString() ?? ''
+    const phone       = phoneRaw ? `${countryCode} ${phoneRaw}`.trim() : ''
+
     try {
-      if (fc.formEndpoint && form) {
-        await fetch(fc.formEndpoint, {
-          method: 'POST',
-          body: new FormData(form),
-        })
+      const res = await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'custom-transcript',
+          name:    data.get('name')?.toString()    ?? '',
+          org:     data.get('org')?.toString()     ?? '',
+          email:   data.get('email')?.toString()   ?? '',
+          phone,
+          topic:   data.get('topic')?.toString()   ?? '',
+          details: data.get('details')?.toString() ?? '',
+          turnstileToken,
+        }),
+      })
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}))
+        setApiError(json?.error ?? 'Something went wrong. Please try again.')
+        return
       }
+      setSubmitted(true)
     } catch {
-      // fail silently — still show success state
+      setApiError('Something went wrong. Please try again.')
     } finally {
       setLoading(false)
-      setSubmitted(true)
     }
   }
 
@@ -704,6 +728,20 @@ export function CustomTranscriptHeroRenderer({ block }: { block: CustomTranscrip
                       />
                     </FormField>
                   </div>
+
+                  {/* Turnstile widget */}
+                  <TurnstileWidget
+                    onSuccess={(token) => setTurnstileToken(token)}
+                    onExpired={() => setTurnstileToken(null)}
+                    className="mt-3"
+                  />
+
+                  {/* API error */}
+                  {apiError && (
+                    <p className="mt-2 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-[12px] text-red-400">
+                      {apiError}
+                    </p>
+                  )}
 
                   <button
                     type="submit"
