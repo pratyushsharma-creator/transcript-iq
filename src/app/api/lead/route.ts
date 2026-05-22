@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { verifyTurnstile } from '@/lib/turnstile'
 import { getNotificationTo, getNotificationCC } from '@/lib/notifications'
+import { sendLeadConfirmation } from '@/lib/resend'
 
 /**
  * POST /api/lead
@@ -87,6 +88,23 @@ export async function POST(req: NextRequest) {
       // Dev fallback — log so we can see the lead in console
       console.log('[api/lead] No RESEND_API_KEY — would send:\n' + lines.join('\n'))
     }
+
+    // 4. Send confirmation email to the submitter
+    const confirmationType =
+      type === 'free-transcript'  ? 'free-transcript'  :
+      type === 'custom-earnings'  ? 'custom-earnings'  :
+                                    'custom-transcript'
+
+    await sendLeadConfirmation({
+      to:    email,
+      type:  confirmationType,
+      name:  name,
+      sector: sector,
+      topic:  topic,
+    }).catch((err) => {
+      // Non-fatal — log but don't fail the request
+      console.error('[api/lead] confirmation email failed:', err)
+    })
 
     return NextResponse.json({ ok: true })
   } catch (err) {

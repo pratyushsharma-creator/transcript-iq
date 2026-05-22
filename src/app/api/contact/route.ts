@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { verifyTurnstile } from '@/lib/turnstile'
 import { getNotificationTo, getNotificationCC } from '@/lib/notifications'
+import { sendLeadConfirmation } from '@/lib/resend'
 
 /**
  * POST /api/contact
@@ -62,6 +63,17 @@ export async function POST(req: NextRequest) {
       // Dev: log to console instead of sending
       console.log('[contact] Would send email:', { name, company, email, subject, message })
     }
+
+    // 4. Send confirmation email to the submitter
+    await sendLeadConfirmation({
+      to:      email,
+      type:    'contact',
+      name:    name,
+      subject: subject,
+    }).catch((err) => {
+      // Non-fatal — log but don't fail the request
+      console.error('[api/contact] confirmation email failed:', err)
+    })
 
     return NextResponse.json({ ok: true })
   } catch (err) {
