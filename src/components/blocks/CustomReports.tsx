@@ -746,7 +746,7 @@ export function CustomTranscriptHeroRenderer({ block }: { block: CustomTranscrip
                   <button
                     type="submit"
                     disabled={loading}
-                    className="mt-4 flex w-full items-center justify-center gap-[9px] rounded-[11px] bg-[var(--accent)] px-5 py-[14px] text-[14px] font-semibold tracking-[-0.01em] text-[#050A07] transition-all duration-200 hover:-translate-y-px hover:bg-[var(--accent-deep)] disabled:opacity-60"
+                    className="mt-4 flex w-full items-center justify-center gap-[9px] rounded-[11px] bg-btn-primary px-5 py-[14px] text-[14px] font-semibold tracking-[-0.01em] text-btn-primary-fg shadow-cta transition-all duration-200 ease-out hover:-translate-y-px hover:bg-btn-primary-hover disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
                     style={{
                       border: 'none',
                       boxShadow: '0 0 0 1px var(--accent-border), 0 8px 28px -8px rgba(52,211,153,0.55)',

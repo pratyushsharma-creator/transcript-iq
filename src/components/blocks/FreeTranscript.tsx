@@ -632,32 +632,11 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
               <button
                 onClick={handleClaim}
                 disabled={loading}
-                style={{
-                  width: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 9,
-                  background: 'var(--accent)',
-                  color: '#050A07',
-                  fontFamily: 'var(--font-sans)',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  letterSpacing: '-0.01em',
-                  padding: 14,
-                  borderRadius: 11,
-                  border: 'none',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.7 : 1,
-                  boxShadow:
-                    '0 0 0 1px rgba(52,211,153,0.26), 0 8px 28px -8px rgba(52,211,153,0.28)',
-                  marginBottom: 12,
-                }}
+                className="mb-3 flex w-full items-center justify-center gap-[9px] rounded-[11px] bg-btn-primary py-[14px] font-sans text-[14px] font-semibold tracking-[-0.01em] text-btn-primary-fg shadow-cta transition-all duration-200 ease-out hover:-translate-y-px hover:bg-btn-primary-hover disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
               >
                 {loading ? (
-                  <svg style={{ width: 14, height: 14, animation: 'spin 1s linear infinite' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg className="h-[14px] w-[14px] animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M21 12a9 9 0 11-6.219-8.56" />
-                    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
                   </svg>
                 ) : (
                   <ArrowIcon />
