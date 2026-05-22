@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { verifyTurnstile } from '@/lib/turnstile'
+import { getNotificationTo, getNotificationCC } from '@/lib/notifications'
 
 /**
  * POST /api/contact
@@ -35,8 +36,9 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Send email via Resend
-    const from = process.env.RESEND_FROM_EMAIL      ?? 'hello@transcript-iq.com'
-    const to   = process.env.LEAD_NOTIFICATION_EMAIL ?? 'pratyush.sharma@nextyn.com'
+    const from   = process.env.RESEND_FROM_EMAIL ?? 'hello@transcript-iq.com'
+    const to     = getNotificationTo()
+    const cc     = getNotificationCC()
     const apiKey = process.env.RESEND_API_KEY
 
     if (apiKey) {
@@ -44,6 +46,7 @@ export async function POST(req: NextRequest) {
       await resend.emails.send({
         from,
         to,
+        ...(cc.length > 0 ? { cc } : {}),
         replyTo: email,
         subject: `[Contact] ${subject} — ${name} (${company})`,
         text: [

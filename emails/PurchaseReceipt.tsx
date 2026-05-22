@@ -40,7 +40,8 @@ export function PurchaseReceipt({
           <Section style={successBox}>
             <Text style={successTitle}>✓ Order Confirmed</Text>
             <Text style={successBody}>
-              Hi {customerName}, your research is ready. PDFs will be delivered to this address within minutes.
+              Hi {customerName}, your order is confirmed and our team is preparing your transcript(s).
+              Your PDF(s) will be delivered to this address <strong>within 2 hours</strong>.
             </Text>
           </Section>
 
@@ -67,11 +68,9 @@ export function PurchaseReceipt({
                     {item.type === 'earnings' ? 'Earnings Analysis' : 'Expert Transcript'}
                   </Text>
                   <Text style={itemTitle}>{item.title}</Text>
-                  {item.downloadUrl && (
-                    <Link href={item.downloadUrl} style={downloadBtn}>
-                      ↓ Download PDF
-                    </Link>
-                  )}
+                  <Text style={pendingNote}>
+                    ⏱ PDF being prepared — link will arrive within 2 hours
+                  </Text>
                 </Column>
                 <Column style={itemPriceCol}>
                   <Text style={itemPrice}>${item.priceUsd}</Text>
@@ -311,19 +310,13 @@ const itemPrice: React.CSSProperties = {
   margin: 0,
 }
 
-const downloadBtn: React.CSSProperties = {
-  display: 'inline-block',
-  marginTop: '6px',
-  backgroundColor: 'rgba(52,211,153,0.1)',
-  border: '1px solid rgba(52,211,153,0.3)',
-  borderRadius: '6px',
-  color: '#34D399',
+const pendingNote: React.CSSProperties = {
   fontFamily: 'monospace',
-  fontSize: '10px',
-  fontWeight: 700,
-  letterSpacing: '0.06em',
-  padding: '5px 12px',
-  textDecoration: 'none',
+  fontSize: '9px',
+  color: '#888880',
+  marginTop: '6px',
+  marginBottom: 0,
+  letterSpacing: '0.04em',
 }
 
 const totalRow: React.CSSProperties = {

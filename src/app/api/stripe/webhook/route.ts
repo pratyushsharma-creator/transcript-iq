@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
-import { sendReceipt } from '@/lib/resend'
+import { sendReceipt, sendPurchaseAlert } from '@/lib/resend'
 import { generateDownloadToken } from '@/lib/downloadToken'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
@@ -186,7 +186,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     }
   })
 
-  // ── Send receipt email ─────────────────────────────────────────────────────
+  // ── Send customer receipt email ────────────────────────────────────────────
   try {
     await sendReceipt({
       to: customerEmail,
@@ -200,5 +200,20 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     console.log('[webhook] Receipt sent to:', customerEmail, 'ref:', orderRef)
   } catch (err) {
     console.error('[webhook] Failed to send receipt email:', err)
+  }
+
+  // ── Send internal purchase alert to the team ───────────────────────────────
+  try {
+    await sendPurchaseAlert({
+      orderRef,
+      customerName: customerName || customerEmail,
+      customerEmail,
+      organisation: organisation || undefined,
+      items: itemsWithDownloads,
+      totalUsd: totalPaid,
+    })
+    console.log('[webhook] Purchase alert sent for ref:', orderRef)
+  } catch (err) {
+    console.error('[webhook] Failed to send purchase alert:', err)
   }
 }
