@@ -189,7 +189,7 @@ export async function FeaturedProductsRenderer({ block }: { block: FeaturedProdu
           {block.productSource === 'expert-transcripts' && (
             <Link
               href="/custom-reports"
-              className="inline-flex items-center gap-2 rounded-md border border-[var(--accent-border)] bg-[var(--accent-tint)] px-5 py-3 text-sm font-medium text-[var(--accent)] transition-all duration-base ease-out hover:-translate-y-px hover:bg-[var(--accent)] hover:text-[#050A07]"
+              className="inline-flex items-center gap-2 rounded-md bg-btn-primary px-5 py-3 text-sm font-medium text-btn-primary-fg shadow-cta transition-all duration-base ease-out hover:-translate-y-px hover:bg-btn-primary-hover"
             >
               Request a Custom Transcript
               <ArrowRight className="h-4 w-4" />
@@ -198,7 +198,7 @@ export async function FeaturedProductsRenderer({ block }: { block: FeaturedProdu
           {block.productSource === 'earnings-analyses' && (
             <Link
               href="/custom-reports"
-              className="inline-flex items-center gap-2 rounded-md border border-[var(--accent-border)] bg-[var(--accent-tint)] px-5 py-3 text-sm font-medium text-[var(--accent)] transition-all duration-base ease-out hover:-translate-y-px hover:bg-[var(--accent)] hover:text-[#050A07]"
+              className="inline-flex items-center gap-2 rounded-md bg-btn-primary px-5 py-3 text-sm font-medium text-btn-primary-fg shadow-cta transition-all duration-base ease-out hover:-translate-y-px hover:bg-btn-primary-hover"
             >
               Request a Custom Earnings Analysis
               <ArrowRight className="h-4 w-4" />
