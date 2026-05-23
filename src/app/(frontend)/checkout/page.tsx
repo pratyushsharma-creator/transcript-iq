@@ -21,7 +21,6 @@ type FormData = {
   city: string
   country: string
   postalCode: string
-  vatNumber: string
 }
 
 type FormErrors = Partial<Record<keyof FormData, string>>
@@ -127,8 +126,6 @@ function OrderSummary({
   turnstileReady: boolean
 }) {
   const { items } = useCart()
-  const tax = Math.round(subtotal * 0.09 * 100) / 100
-  const total = subtotal + tax
 
   return (
     <div className="lg:sticky lg:top-24 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6">
@@ -171,13 +168,13 @@ function OrderSummary({
           <span>Subtotal</span>
           <span className="font-mono">${subtotal.toFixed(2)}</span>
         </div>
-        <div className="flex justify-between text-[var(--ink-2)]">
-          <span>GST / Tax (9%)</span>
-          <span className="font-mono">${tax.toFixed(2)}</span>
+        <div className="flex justify-between text-[var(--mist)] text-[11px]">
+          <span>Tax</span>
+          <span className="font-mono">$0.00</span>
         </div>
         <div className="mt-2 flex justify-between border-t border-[var(--border)] pt-3 font-semibold text-[var(--ink)]">
           <span className="text-[15px]">Total due</span>
-          <span className="font-mono text-[17px] text-[var(--accent)]">${total.toFixed(2)}</span>
+          <span className="font-mono text-[17px] text-[var(--accent)]">${subtotal.toFixed(2)}</span>
         </div>
       </div>
 
@@ -194,7 +191,7 @@ function OrderSummary({
         ) : (
           <>
             <Lock className="h-4 w-4" />
-            Continue to Payment — ${total.toFixed(2)}
+            Continue to Payment — ${subtotal.toFixed(2)}
             <ArrowRight className="h-4 w-4 transition-transform duration-base ease-out group-hover:translate-x-0.5" />
           </>
         )}
@@ -222,7 +219,7 @@ export default function CheckoutPage() {
 
   const [form, setForm] = useState<FormData>({
     firstName: '', lastName: '', email: '', organisation: '', role: '',
-    billingName: '', addressLine1: '', city: '', country: '', postalCode: '', vatNumber: '',
+    billingName: '', addressLine1: '', city: '', country: '', postalCode: '',
   })
 
   const handleTurnstileSuccess = useCallback((token: string) => setTurnstileToken(token), [])
@@ -281,7 +278,6 @@ export default function CheckoutPage() {
             city: form.city,
             country: form.country,
             postalCode: form.postalCode,
-            vatNumber: form.vatNumber,
           },
         }),
       })
@@ -376,9 +372,6 @@ export default function CheckoutPage() {
               </Field>
               <Field label="Country" required error={errors.country}>
                 <input className={inputClass(errors.country)} value={form.country} onChange={(e) => set('country', e.target.value)} placeholder="Singapore" />
-              </Field>
-              <Field label="GST / VAT number" hint="Optional — included on tax receipt.">
-                <input className={inputClass()} value={form.vatNumber} onChange={(e) => set('vatNumber', e.target.value)} placeholder="e.g. SG200012345A" />
               </Field>
               <Field label="Postal code">
                 <input className={inputClass()} value={form.postalCode} onChange={(e) => set('postalCode', e.target.value)} placeholder="123456" />

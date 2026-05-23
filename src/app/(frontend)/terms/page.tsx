@@ -130,7 +130,7 @@ export default function TermsPage() {
           <section id="orders-payment">
             <h2 className="mb-4 text-[22px] font-semibold tracking-[-0.02em] text-[var(--ink)]">4. Orders &amp; Payment</h2>
             <p>
-              All prices are displayed in USD exclusive of applicable taxes. Goods and Services Tax (GST), VAT, or equivalent may apply depending on your jurisdiction and will be calculated at checkout.
+              All prices are displayed in USD. Transcript IQ does not charge GST, VAT, or any other tax on purchases made through the Platform. The price shown is the total amount charged.
             </p>
             <p className="mt-4">
               We accept payment by credit card and debit card (via Stripe). For qualifying enterprise clients, invoice-based payment (net-30) is available upon request. By submitting an order, you represent that you are authorised to use the payment method provided.

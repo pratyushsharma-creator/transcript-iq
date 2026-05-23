@@ -207,15 +207,7 @@ function ConfirmationContent() {
         </div>
 
         <div className="mt-4 flex flex-col gap-1.5 border-t border-[var(--border)] pt-4 text-[13px]">
-          <div className="flex justify-between text-[var(--ink-2)]">
-            <span>Subtotal</span>
-            <span className="font-mono">${o.subtotalUsd.toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between text-[var(--ink-2)]">
-            <span>GST / Tax</span>
-            <span className="font-mono">${o.taxUsd.toFixed(2)}</span>
-          </div>
-          <div className="mt-1 flex justify-between border-t border-[var(--border)] pt-2 font-semibold text-[var(--ink)]">
+          <div className="mt-1 flex justify-between font-semibold text-[var(--ink)]">
             <span>Total charged</span>
             <span className="font-mono text-[var(--accent)]">${o.totalUsd.toFixed(2)}</span>
           </div>

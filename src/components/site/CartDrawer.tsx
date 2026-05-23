@@ -182,7 +182,7 @@ export function CartDrawer() {
                 </span>
               </div>
               <p className="mb-5 font-mono text-[10px] text-[var(--mist)]">
-                Taxes & discounts calculated at checkout · Instant PDF delivery
+                No tax added · Instant PDF delivery
               </p>
 
               {/* Checkout CTA */}

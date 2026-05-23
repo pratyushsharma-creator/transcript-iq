@@ -31,7 +31,6 @@ type CheckoutBody = {
     city: string
     country: string
     postalCode?: string
-    vatNumber?: string
   }
   turnstileToken?: string
 }
@@ -93,6 +92,9 @@ export async function POST(req: NextRequest) {
       line_items: lineItems,
       customer_email: customer.email,
 
+      // No tax — Nextyn Advisory operates from Singapore and does not charge GST/VAT
+      automatic_tax: { enabled: false },
+
       // Shipping / billing collection disabled — we already have the info
       billing_address_collection: 'auto',
 
@@ -113,7 +115,6 @@ export async function POST(req: NextRequest) {
         billingCity: billing.city,
         billingCountry: billing.country,
         billingPostal: billing.postalCode ?? '',
-        vatNumber: billing.vatNumber ?? '',
         // JSON-encode items for webhook reconstruction (Stripe metadata is string-only)
         itemSlugs: items.map((i) => i.slug).join(','),
         itemTypes: items.map((i) => i.type).join(','),
