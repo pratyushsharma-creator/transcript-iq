@@ -599,58 +599,111 @@ conn.close()
 
 - [ ] **Step 3: Apply FIX 2 — swap CTA variants on home page**
 
-Once you know the table name and column names, run:
+Using the actual values found in Steps 1–2, write and run a Python script. Fill in `HERO_TABLE`, `CTA_TABLE`, `HOME_HERO_BLOCK_ID`, and the actual column names for label and variant from the diagnostic output:
 
 ```python
-# FIX 2: swap variant values for home page CTAs
-# The CTA labeled "Browse Transcripts" should become 'secondary'
-# The CTA labeled "Get a Free Transcript" should become 'primary'
+# /tmp/cms_fix_cta.py  — fill ALL CAPS vars with real values from Steps 1-2
+import psycopg2
 
-cur.execute("""
-    UPDATE <cta_table> 
-    SET variant = 'secondary'
-    WHERE label ILIKE '%Browse Transcripts%' 
-      AND _parent_id = '<home_hero_block_id>'
-""")
+HERO_TABLE       = 'pages_blocks_stencil_hero'      # from Step 1 diagnostic
+CTA_TABLE        = 'pages_blocks_stencil_hero_ctas'  # from Step 1 diagnostic
+HOME_HERO_BLOCK_ID = 'REPLACE_WITH_ACTUAL_HERO_BLOCK_ID'  # from Step 2: id from HERO_TABLE WHERE _parent_id=home_page_id
+LABEL_COL        = 'label'    # confirm column name from Step 2 CTA columns output
+VARIANT_COL      = 'variant'  # confirm column name from Step 2 CTA columns output
+PARENT_COL       = '_parent_id'  # confirm column name from Step 2 CTA columns output
+
+db_uri = None
+with open("C:/Transcript IQ (Claude Build)/.env.local") as f:
+    for line in f:
+        if line.startswith("DATABASE_URI="):
+            db_uri = line.split("=", 1)[1].strip().strip('"').strip("'")
+            break
+
+conn = psycopg2.connect(db_uri)
+cur = conn.cursor()
+
+# FIX 2a: "Browse Transcripts" → secondary
+cur.execute(
+    f"UPDATE {CTA_TABLE} SET {VARIANT_COL} = 'secondary' WHERE {LABEL_COL} ILIKE %s AND {PARENT_COL} = %s",
+    ('%Browse Transcripts%', HOME_HERO_BLOCK_ID)
+)
 print("Browse Transcripts rows updated:", cur.rowcount)
 
-cur.execute("""
-    UPDATE <cta_table>
-    SET variant = 'primary'
-    WHERE label ILIKE '%Free Transcript%'
-      AND _parent_id = '<home_hero_block_id>'
-""")
+# FIX 2b: "Get a Free Transcript" → primary
+cur.execute(
+    f"UPDATE {CTA_TABLE} SET {VARIANT_COL} = 'primary' WHERE {LABEL_COL} ILIKE %s AND {PARENT_COL} = %s",
+    ('%Free Transcript%', HOME_HERO_BLOCK_ID)
+)
 print("Free Transcript rows updated:", cur.rowcount)
 
 conn.commit()
+conn.close()
 ```
 
 Expected: 1 row updated for each query.
 
 - [ ] **Step 4: Apply FIX 8 — merge Custom Reports heading to 2 lines**
 
-Inspect the hero block for the custom-reports page to understand how the heading is stored (likely a JSON array or a text field with newlines):
+First inspect the hero block for the custom-reports page to understand how the heading is stored. Using the actual table name and custom-reports page ID from Step 1:
 
 ```python
-cur.execute("SELECT * FROM <hero_blocks_table> WHERE _parent_id = '<custom_reports_page_id>'")
-row = cur.fetchone()
-print("Custom Reports hero:", row)
+# /tmp/cms_fix_inspect.py  — fill ALL CAPS vars with real values from Step 1
+import psycopg2
+
+HERO_TABLE           = 'pages_blocks_stencil_hero'   # from Step 1
+CUSTOM_REPORTS_PAGE_ID = 'REPLACE_WITH_ACTUAL_ID'    # from Step 1 pages query
+
+db_uri = None
+with open("C:/Transcript IQ (Claude Build)/.env.local") as f:
+    for line in f:
+        if line.startswith("DATABASE_URI="):
+            db_uri = line.split("=", 1)[1].strip().strip('"').strip("'")
+            break
+
+conn = psycopg2.connect(db_uri)
+cur = conn.cursor()
+
+cur.execute(f"SELECT * FROM {HERO_TABLE} WHERE _parent_id = %s", (CUSTOM_REPORTS_PAGE_ID,))
+rows = cur.fetchall()
+for row in rows:
+    print(row)
+
+conn.close()
 ```
 
-Then update the heading. If it's stored as a text field with `\n`:
+Inspect the output to see how the heading is stored (text with `\n`, JSON array, etc.). Then write the update:
+
 ```python
-# Current: "Can't find what\nyou need?\nWe'll build it."
-# Target:  "Can't find what you need?\nWe'll build it."
-cur.execute("""
-    UPDATE <hero_blocks_table>
-    SET heading = 'Can''t find what you need?\nWe''ll build it.'
-    WHERE _parent_id = '<custom_reports_page_id>'
-""")
-print("Heading updated:", cur.rowcount)
+# /tmp/cms_fix_heading.py  — fill ALL CAPS vars with real values
+import psycopg2
+
+HERO_TABLE           = 'pages_blocks_stencil_hero'
+CUSTOM_REPORTS_PAGE_ID = 'REPLACE_WITH_ACTUAL_ID'
+HEADING_COL          = 'heading'  # confirm column name from inspection
+
+db_uri = None
+with open("C:/Transcript IQ (Claude Build)/.env.local") as f:
+    for line in f:
+        if line.startswith("DATABASE_URI="):
+            db_uri = line.split("=", 1)[1].strip().strip('"').strip("'")
+            break
+
+conn = psycopg2.connect(db_uri)
+cur = conn.cursor()
+
+# If heading is stored as a plain text string with \n line breaks:
+new_heading = "Can't find what you need?\nWe'll build it."
+cur.execute(
+    f"UPDATE {HERO_TABLE} SET {HEADING_COL} = %s WHERE _parent_id = %s",
+    (new_heading, CUSTOM_REPORTS_PAGE_ID)
+)
+print("Heading rows updated:", cur.rowcount)
+
 conn.commit()
+conn.close()
 ```
 
-If the heading is stored as a JSON array of line objects, log the current value first and structure your UPDATE to replace the entire array with the 2-element version. Adapt based on what you find.
+If the heading is stored as JSONB (an array of line objects), log the current value, understand its structure, and build the replacement JSON accordingly before running the UPDATE. Adapt based on what you find.
 
 - [ ] **Step 5: Verify via site**
 
