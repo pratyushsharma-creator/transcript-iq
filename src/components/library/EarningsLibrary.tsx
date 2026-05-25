@@ -604,6 +604,7 @@ export function EarningsLibrary({ initialDocs, totalDocs, industries }: Earnings
   const [hasNext, setHasNext] = useState(initialDocs.length < totalDocs)
   const [loading, setLoading] = useState(false)
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
 
   const buildParams = useCallback((f: ActiveFilters, s: string, p: number) => {
     const params = new URLSearchParams()
@@ -677,6 +678,17 @@ export function EarningsLibrary({ initialDocs, totalDocs, industries }: Earnings
   const hasFilters = activeChips.length > 0
   const activeCount = activeChips.length
 
+  const displayDocs = searchQuery.trim()
+    ? docs.filter((d) => {
+        const q = searchQuery.toLowerCase()
+        return (
+          (d.title ?? '').toLowerCase().includes(q) ||
+          (d.ticker ?? '').toLowerCase().includes(q) ||
+          (d.companyName ?? '').toLowerCase().includes(q)
+        )
+      })
+    : docs
+
   return (
     <>
       {/* ── Page header ────────────────────────────────────────────────── */}
@@ -737,6 +749,39 @@ export function EarningsLibrary({ initialDocs, totalDocs, industries }: Earnings
         {/* ── Content column ────────────────────────────────────────────── */}
         <div className="flex-1 min-w-0">
 
+          {/* Search bar */}
+          <div className="relative mb-4">
+            <svg
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--mist)] pointer-events-none"
+            >
+              <circle cx="6.5" cy="6.5" r="4.5" />
+              <path d="M10 10l3.5 3.5" strokeLinecap="round" />
+            </svg>
+            <input
+              type="search"
+              placeholder="Search by company, ticker, or title…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] pl-8 pr-4 py-2.5 font-mono text-[12px] text-[var(--ink)] placeholder-[var(--mist)] outline-none transition-all duration-150 focus:border-[var(--accent-border)] focus:ring-1 focus:ring-[var(--accent-border)]"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--mist)] hover:text-[var(--ink)] transition-colors"
+                aria-label="Clear search"
+              >
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3 w-3">
+                  <path d="M2 2l8 8M10 2l-8 8" strokeLinecap="round" />
+                </svg>
+              </button>
+            )}
+          </div>
+
           {/* Toolbar */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-5 border-b border-[var(--border)]">
             <div className="flex items-center gap-2 flex-wrap">
@@ -755,8 +800,8 @@ export function EarningsLibrary({ initialDocs, totalDocs, industries }: Earnings
               </button>
 
               <span className="font-mono text-[11px] text-[var(--mist)] tracking-[0.06em] whitespace-nowrap">
-                <strong className="text-[var(--ink)]">{docs.length}</strong>
-                {hasFilters ? ' matching' : ''} anal{docs.length !== 1 ? 'yses' : 'ysis'}
+                <strong className="text-[var(--ink)]">{displayDocs.length}</strong>
+                {(hasFilters || searchQuery) ? ' matching' : ''} anal{displayDocs.length !== 1 ? 'yses' : 'ysis'}
               </span>
 
               {activeChips.map(({ group, value, label }) => (
@@ -806,9 +851,9 @@ export function EarningsLibrary({ initialDocs, totalDocs, industries }: Earnings
           </div>
 
           {/* Cards */}
-          {loading && docs.length === 0 ? (
+          {loading && displayDocs.length === 0 ? (
             <div className="py-20 text-center font-mono text-[11px] text-[var(--mist)]">Loading…</div>
-          ) : docs.length === 0 ? (
+          ) : displayDocs.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-[var(--border-2)] rounded-[18px] bg-[var(--surface)]">
               <div className="w-[52px] h-[52px] rounded-[14px] bg-[var(--accent-tint)] border border-[var(--accent-border)] flex items-center justify-center mb-5">
                 <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-[22px] h-[22px] text-[var(--accent)]">
@@ -826,7 +871,7 @@ export function EarningsLibrary({ initialDocs, totalDocs, industries }: Earnings
             </div>
           ) : (
             <div className={view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 gap-3' : 'flex flex-col gap-3'}>
-              {docs.map((doc) => <EarningsCard key={doc.id} doc={doc} view={view} />)}
+              {displayDocs.map((doc) => <EarningsCard key={doc.id} doc={doc} view={view} />)}
             </div>
           )}
 
