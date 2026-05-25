@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { Mail, MapPin, Clock, Send, ChevronDown } from 'lucide-react'
+import { Mail, MapPin, Send, ChevronDown } from 'lucide-react'
 import { TurnstileWidget } from '@/components/ui/Turnstile'
 
 // Note: metadata exported from a separate layout.tsx (this file uses 'use client')
@@ -253,40 +253,6 @@ export default function ContactPage() {
 
         {/* ── Sidebar ───────────────────────────────────────────────────── */}
         <aside className="space-y-6">
-
-          {/* Direct contact */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6">
-            <h3 className="mb-4 text-[15px] font-semibold text-[var(--ink)]">Direct contacts</h3>
-            <div className="space-y-3">
-              {[
-                { label: 'General', email: 'hello@transcript-iq.com' },
-                { label: 'Support', email: 'support@transcript-iq.com' },
-                { label: 'Compliance', email: 'compliance@transcript-iq.com' },
-                { label: 'Press', email: 'press@transcript-iq.com' },
-              ].map((c) => (
-                <div key={c.label} className="flex items-center justify-between gap-3">
-                  <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--mist)]">{c.label}</span>
-                  <a href={`mailto:${c.email}`} className="text-[13px] text-[var(--accent)] hover:underline hover:underline-offset-4">
-                    {c.email}
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Response time */}
-          <div className="flex items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
-            <Clock className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" />
-            <div>
-              <p className="mb-1 text-[13px] font-semibold text-[var(--ink)]">Response times</p>
-              <div className="space-y-1 text-[12px] text-[var(--ink-2)]">
-                <p>General enquiries — 1 business day</p>
-                <p>Custom research — 2 business days</p>
-                <p>Compliance / legal — 1 business day</p>
-                <p>Technical support — 4 hours (business hours)</p>
-              </div>
-            </div>
-          </div>
 
           {/* Offices */}
           <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6">

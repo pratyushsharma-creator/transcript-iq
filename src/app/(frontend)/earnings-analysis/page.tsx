@@ -59,7 +59,7 @@ export default async function EarningsAnalysisPage({ searchParams }: { searchPar
             </p>
           </div>
           <Link
-            href="/custom-reports"
+            href="/custom-earnings"
             className="shrink-0 inline-flex items-center gap-2 rounded-[10px] bg-btn-primary px-7 py-3.5 text-[14px] font-semibold text-btn-primary-fg shadow-cta transition-all duration-base ease-out hover:-translate-y-px hover:bg-btn-primary-hover whitespace-nowrap"
           >
             Request a Custom Earnings Analysis

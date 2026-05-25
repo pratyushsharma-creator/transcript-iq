@@ -39,7 +39,8 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Basic validation
-    if (!body.email?.trim()) {
+    // Email is optional for custom-earnings (phone-only form); required for all other types
+    if (body.type !== 'custom-earnings' && !body.email?.trim()) {
       return NextResponse.json({ error: 'Email is required.' }, { status: 400 })
     }
 
@@ -80,7 +81,7 @@ export async function POST(req: NextRequest) {
         from,
         to,
         ...(cc.length > 0 ? { cc } : {}),
-        replyTo: email,
+        ...(email ? { replyTo: email } : {}),
         subject,
         text: lines.join('\n'),
       })

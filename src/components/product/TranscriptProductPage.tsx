@@ -633,53 +633,6 @@ export function TranscriptProductPage({
         </div>
       </div>
 
-      {/* Bundles section */}
-      <div className="pt-12 border-t border-[var(--border)]">
-        <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--mist)] mb-5">Save more with bundles</div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[14px] px-[26px] py-6 hover:border-[var(--border-md)] hover:-translate-y-px transition-all cursor-pointer">
-            <div className="font-mono text-[9px] tracking-[0.14em] uppercase text-[var(--accent)] mb-2">3 Transcripts</div>
-            <div className="text-[16px] font-medium tracking-[-0.015em] mb-2.5">
-              {primarySector ? `${primarySector.name} Deep-Dive Pack` : 'Sector Deep-Dive Pack'}
-            </div>
-            <div className="flex flex-wrap gap-[5px] mb-4">
-              {(primarySector ? [primarySector.name, 'Adjacent Research', 'Competitive Analysis'] : ['Primary Research', 'Adjacent Research', 'Competitive Analysis']).map(topic => (
-                <span key={topic} className="font-mono text-[9px] tracking-[0.04em] text-[var(--slate)] bg-[var(--bg)] border border-[var(--border)] px-[7px] py-0.5 rounded-[4px]">{topic}</span>
-              ))}
-            </div>
-            <div className="flex items-baseline gap-2 mb-3">
-              <span className="font-mono text-[22px] font-medium text-[var(--accent)] tracking-[-0.02em]">$999</span>
-              <span className="font-mono text-[12px] text-[var(--mist)] line-through">$1,297</span>
-              <span className="font-mono text-[9px] font-semibold tracking-[0.08em] text-[var(--warning)] bg-[var(--warn-tint)] border border-[var(--warn-border)] px-[7px] py-0.5 rounded-[4px]">Save 23%</span>
-            </div>
-            <div className="text-[11px] text-[var(--mist)] mb-4">You save $298 compared to individual purchases</div>
-            <button className="w-full flex items-center justify-center text-[12px] font-medium text-[var(--ink-2)] bg-[var(--bg)] border border-[var(--border)] px-4 py-[9px] rounded-[7px] hover:border-[var(--border-md)] hover:text-[var(--ink)] transition-all cursor-pointer">
-              Buy 3-Transcript Pack →
-            </button>
-          </div>
-          <div className="border border-[var(--accent-border)] rounded-[14px] px-[26px] py-6 hover:-translate-y-px transition-all cursor-pointer" style={{ background: 'linear-gradient(145deg, var(--surface), rgba(16,185,129,0.05))' }}>
-            <div className="font-mono text-[9px] tracking-[0.14em] uppercase text-[var(--accent)] mb-2">6 Transcripts</div>
-            <div className="text-[16px] font-medium tracking-[-0.015em] mb-2.5">
-              Full Sector Research Pack
-            </div>
-            <div className="flex flex-wrap gap-[5px] mb-4">
-              {['Primary Research', 'Adjacent Sectors', 'AI Infrastructure', 'Cloud CapEx'].map(topic => (
-                <span key={topic} className="font-mono text-[9px] tracking-[0.04em] text-[var(--slate)] bg-[var(--bg)] border border-[var(--border)] px-[7px] py-0.5 rounded-[4px]">{topic}</span>
-              ))}
-            </div>
-            <div className="flex items-baseline gap-2 mb-3">
-              <span className="font-mono text-[22px] font-medium text-[var(--accent)] tracking-[-0.02em]">$1,899</span>
-              <span className="font-mono text-[12px] text-[var(--mist)] line-through">$2,694</span>
-              <span className="font-mono text-[9px] font-semibold tracking-[0.08em] text-[var(--warning)] bg-[var(--warn-tint)] border border-[var(--warn-border)] px-[7px] py-0.5 rounded-[4px]">Save 30%</span>
-            </div>
-            <div className="text-[11px] text-[var(--mist)] mb-4">You save $795 compared to individual purchases</div>
-            <button className="w-full flex items-center justify-center text-[12px] font-semibold text-white bg-[var(--accent)] border border-[var(--accent)] px-4 py-[9px] rounded-[7px] hover:bg-[var(--accent-deep)] transition-all cursor-pointer">
-              Buy Full Research Pack →
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* Related transcripts */}
       {related.length > 0 && (
         <div className="py-12 border-t border-[var(--border)]">

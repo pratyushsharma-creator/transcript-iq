@@ -88,8 +88,8 @@ function ErrorState({ message }: { message: string }) {
         <p className="mb-6 text-[14px] text-[var(--ink-2)]">{message}</p>
         <p className="mb-8 font-mono text-[11px] text-[var(--mist)]">
           If you were charged, please email{' '}
-          <a href="mailto:hello@transcript-iq.com" className="text-[var(--accent)] underline">
-            hello@transcript-iq.com
+          <a href="mailto:info@nextyn.com" className="text-[var(--accent)] underline">
+            info@nextyn.com
           </a>{' '}
           and we will resolve it immediately.
         </p>
@@ -222,7 +222,7 @@ function ConfirmationContent() {
             { step: '01', text: 'Receipt sent to your email with order summary' },
             { step: '02', text: 'PDF download links delivered within minutes' },
             { step: '03', text: 'MNPI screening certificate included with each transcript' },
-            { step: '04', text: 'Support available at hello@transcript-iq.com' },
+            { step: '04', text: 'Support available at info@nextyn.com' },
           ].map(({ step, text }) => (
             <div key={step} className="flex items-start gap-3">
               <span className="font-mono text-[9px] font-semibold text-[var(--accent)] shrink-0 mt-0.5">{step}</span>

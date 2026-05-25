@@ -34,7 +34,7 @@ export function organizationSchema() {
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer support',
-      email: 'support@transcript-iq.com',
+      email: 'info@nextyn.com',
     },
   }
 }

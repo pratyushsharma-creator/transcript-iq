@@ -94,8 +94,8 @@ export default function PrivacyPage() {
                 <p>Singapore · Mumbai · Bangalore · Jakarta</p>
                 <p>
                   Email:{' '}
-                  <a href="mailto:privacy@transcript-iq.com" className="text-[var(--accent)]">
-                    privacy@transcript-iq.com
+                  <a href="mailto:info@nextyn.com" className="text-[var(--accent)]">
+                    info@nextyn.com
                   </a>
                 </p>
               </div>
@@ -287,8 +287,8 @@ export default function PrivacyPage() {
             </ul>
             <p className="mt-4">
               To exercise any of these rights, email{' '}
-              <a href="mailto:privacy@transcript-iq.com" className="text-[var(--accent)] underline underline-offset-4">
-                privacy@transcript-iq.com
+              <a href="mailto:info@nextyn.com" className="text-[var(--accent)] underline underline-offset-4">
+                info@nextyn.com
               </a>. We will respond within 30 days. If you are unsatisfied with our response, you have the right to lodge a complaint with your local data protection authority.
             </p>
           </section>
@@ -335,8 +335,8 @@ export default function PrivacyPage() {
               <p className="font-semibold text-[var(--ink)]">Nextyn Advisory Private Limited</p>
               <p className="mt-1">Privacy Officer · Transcript IQ</p>
               <p className="mt-3">
-                <a href="mailto:privacy@transcript-iq.com" className="text-[var(--accent)] underline underline-offset-4">
-                  privacy@transcript-iq.com
+                <a href="mailto:info@nextyn.com" className="text-[var(--accent)] underline underline-offset-4">
+                  info@nextyn.com
                 </a>
               </p>
               <p className="mt-1 text-[var(--mist)]">We aim to respond to all privacy requests within 5 business days.</p>

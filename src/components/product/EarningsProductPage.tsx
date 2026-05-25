@@ -713,7 +713,7 @@ export function EarningsProductPage({
           <div className="flex flex-wrap items-baseline justify-between gap-3 mb-6">
             <div>
               <div className="font-mono text-[9px] tracking-[0.14em] uppercase text-[var(--mist)] mb-1.5">You may also like</div>
-              <div className="text-[22px] font-medium tracking-[-0.025em]">Related Earnings Analyses</div>
+              <div className="text-[22px] font-medium tracking-[-0.025em]">Related Earnings Analysis</div>
             </div>
             <Link
               href={primarySector ? `/earnings-analysis?sector=${primarySector.slug}` : '/earnings-analysis'}

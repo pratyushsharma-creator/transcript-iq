@@ -147,8 +147,8 @@ export default function TermsPage() {
             </p>
             <p className="mt-4">
               In the event of a technical issue preventing delivery, please contact{' '}
-              <a href="mailto:support@transcript-iq.com" className="text-[var(--accent)] underline underline-offset-4">
-                support@transcript-iq.com
+              <a href="mailto:info@nextyn.com" className="text-[var(--accent)] underline underline-offset-4">
+                info@nextyn.com
               </a>{' '}
               within 48 hours of purchase and we will re-deliver within one business day.
             </p>
@@ -172,8 +172,8 @@ export default function TermsPage() {
             </ul>
             <p className="mt-4">
               To request a refund under an exception, email{' '}
-              <a href="mailto:support@transcript-iq.com" className="text-[var(--accent)] underline underline-offset-4">
-                support@transcript-iq.com
+              <a href="mailto:info@nextyn.com" className="text-[var(--accent)] underline underline-offset-4">
+                info@nextyn.com
               </a>{' '}
               within 7 days of purchase with your order reference number.
             </p>
@@ -211,8 +211,8 @@ export default function TermsPage() {
             </p>
             <p className="mt-4">
               If you discover content in a purchased transcript that you believe may constitute MNPI, you are obligated to notify your compliance officer immediately and to contact{' '}
-              <a href="mailto:compliance@transcript-iq.com" className="text-[var(--accent)] underline underline-offset-4">
-                compliance@transcript-iq.com
+              <a href="mailto:compliance@nextyn.com" className="text-[var(--accent)] underline underline-offset-4">
+                compliance@nextyn.com
               </a>.
             </p>
           </section>
@@ -299,8 +299,8 @@ export default function TermsPage() {
               <p className="font-semibold text-[var(--ink)]">Nextyn Advisory Private Limited</p>
               <p className="mt-1">Legal &amp; Compliance · Transcript IQ</p>
               <p className="mt-3">
-                <a href="mailto:legal@transcript-iq.com" className="text-[var(--accent)] underline underline-offset-4">
-                  legal@transcript-iq.com
+                <a href="mailto:info@nextyn.com" className="text-[var(--accent)] underline underline-offset-4">
+                  info@nextyn.com
                 </a>
               </p>
             </div>

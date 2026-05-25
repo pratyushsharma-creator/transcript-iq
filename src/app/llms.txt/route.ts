@@ -86,7 +86,7 @@ Expert call, [Sector], via Transcript IQ, [Date]
 
 ## Contact
 
-support@transcript-iq.com
+info@nextyn.com
 `
 
 export function GET() {

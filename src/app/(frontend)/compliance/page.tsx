@@ -165,7 +165,7 @@ export default function CompliancePage() {
               },
               {
                 heading: 'Compliance Officer Support',
-                body: 'Compliance officers at client organisations are welcome to contact our compliance team directly to discuss our expert vetting process, review MNPI screening methodology, or request supporting documentation for internal review. Contact: compliance@transcript-iq.com',
+                body: 'Compliance officers at client organisations are welcome to contact our compliance team directly to discuss our expert vetting process, review MNPI screening methodology, or request supporting documentation for internal review. Contact: compliance@nextyn.com',
               },
               {
                 heading: 'Client Obligations',
@@ -305,10 +305,10 @@ export default function CompliancePage() {
             </div>
             <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
               <a
-                href="mailto:compliance@transcript-iq.com"
+                href="mailto:compliance@nextyn.com"
                 className="inline-flex items-center gap-2 rounded-[10px] bg-btn-primary px-5 py-3 text-[13px] font-semibold text-btn-primary-fg shadow-cta transition-all duration-base ease-out hover:-translate-y-px hover:bg-btn-primary-hover"
               >
-                compliance@transcript-iq.com
+                compliance@nextyn.com
               </a>
               <Link
                 href="/contact"

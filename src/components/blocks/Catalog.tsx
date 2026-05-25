@@ -197,7 +197,7 @@ export async function FeaturedProductsRenderer({ block }: { block: FeaturedProdu
           )}
           {block.productSource === 'earnings-analyses' && (
             <Link
-              href="/custom-reports"
+              href="/custom-earnings"
               className="inline-flex items-center gap-2 rounded-md bg-btn-primary px-5 py-3 text-sm font-medium text-btn-primary-fg shadow-cta transition-all duration-base ease-out hover:-translate-y-px hover:bg-btn-primary-hover"
             >
               Request a Custom Earnings Analysis
