@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Card Prototype — Before vs After</title>
+<style>
+:root {
+  --ac: #10b981; --acd: #059669;
+  --ab: rgba(16,185,129,.28); --at: rgba(16,185,129,.07);
+  --sf: #ffffff; --s2: #f4f4f6; --bg: #ebebed;
+  --ink: #0f1011; --i2: #4b5563; --ms: #9ca3af;
+  --bd: #e5e7eb; --b2: #d1d5db; --sl: #6b7280;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  padding: 40px 32px 80px;
+  color: var(--ink);
+}
+h1 { font-size: 20px; font-weight: 700; letter-spacing: -.03em; margin-bottom: 6px; }
+.sub { font-size: 13px; color: var(--ms); line-height: 1.6; margin-bottom: 40px; }
+
+/* Section headings */
+.sh {
+  font-family: ui-monospace, monospace;
+  font-size: 10px; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase;
+  margin-bottom: 14px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--bd);
+}
+.sh.bad { color: #ef4444; }
+.sh.ok  { color: var(--ac); }
+
+/* 2-col grid */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 820px; margin-bottom: 52px; }
+.g4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; max-width: 820px; margin-bottom: 52px; }
+
+.card-wrap-label {
+  font-family: ui-monospace, monospace;
+  font-size: 9px; letter-spacing: .07em;
+  margin-bottom: 9px;
+}
+.card-wrap-label.bad { color: #ef4444; }
+.card-wrap-label.ok  { color: var(--ac); }
+
+/* CARD */
+.card {
+  background: var(--sf);
+  border: 1px solid var(--ab);
+  border-radius: 14px;
+  padding: 22px 20px;
+  display: flex; flex-direction: column;
+  box-shadow: 0 2px 10px -3px rgba(0,0,0,.08), 0 6px 20px -6px rgba(0,0,0,.07);
+}
+.card.elite {
+  background: linear-gradient(180deg, rgba(16,185,129,.06) 0%, transparent 50%), #fff;
+  border-color: rgba(16,185,129,.38);
+  position: relative; overflow: hidden;
+}
+.elite-glow {
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ac), transparent);
+  opacity: .55;
+}
+
+/* Card internals */
+.c-hdr { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 11px; }
+.c-sector {
+  font-family: ui-monospace, monospace;
+  font-size: 9px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--ac);
+}
+.c-date {
+  font-family: ui-monospace, monospace;
+  font-size: 9px; letter-spacing: .06em; color: var(--ms);
+}
+.c-title {
+  font-size: 18.5px; font-weight: 600;
+  line-height: 1.3; letter-spacing: -.025em;
+  color: var(--ink); margin-bottom: 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.c-exp {
+  display: flex; align-items: center;
+  gap: 8px; margin-bottom: 9px;
+}
+.av {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: linear-gradient(135deg, #059669, #10b981);
+  display: flex; align-items: center; justify-content: center;
+  font-family: ui-monospace, monospace;
+  font-size: 5.5px; font-weight: 700; color: #064e3b;
+  flex-shrink: 0;
+}
+.exp-title {
+  font-size: 11px; line-height: 1.35;
+  color: var(--sl); flex: 1;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.level-pill {
+  font-family: ui-monospace, monospace;
+  font-size: 8.5px; letter-spacing: .07em;
+  color: var(--ms);
+  background: var(--s2);
+  border-radius: 4px; padding: 2px 6px;
+  flex-shrink: 0;
+}
+
+/* Meta band — CURRENT (bad): border-y */
+.meta-band-bad {
+  display: flex;
+  border-top: 1px solid var(--bd);
+  border-bottom: 1px solid var(--bd);
+  padding: 10px 0;
+  margin-bottom: 16px;
+}
+/* Meta band — PROPOSED (good): no borders, no extra margin */
+.meta-band-ok {
+  display: flex;
+  padding: 8px 0 0 0;
+  margin-bottom: 0;
+}
+
+.mc { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.mc + .mc { border-left: 1px solid var(--bd); padding-left: 11px; }
+.mc:not(:last-child) { padding-right: 11px; }
+.ml {
+  font-family: ui-monospace, monospace;
+  font-size: 7px; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--ms);
+}
+.mv { font-size: 11px; font-weight: 500; color: var(--ink); }
+.mv.a { color: var(--ac); }
+
+/* Dead space indicator */
+.dead-space {
+  height: 16px; margin: 0;
+  background: rgba(239,68,68,.07);
+  border: 1px dashed rgba(239,68,68,.35);
+  border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: ui-monospace, monospace;
+  font-size: 8px; color: #ef4444;
+}
+.line-ann {
+  font-family: ui-monospace, monospace;
+  font-size: 8px; color: #ef4444;
+  background: rgba(239,68,68,.07);
+  border: 1px dashed rgba(239,68,68,.3);
+  border-radius: 3px; padding: 1px 5px;
+  display: inline-block; margin-bottom: 3px;
+}
+
+/* Footer */
+.c-foot {
+  margin-top: auto;
+  border-top: 1px solid var(--bd);
+  padding-top: 13px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.price-row { display: flex; align-items: center; justify-content: space-between; }
+.price-group { display: flex; align-items: center; gap: 6px; }
+.price {
+  font-family: ui-monospace, monospace;
+  font-size: 22px; font-weight: 500;
+  line-height: 1; letter-spacing: -.04em; color: var(--ac);
+}
+.price-strike {
+  font-family: ui-monospace, monospace;
+  font-size: 12px; line-height: 1;
+  color: var(--ms); text-decoration: line-through;
+}
+.disc {
+  font-family: ui-monospace, monospace;
+  font-size: 8px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .08em;
+  color: #fff; background: var(--ac);
+  border-radius: 3px; padding: 2px 5px; line-height: 1;
+}
+.tier {
+  font-family: ui-monospace, monospace;
+  font-size: 8px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ms);
+  border: 1px solid var(--b2); background: var(--s2);
+  border-radius: 4px; padding: 2px 7px;
+}
+.tier.premium { color: #92400e; border-color: rgba(202,138,4,.22); background: rgba(202,138,4,.06); }
+.tier.elite   { color: var(--ac); border-color: var(--ab); background: var(--at); }
+.btn-row { display: flex; gap: 7px; }
+.btn-cart {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px;
+  border: 1px solid var(--bd); background: transparent;
+  border-radius: 8px; padding: 9px;
+  font-size: 11.5px; font-weight: 500; color: var(--i2);
+  cursor: pointer; font-family: inherit;
+  transition: all .15s;
+}
+.btn-cart:hover { border-color: var(--b2); background: var(--s2); color: var(--ink); }
+.btn-buy {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px;
+  border: none; border-radius: 8px; padding: 9px;
+  font-size: 11.5px; font-weight: 600; color: #fff;
+  background: var(--acd); cursor: pointer; font-family: inherit;
+  box-shadow: 0 1px 3px rgba(5,150,105,.3); transition: all .15s;
+}
+.btn-buy:hover { background: var(--ac); transform: translateY(-1px); }
+
+/* Note box */
+.note {
+  background: var(--at); border: 1px solid var(--ab);
+  border-radius: 10px; padding: 18px 20px;
+  max-width: 820px; margin-top: 8px;
+}
+.note-hdr {
+  font-family: ui-monospace, monospace;
+  font-size: 9px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ac);
+  margin-bottom: 10px;
+}
+.note p { font-size: 12.5px; line-height: 1.75; color: var(--i2); }
+.note p + p { margin-top: 10px; }
+.note strong { color: var(--ink); }
+code {
+  font-family: ui-monospace, monospace;
+  font-size: 11px; background: rgba(0,0,0,.05);
+  padding: 1px 4px; border-radius: 3px;
+}
+</style>
+</head>
+<body>
+
+<h1>Transcript Card — Before vs After</h1>
+<p class="sub">
+  Left = current card with the two problems annotated in red.<br>
+  Right = proposed fix. Bottom row = all three tier variants in the new design.
+</p>
+
+<!-- SECTION 1: Before vs After -->
+<div class="sh bad">Problem vs Fix — same transcript, same data</div>
+<div class="g2">
+
+  <!-- CURRENT (bad) -->
+  <div>
+    <div class="card-wrap-label bad">CURRENT — double separator + dead space</div>
+    <div class="card">
+      <div class="c-hdr">
+        <span class="c-sector">Space Economy</span>
+        <span class="c-date">20 Apr 2026 · north-america</span>
+      </div>
+      <div class="c-title">LEO Satellite Broadband Outlook: Household Penetration Potential, and Structural Advantages Over Fiber and FWA</div>
+      <div class="c-exp">
+        <div class="av">EXP</div>
+        <span class="exp-title">Former Manager, LEO Broadband Strategy, Major Satellite Operator</span>
+      </div>
+      <!-- annotation: top line -->
+      <div style="margin-bottom:3px"><span class="line-ann">↑ border-y top line (not needed)</span></div>
+      <div class="meta-band-bad">
+        <div class="mc" style="border-left:none;padding-left:0">
+          <div class="ml">Expert Level</div>
+          <div class="mv">Director</div>
+        </div>
+        <div class="mc">
+          <div class="ml">Duration</div>
+          <div class="mv">—</div>
+        </div>
+        <div class="mc">
+          <div class="ml">Compliance</div>
+          <div class="mv a">MNPI Screened</div>
+        </div>
+      </div>
+      <!-- annotation: bottom line -->
+      <div style="margin-top:-14px;margin-bottom:3px"><span class="line-ann">↑ border-y bottom line (not needed)</span></div>
+      <!-- dead space -->
+      <div class="dead-space">← mb-16px dead space (this is what you're seeing)</div>
+      <div class="c-foot">
+        <div class="price-row">
+          <div class="price-group">
+            <span class="price">$349</span>
+            <span class="price-strike">$499</span>
+            <span class="disc">30% OFF</span>
+          </div>
+          <span class="tier">STANDARD</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn-cart">+ Add to Cart</button>
+          <button class="btn-buy">🛒 Buy Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROPOSED (good) -->
+  <div>
+    <div class="card-wrap-label ok">PROPOSED — single separator, no dead space</div>
+    <div class="card">
+      <div class="c-hdr">
+        <span class="c-sector">Space Economy</span>
+        <span class="c-date">20 Apr 2026 · north-america</span>
+      </div>
+      <div class="c-title">LEO Satellite Broadband Outlook: Household Penetration Potential, and Structural Advantages Over Fiber and FWA</div>
+      <div class="c-exp">
+        <div class="av">EXP</div>
+        <span class="exp-title">Former Manager, LEO Broadband Strategy, Major Satellite Operator</span>
+      </div>
+      <!-- Meta band: no border-y, no mb-16px — 3 proper fields, footer border-t is the only separator -->
+      <div class="meta-band-ok">
+        <div class="mc" style="border-left:none;padding-left:0">
+          <div class="ml">Expert Level</div>
+          <div class="mv">Director</div>
+        </div>
+        <div class="mc">
+          <div class="ml">Duration</div>
+          <div class="mv">—</div>
+        </div>
+        <div class="mc">
+          <div class="ml">Compliance</div>
+          <div class="mv a">MNPI Screened</div>
+        </div>
+      </div>
+      <div class="c-foot">
+        <div class="price-row">
+          <div class="price-group">
+            <span class="price">$349</span>
+            <span class="price-strike">$499</span>
+            <span class="disc">30% OFF</span>
+          </div>
+          <span class="tier">STANDARD</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn-cart">+ Add to Cart</button>
+          <button class="btn-buy">🛒 Buy Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 2: All three tiers in new design -->
+<div class="sh ok">New design — all three tiers + duration present</div>
+<div class="g4">
+
+  <!-- Standard, no duration -->
+  <div>
+    <div class="card-wrap-label ok">Standard · no duration</div>
+    <div class="card">
+      <div class="c-hdr">
+        <span class="c-sector">Fintech</span>
+        <span class="c-date">12 Apr 2026</span>
+      </div>
+      <div class="c-title">B2B Payments Infrastructure: How Embedded Finance is Eroding Legacy Acquirer Margins</div>
+      <div class="c-exp">
+        <div class="av">EXP</div>
+        <span class="exp-title">Former Head of Payments, Major Neobank</span>
+      </div>
+      <div class="meta-band-ok">
+        <div class="mc" style="border-left:none;padding-left:0">
+          <div class="ml">Expert Level</div>
+          <div class="mv">Director</div>
+        </div>
+        <div class="mc">
+          <div class="ml">Duration</div>
+          <div class="mv">—</div>
+        </div>
+        <div class="mc">
+          <div class="ml">Compliance</div>
+          <div class="mv a">MNPI Screened</div>
+        </div>
+      </div>
+      <div class="c-foot">
+        <div class="price-row">
+          <div class="price-group"><span class="price">$349</span></div>
+          <span class="tier">STANDARD</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn-cart">+ Add to Cart</button>
+          <button class="btn-buy">🛒 Buy Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Standard, with duration -->
+  <div>
+    <div class="card-wrap-label ok">Standard · 55 min</div>
+    <div class="card">
+      <div class="c-hdr">
+        <span class="c-sector">Technology</span>
+        <span class="c-date">15 Mar 2026 · europe</span>
+      </div>
+      <div class="c-title">AI Infrastructure Spend: Hyperscaler CapEx Cycles and GPU Procurement Waves</div>
+      <div class="c-exp">
+        <div class="av">EXP</div>
+        <span class="exp-title">Former VP Engineering, Major Cloud Provider</span>
+      </div>
+      <div class="meta-band-ok">
+        <div class="mc" style="border-left:none;padding-left:0">
+          <div class="ml">Expert Level</div>
+          <div class="mv">VP</div>
+        </div>
+        <div class="mc">
+          <div class="ml">Duration</div>
+          <div class="mv">55 min</div>
+        </div>
+        <div class="mc">
+          <div class="ml">Compliance</div>
+          <div class="mv a">MNPI Screened</div>
+        </div>
+      </div>
+      <div class="c-foot">
+        <div class="price-row">
+          <div class="price-group"><span class="price">$349</span></div>
+          <span class="tier">STANDARD</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn-cart">+ Add to Cart</button>
+          <button class="btn-buy">🛒 Buy Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Premium -->
+  <div>
+    <div class="card-wrap-label ok">Premium · discount</div>
+    <div class="card">
+      <div class="c-hdr">
+        <span class="c-sector">Healthcare</span>
+        <span class="c-date">28 Mar 2026 · global</span>
+      </div>
+      <div class="c-title">GLP-1 Market Dynamics: Supply Constraints, Payer Landscape, and Long-Term Adherence Rates</div>
+      <div class="c-exp">
+        <div class="av">EXP</div>
+        <span class="exp-title">Former SVP Commercial, Major Pharma</span>
+      </div>
+      <div class="meta-band-ok">
+        <div class="mc" style="border-left:none;padding-left:0">
+          <div class="ml">Expert Level</div>
+          <div class="mv">VP</div>
+        </div>
+        <div class="mc">
+          <div class="ml">Duration</div>
+          <div class="mv">68 min</div>
+        </div>
+        <div class="mc">
+          <div class="ml">Compliance</div>
+          <div class="mv a">MNPI Screened</div>
+        </div>
+      </div>
+      <div class="c-foot">
+        <div class="price-row">
+          <div class="price-group">
+            <span class="price">$359</span>
+            <span class="price-strike">$449</span>
+            <span class="disc">20% OFF</span>
+          </div>
+          <span class="tier premium">PREMIUM</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn-cart">+ Add to Cart</button>
+          <button class="btn-buy">🛒 Buy Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Elite -->
+  <div>
+    <div class="card-wrap-label ok">Elite · C-Suite</div>
+    <div class="card elite">
+      <div class="elite-glow"></div>
+      <div class="c-hdr">
+        <span class="c-sector">Consumer</span>
+        <span class="c-date">02 Feb 2026 · apac</span>
+      </div>
+      <div class="c-title">Luxury Goods Pricing Power: How LVMH Defends Margins in a Softening China Market</div>
+      <div class="c-exp">
+        <div class="av">EXP</div>
+        <span class="exp-title">Former Chief Commercial Officer, Major Luxury Group</span>
+      </div>
+      <div class="meta-band-ok">
+        <div class="mc" style="border-left:none;padding-left:0">
+          <div class="ml">Expert Level</div>
+          <div class="mv">C-Suite</div>
+        </div>
+        <div class="mc">
+          <div class="ml">Duration</div>
+          <div class="mv">72 min</div>
+        </div>
+        <div class="mc">
+          <div class="ml">Compliance</div>
+          <div class="mv a">MNPI Screened</div>
+        </div>
+      </div>
+      <div class="c-foot">
+        <div class="price-row">
+          <div class="price-group"><span class="price">$599</span></div>
+          <span class="tier elite">ELITE</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn-cart">+ Add to Cart</button>
+          <button class="btn-buy">🛒 Buy Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="note">
+  <div class="note-hdr">What changes — say "looks good" to apply to the live site</div>
+  <p>
+    <strong>TranscriptCard.tsx (homepage blocks):</strong>
+    Remove <code>border-y</code> from the meta band — no more top+bottom double line.
+    Remove <code>mb-[16px]</code> below it — no more dead space.
+    Expert Level stays as a labeled field (first column in the meta band, alongside Duration and Compliance).
+    Footer's existing <code>border-t</code> is the single separator between meta and price.
+  </p>
+  <p>
+    <strong>TranscriptLibrary.tsx (collection page):</strong>
+    Replace the internal card layout entirely so it uses exactly the same structure as above — same header, same expert+level row, same Duration/Compliance meta, same Add to Cart + Buy Now footer wired to CartContext.
+    The library currently has a completely different card with a plain "Buy →" button and different meta — that inconsistency goes away.
+  </p>
+</div>
+
+</body>
+</html>
