@@ -16,8 +16,8 @@ import config from '@/payload.config'
 export const runtime = 'nodejs'
 export const maxDuration = 30
 
-type AllowedCollection = 'blog-posts' | 'expert-transcripts' | 'earnings-analyses'
-const ALLOWED: AllowedCollection[] = ['blog-posts', 'expert-transcripts', 'earnings-analyses']
+type AllowedCollection = 'blog-posts' | 'expert-transcripts' | 'earnings-analyses' | 'pages'
+const ALLOWED: AllowedCollection[] = ['blog-posts', 'expert-transcripts', 'earnings-analyses', 'pages']
 
 async function verifyAdminOrEditor(authHeader: string): Promise<boolean> {
   // System-level access via PAYLOAD_SECRET
