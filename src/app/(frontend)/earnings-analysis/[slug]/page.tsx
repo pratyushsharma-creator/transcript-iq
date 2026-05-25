@@ -4,7 +4,7 @@ import { EarningsProductPage } from '@/components/product/EarningsProductPage'
 import type { RelatedEarnings } from '@/components/product/EarningsProductPage'
 import { canonical, truncate } from '@/lib/seo/metadata'
 import { breadcrumbSchema, JsonLd } from '@/lib/seo/jsonld'
-import { getEarningsAnalysisBySlug, getRelatedEarningsAnalyses } from '@/lib/cache/queries'
+import { getEarningsAnalysisBySlug, getRelatedEarningsAnalyses, getAllEarningsSlugs } from '@/lib/cache/queries'
 
 /** Convert Payload Lexical JSON to a simple HTML string (server-side only). */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -39,6 +39,11 @@ function lexicalToHtml(lexicalJson: unknown): string {
 }
 
 export const revalidate = 86400
+
+export async function generateStaticParams() {
+  const slugs = await getAllEarningsSlugs()
+  return slugs.map((slug) => ({ slug }))
+}
 
 type Params = Promise<{ slug: string }>
 

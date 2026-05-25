@@ -222,6 +222,34 @@ export const getRelatedEarningsAnalyses = unstable_cache(
   { tags: [CACHE_TAGS.earningsAnalyses], revalidate: 86400 },
 )
 
+export const getAllTranscriptSlugs = unstable_cache(
+  async (): Promise<string[]> => {
+    const payload = await getPayload({ config: await config })
+    const { docs } = await payload.find({
+      collection: 'expert-transcripts',
+      limit: 1000,
+      depth: 0,
+    })
+    return docs.map((d) => d.slug).filter((s): s is string => Boolean(s))
+  },
+  ['all-transcript-slugs'],
+  { tags: [CACHE_TAGS.expertTranscripts], revalidate: 86400 },
+)
+
+export const getAllEarningsSlugs = unstable_cache(
+  async (): Promise<string[]> => {
+    const payload = await getPayload({ config: await config })
+    const { docs } = await payload.find({
+      collection: 'earnings-analyses',
+      limit: 1000,
+      depth: 0,
+    })
+    return docs.map((d) => d.slug).filter((s): s is string => Boolean(s))
+  },
+  ['all-earnings-slugs'],
+  { tags: [CACHE_TAGS.earningsAnalyses], revalidate: 86400 },
+)
+
 // ── Blog Posts ────────────────────────────────────────────────────────────
 
 export const getBlogPostBySlug = unstable_cache(

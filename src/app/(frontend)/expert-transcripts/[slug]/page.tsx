@@ -4,9 +4,14 @@ import { TranscriptProductPage } from '@/components/product/TranscriptProductPag
 import type { RelatedTranscript } from '@/components/product/TranscriptProductPage'
 import { productSchema, breadcrumbSchema, JsonLd } from '@/lib/seo/jsonld'
 import { canonical, truncate } from '@/lib/seo/metadata'
-import { getTranscriptBySlug, getRelatedTranscripts } from '@/lib/cache/queries'
+import { getTranscriptBySlug, getRelatedTranscripts, getAllTranscriptSlugs } from '@/lib/cache/queries'
 
 export const revalidate = 86400
+
+export async function generateStaticParams() {
+  const slugs = await getAllTranscriptSlugs()
+  return slugs.map((slug) => ({ slug }))
+}
 
 type Params = Promise<{ slug: string }>
 
