@@ -110,6 +110,11 @@ export function EarningsAnalysisCard({
     openCart()
   }
 
+  // Prefetch on hover so the route JS is ready before the click
+  const handleMouseEnter = () => {
+    router.prefetch(productUrl)
+  }
+
   // Clicking anywhere on the card navigates to the product page
   const handleCardClick = () => {
     router.push(productUrl)
@@ -122,6 +127,7 @@ export function EarningsAnalysisCard({
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }}
       onClick={handleCardClick}
+      onMouseEnter={handleMouseEnter}
       className={`group relative flex flex-col gap-3 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] p-5 cursor-pointer ${hoverClass(hoverEffect)}`}
     >
       <div className="flex items-center justify-between">
