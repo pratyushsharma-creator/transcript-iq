@@ -1,5 +1,12 @@
-// src/components/site/TestimonialStrip.tsx
+'use client'
+
+import { motion, useInView } from 'motion/react'
+import { useRef } from 'react'
+
 export function TestimonialStrip() {
+  const ref = useRef<HTMLDivElement>(null)
+  const isInView = useInView(ref, { once: true, margin: '-60px' })
+
   const quotes = [
     {
       text: "We used Transcript IQ to anchor our pre-CIM diligence on a mid-market industrials deal. Having verbatim VP-level perspectives in under 24 hours changed how we prepped for management meetings.",
@@ -18,13 +25,25 @@ export function TestimonialStrip() {
   return (
     <section className="border-t border-[var(--border)] bg-[var(--surface-2)]">
       <div className="mx-auto max-w-[1280px] px-4 sm:px-6 md:px-10 py-14">
-        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--mist)] mb-8 text-center">
+        <motion.p
+          initial={{ opacity: 0, y: 8 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--mist)] mb-8 text-center"
+        >
           Trusted by buy-side professionals
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        </motion.p>
+        <div ref={ref} className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {quotes.map((q, i) => (
-            <div
+            <motion.div
               key={i}
+              initial={{ opacity: 0, y: 16 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{
+                duration: 0.45,
+                delay: 0.1 + i * 0.08,
+                ease: [0.16, 1, 0.3, 1],
+              }}
               className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 flex flex-col gap-4"
             >
               <svg viewBox="0 0 24 18" fill="none" aria-hidden="true" className="h-5 w-5 text-[var(--accent)] opacity-50 shrink-0">
@@ -39,7 +58,7 @@ export function TestimonialStrip() {
               <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--mist)]">
                 — {q.role}
               </p>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
