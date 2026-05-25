@@ -660,6 +660,7 @@ export function EarningsLibrary({ initialDocs, totalDocs, industries }: Earnings
   function clearAll() {
     const f = emptyFilters()
     setFilters(f)
+    setSearchQuery('')
     fetchDocs(f, sort, 1)
   }
 

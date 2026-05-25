@@ -582,6 +582,7 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
   function clearAll() {
     const f = emptyFilters()
     setFilters(f)
+    setSearchQuery('')
     fetchDocs(f, sort, 1)
   }
 
