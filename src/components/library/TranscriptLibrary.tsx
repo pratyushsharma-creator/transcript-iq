@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCart } from '@/context/CartContext'
@@ -199,7 +200,14 @@ function FilterGroup({
                 >
                   {item.label}
                   {counts?.[item.value] != null && (
-                    <span className="ml-1 text-[var(--mist)] font-normal">({counts[item.value]})</span>
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.2, delay: 0.05 }}
+                      className="ml-1 text-[var(--mist)] font-normal"
+                    >
+                      ({counts[item.value]})
+                    </motion.span>
                   )}
                 </span>
               </button>
@@ -718,18 +726,25 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] pl-8 pr-4 py-2.5 font-mono text-[12px] text-[var(--ink)] placeholder-[var(--mist)] outline-none transition-all duration-150 focus:border-[var(--accent-border)] focus:ring-1 focus:ring-[var(--accent-border)]"
             />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--mist)] hover:text-[var(--ink)] transition-colors"
-                aria-label="Clear search"
-              >
-                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3 w-3">
-                  <path d="M2 2l8 8M10 2l-8 8" strokeLinecap="round" />
-                </svg>
-              </button>
-            )}
+            <AnimatePresence>
+              {searchQuery && (
+                <motion.button
+                  key="clear"
+                  initial={{ opacity: 0, scale: 0.7 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.7 }}
+                  transition={{ duration: 0.12, ease: [0.16, 1, 0.3, 1] }}
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--mist)] hover:text-[var(--ink)] transition-colors"
+                  aria-label="Clear search"
+                >
+                  <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3 w-3">
+                    <path d="M2 2l8 8M10 2l-8 8" strokeLinecap="round" />
+                  </svg>
+                </motion.button>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Toolbar */}
