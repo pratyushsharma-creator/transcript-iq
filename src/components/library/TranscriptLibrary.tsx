@@ -526,7 +526,6 @@ interface TranscriptLibraryProps {
 
 export function TranscriptLibrary({ initialDocs, totalDocs, industries }: TranscriptLibraryProps) {
   const [docs, setDocs] = useState<TranscriptDoc[]>(initialDocs)
-  const [total, setTotal] = useState(totalDocs)
   const [filters, setFilters] = useState<ActiveFilters>(emptyFilters())
   const [sort, setSort] = useState('-dateConducted')
   const [view, setView] = useState<'grid' | 'list'>('grid')
@@ -556,7 +555,6 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
         const res = await fetch(`/api/expert-transcripts?${buildParams(f, s, p)}`)
         const data = await res.json()
         setDocs((prev) => (append ? [...prev, ...(data.docs ?? [])] : (data.docs ?? [])))
-        setTotal(data.totalDocs ?? 0)
         setHasNext(data.hasNextPage ?? false)
         setPage(p)
         const u = new URLSearchParams()

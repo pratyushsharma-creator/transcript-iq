@@ -597,7 +597,6 @@ interface EarningsLibraryProps {
 
 export function EarningsLibrary({ initialDocs, totalDocs, industries }: EarningsLibraryProps) {
   const [docs, setDocs] = useState<EarningsDoc[]>(initialDocs)
-  const [total, setTotal] = useState(totalDocs)
   const [filters, setFilters] = useState<ActiveFilters>(emptyFilters())
   const [sort, setSort] = useState('-reportDate')
   const [view, setView] = useState<'grid' | 'list'>('grid')
@@ -627,7 +626,6 @@ export function EarningsLibrary({ initialDocs, totalDocs, industries }: Earnings
         const res = await fetch(`/api/earnings-analyses?${buildParams(f, s, p)}`)
         const data = await res.json()
         setDocs((prev) => (append ? [...prev, ...(data.docs ?? [])] : (data.docs ?? [])))
-        setTotal(data.totalDocs ?? 0)
         setHasNext(data.hasNextPage ?? false)
         setPage(p)
         const u = new URLSearchParams()
