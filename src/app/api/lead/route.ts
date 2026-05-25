@@ -96,16 +96,19 @@ export async function POST(req: NextRequest) {
       type === 'custom-earnings'  ? 'custom-earnings'  :
                                     'custom-transcript'
 
-    await sendLeadConfirmation({
-      to:    email,
-      type:  confirmationType,
-      name:  name,
-      sector: sector,
-      topic:  topic,
-    }).catch((err) => {
-      // Non-fatal — log but don't fail the request
-      console.error('[api/lead] confirmation email failed:', err)
-    })
+    // Only send confirmation if an email address was provided
+    if (email) {
+      await sendLeadConfirmation({
+        to:    email,
+        type:  confirmationType,
+        name:  name,
+        sector: sector,
+        topic:  topic,
+      }).catch((err) => {
+        // Non-fatal — log but don't fail the request
+        console.error('[api/lead] confirmation email failed:', err)
+      })
+    }
 
     return NextResponse.json({ ok: true })
   } catch (err) {
