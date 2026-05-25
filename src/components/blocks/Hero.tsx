@@ -444,7 +444,7 @@ function HeroVisual({
   if (variant === 'mockup') return <GenericMockup label={visual.mockupType ?? 'transcriptPreview'} />
   if (variant === 'animated' || variant === 'split') {
     if (visual.image?.url) {
-      return <Image src={visual.image.url} alt={visual.image.alt ?? ''} fill className="object-cover" priority />
+      return <Image src={visual.image.url} alt={visual.image.alt ?? ''} fill className="object-cover" priority sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 560px" />
     }
     return <AbstractGraphic />
   }
