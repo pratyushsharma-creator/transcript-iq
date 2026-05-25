@@ -251,7 +251,7 @@ export function TranscriptCard({
           <div className="mb-[4px] font-mono text-[8px] uppercase tracking-[0.16em] text-[var(--mist)]">
             Compliance
           </div>
-          <div className="text-[12px] font-medium text-[var(--accent)]">
+          <div className="text-[12px] font-medium text-[var(--ink-2)]">
             {data.complianceBadges?.includes('mnpi-screened') ? 'MNPI Screened' : 'Verified'}
           </div>
         </div>

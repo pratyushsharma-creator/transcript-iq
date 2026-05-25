@@ -37,7 +37,7 @@ export function ComplianceBadgePill({
     size === 'xs' ? 'px-1.5 py-0.5 text-[10px]' : size === 'md' ? 'px-3 py-1 text-[12px]' : 'px-2 py-0.5 text-[10px]'
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-md border border-[var(--accent-border)] bg-[var(--accent-tint)] font-mono font-medium uppercase tracking-[0.08em] text-[var(--accent)] ${sizing}`}
+      className={`inline-flex items-center gap-1 rounded-md border border-[var(--border)] bg-[var(--surface-2)] font-mono font-medium uppercase tracking-[0.08em] text-[var(--ink-2)] ${sizing}`}
     >
       <Icon className="h-3 w-3" />
       {text}
