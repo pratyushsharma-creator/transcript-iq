@@ -1,0 +1,121 @@
+/**
+ * ONE-TIME CONTENT FIX ROUTE — DELETE AFTER USE
+ *
+ * Fixes:
+ *   1. custom-reports page (ID 3) — FAQ block contactEmail:
+ *      research@transcript-iq.com → info@nextyn.com
+ *   2. how-to-use page (ID 2) — FAQ answer text:
+ *      "50,000+" → "135,000+" in the "Who are the experts" item
+ */
+import { NextRequest, NextResponse } from 'next/server'
+import { getPayload } from 'payload'
+import config from '@/payload.config'
+
+export const runtime = 'nodejs'
+export const maxDuration = 60
+
+// One-time token — revoke by deleting this file after use
+const FIX_TOKEN = 'tiq-ceo-fixes-2026-05-25'
+
+// ── Lexical tree helper: replace text in all text nodes ──────────────────────
+function replaceInLexical(node: unknown, from: string, to: string): boolean {
+  if (!node || typeof node !== 'object') return false
+  const n = node as Record<string, unknown>
+  let changed = false
+  if (n.type === 'text' && typeof n.text === 'string' && n.text.includes(from)) {
+    n.text = n.text.replaceAll(from, to)
+    changed = true
+  }
+  if (Array.isArray(n.children)) {
+    for (const child of n.children) {
+      if (replaceInLexical(child, from, to)) changed = true
+    }
+  }
+  return changed
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json() as { token?: string }
+    if (body.token !== FIX_TOKEN) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+    }
+
+    const payload = await getPayload({ config: await config })
+    const log: string[] = []
+
+    // ── Fix 1: custom-reports page (ID 3) — FAQ contactEmail ─────────────────
+    const page3 = await payload.findByID({
+      collection: 'pages',
+      id: 3,
+      depth: 5,
+      overrideAccess: true,
+    }) as { layout?: Array<Record<string, unknown>> } | null
+
+    if (!page3) {
+      log.push('ERROR: Page 3 not found')
+    } else {
+      const layout3 = page3.layout ?? []
+      let fixed3 = false
+      for (const block of layout3) {
+        if (block.blockType === 'faq' && block.contactEmail === 'research@transcript-iq.com') {
+          block.contactEmail = 'info@nextyn.com'
+          fixed3 = true
+        }
+      }
+      if (fixed3) {
+        await payload.update({
+          collection: 'pages',
+          id: 3,
+          data: { layout: layout3 as never },
+          overrideAccess: true,
+        })
+        log.push('✅ Page 3 (custom-reports): FAQ contactEmail updated to info@nextyn.com')
+      } else {
+        log.push('ℹ️  Page 3: no research@transcript-iq.com found in FAQ blocks (already fixed?)')
+      }
+    }
+
+    // ── Fix 2: how-to-use page (ID 2) — expert network count ─────────────────
+    const page2 = await payload.findByID({
+      collection: 'pages',
+      id: 2,
+      depth: 5,
+      overrideAccess: true,
+    }) as { layout?: Array<Record<string, unknown>> } | null
+
+    if (!page2) {
+      log.push('ERROR: Page 2 not found')
+    } else {
+      const layout2 = page2.layout ?? []
+      let fixed2 = false
+      for (const block of layout2) {
+        if (block.blockType === 'faq') {
+          const items = (block.items as Array<Record<string, unknown>>) ?? []
+          for (const item of items) {
+            if (replaceInLexical(item.answer, '50,000+', '135,000+')) {
+              fixed2 = true
+            }
+          }
+        }
+      }
+      if (fixed2) {
+        await payload.update({
+          collection: 'pages',
+          id: 2,
+          data: { layout: layout2 as never },
+          overrideAccess: true,
+        })
+        log.push('✅ Page 2 (how-to-use): FAQ expert network count updated to 135,000+')
+      } else {
+        log.push('ℹ️  Page 2: no "50,000+" found in FAQ answers (already fixed?)')
+      }
+    }
+
+    return NextResponse.json({ ok: true, log })
+  } catch (err) {
+    console.error('[fix-content]', err)
+    const message = err instanceof Error ? err.message : String(err)
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
+}
