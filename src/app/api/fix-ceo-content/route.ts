@@ -6,6 +6,7 @@
  *      research@transcript-iq.com → info@nextyn.com
  *   2. how-to-use page (ID 2) — FAQ answer text:
  *      "50,000+" → "135,000+" in the "Who are the experts" item
+ *   3. expert-transcripts ID 87 — dateConducted: 2026-12-05 → 2026-05-15
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
@@ -110,6 +111,32 @@ export async function POST(req: NextRequest) {
       } else {
         log.push('ℹ️  Page 2: no "50,000+" found in FAQ answers (already fixed?)')
       }
+    }
+
+    // ── Fix 3: transcript ID 87 — future dateConducted ───────────────────────
+    try {
+      const t87 = await payload.findByID({
+        collection: 'expert-transcripts',
+        id: 87,
+        depth: 0,
+        overrideAccess: true,
+      }) as { dateConducted?: string } | null
+
+      if (!t87) {
+        log.push('ERROR: Transcript 87 not found')
+      } else if (t87.dateConducted && t87.dateConducted > '2026-06-01') {
+        await payload.update({
+          collection: 'expert-transcripts',
+          id: 87,
+          data: { dateConducted: '2026-05-15T10:00:00.000Z' } as never,
+          overrideAccess: true,
+        })
+        log.push(`✅ Transcript 87: dateConducted corrected from ${t87.dateConducted} → 2026-05-15`)
+      } else {
+        log.push(`ℹ️  Transcript 87: dateConducted is ${t87.dateConducted ?? 'not set'} (no future date found)`)
+      }
+    } catch (e) {
+      log.push(`ERROR fixing transcript 87: ${e instanceof Error ? e.message : String(e)}`)
     }
 
     return NextResponse.json({ ok: true, log })
