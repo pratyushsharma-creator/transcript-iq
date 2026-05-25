@@ -27,7 +27,7 @@ export function TestimonialStrip() {
               key={i}
               className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 flex flex-col gap-4"
             >
-              <svg viewBox="0 0 24 18" fill="none" className="h-5 w-5 text-[var(--accent)] opacity-50 shrink-0">
+              <svg viewBox="0 0 24 18" fill="none" aria-hidden="true" className="h-5 w-5 text-[var(--accent)] opacity-50 shrink-0">
                 <path
                   d="M0 18V10.8C0 4.8 3.6.6 10.8 0v3.6C7.2 4.2 5.4 6.6 5.4 9.6H9V18H0zm13.2 0V10.8C13.2 4.8 16.8.6 24 0v3.6c-3.6.6-5.4 3-5.4 6H22.2V18H13.2z"
                   fill="currentColor"
