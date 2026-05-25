@@ -10,7 +10,6 @@ type CompKey = 'mnpi-screened' | 'pii-redacted' | 'compliance-certified'
 type TabId = 'summary' | 'themes' | 'commentary' | 'methodology'
 
 interface Industry { id: string; name: string; slug: string }
-interface Company { id: string; name: string; ticker?: string }
 
 interface EarningsDoc {
   id: string
@@ -35,7 +34,7 @@ interface EarningsDoc {
   complianceBadges?: CompKey[]
   engagementCopy?: string
   sectors?: (string | Industry)[]
-  companies?: (string | Company)[]
+  companies?: string
 }
 
 export interface RelatedEarnings {
@@ -172,7 +171,9 @@ export function EarningsProductPage({
     : ''
 
   const sectors = (analysis.sectors ?? []).filter((s): s is Industry => typeof s === 'object' && s !== null)
-  const companies = (analysis.companies ?? []).filter((c): c is Company => typeof c === 'object' && c !== null)
+  const companies = analysis.companies
+    ? analysis.companies.split(',').map(s => s.trim()).filter(Boolean)
+    : []
   const primarySector = sectors[0]
 
   const badges = analysis.performanceBadges ?? []
@@ -356,10 +357,9 @@ export function EarningsProductPage({
             <div className="mb-8">
               <div className="font-mono text-[9px] tracking-[0.14em] uppercase text-[var(--mist)] mb-2.5">Companies discussed</div>
               <div className="flex flex-wrap gap-1.5">
-                {companies.map(c => (
-                  <div key={c.id} className="inline-flex items-center gap-[5px] font-mono text-[10px] tracking-[0.04em] text-[var(--slate)] bg-[var(--surface)] border border-[var(--border)] px-[10px] py-1 rounded-[5px] hover:text-[var(--ink-2)] hover:border-[var(--border-md)] transition-all cursor-default">
-                    {c.ticker && <span className="text-[var(--accent)]">${c.ticker}</span>}
-                    {c.name}
+                {companies.map(name => (
+                  <div key={name} className="inline-flex items-center font-mono text-[10px] tracking-[0.04em] text-[var(--slate)] bg-[var(--surface)] border border-[var(--border)] px-[10px] py-1 rounded-[5px] hover:text-[var(--ink-2)] hover:border-[var(--border-md)] transition-all cursor-default">
+                    {name}
                   </div>
                 ))}
               </div>
