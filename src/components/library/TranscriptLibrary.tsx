@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCart } from '@/context/CartContext'
@@ -603,19 +603,22 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
     : docs
 
   // Compute filter value counts from the full initial dataset (before any active filters)
-  const filterCounts = {
-    industry: {} as Record<string, number>,
-    geography: {} as Record<string, number>,
-    level: {} as Record<string, number>,
-    tier: {} as Record<string, number>,
-  }
-  for (const doc of initialDocs) {
-    const sector = doc.sectors?.find(isPopulated) as Industry | undefined
-    if (sector?.slug) filterCounts.industry[sector.slug] = (filterCounts.industry[sector.slug] ?? 0) + 1
-    for (const g of doc.geography ?? []) filterCounts.geography[g] = (filterCounts.geography[g] ?? 0) + 1
-    if (doc.expertLevel) filterCounts.level[doc.expertLevel] = (filterCounts.level[doc.expertLevel] ?? 0) + 1
-    filterCounts.tier[doc.tier] = (filterCounts.tier[doc.tier] ?? 0) + 1
-  }
+  const filterCounts = useMemo(() => {
+    const counts = {
+      industry: {} as Record<string, number>,
+      geography: {} as Record<string, number>,
+      level: {} as Record<string, number>,
+      tier: {} as Record<string, number>,
+    }
+    for (const doc of initialDocs) {
+      const sector = doc.sectors?.find(isPopulated) as Industry | undefined
+      if (sector?.slug) counts.industry[sector.slug] = (counts.industry[sector.slug] ?? 0) + 1
+      for (const g of doc.geography ?? []) counts.geography[g] = (counts.geography[g] ?? 0) + 1
+      if (doc.expertLevel) counts.level[doc.expertLevel] = (counts.level[doc.expertLevel] ?? 0) + 1
+      counts.tier[doc.tier] = (counts.tier[doc.tier] ?? 0) + 1
+    }
+    return counts
+  }, [initialDocs])
 
   // Active chips for the results bar
   const activeChips: { group: keyof ActiveFilters; value: string; label: string }[] = []
@@ -716,6 +719,7 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
             />
             {searchQuery && (
               <button
+                type="button"
                 onClick={() => setSearchQuery('')}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--mist)] hover:text-[var(--ink)] transition-colors"
                 aria-label="Clear search"
