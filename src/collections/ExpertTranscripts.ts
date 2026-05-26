@@ -205,9 +205,13 @@ export const ExpertTranscripts: CollectionConfig = {
   hooks: {
     afterChange: [
       ({ doc }) => {
-        revalidateOnPublish(CACHE_TAGS.expertTranscripts, doc)
-        if (doc._status === 'published' && doc.slug) {
-          pingCollectionPage('/expert-transcripts', doc.slug as string)
+        try {
+          revalidateOnPublish(CACHE_TAGS.expertTranscripts, doc)
+          if (doc._status === 'published' && doc.slug) {
+            pingCollectionPage('/expert-transcripts', doc.slug as string)
+          }
+        } catch (err) {
+          console.error('[ExpertTranscripts afterChange] hook error — save succeeded, revalidation skipped:', err)
         }
       },
     ],

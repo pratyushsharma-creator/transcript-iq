@@ -69,17 +69,25 @@ export const BlogPosts: CollectionConfig = {
   hooks: {
     beforeChange: [
       ({ data }) => {
-        const text = JSON.stringify(data?.body || '')
-        const words = text.split(/\s+/).filter(Boolean).length
-        data.readTime = Math.max(1, Math.round(words / 200))
+        try {
+          const text = JSON.stringify(data?.body || '')
+          const words = text.split(/\s+/).filter(Boolean).length
+          data.readTime = Math.max(1, Math.round(words / 200))
+        } catch {
+          // non-critical — readTime remains whatever it was
+        }
         return data
       },
     ],
     afterChange: [
       ({ doc }) => {
-        revalidateOnPublish(CACHE_TAGS.blogPosts, doc)
-        if (doc._status === 'published' && doc.slug) {
-          pingCollectionPage('/resources', doc.slug as string)
+        try {
+          revalidateOnPublish(CACHE_TAGS.blogPosts, doc)
+          if (doc._status === 'published' && doc.slug) {
+            pingCollectionPage('/resources', doc.slug as string)
+          }
+        } catch (err) {
+          console.error('[BlogPosts afterChange] hook error — save succeeded, revalidation skipped:', err)
         }
       },
     ],

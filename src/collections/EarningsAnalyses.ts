@@ -335,9 +335,13 @@ export const EarningsAnalyses: CollectionConfig = {
   hooks: {
     afterChange: [
       ({ doc }) => {
-        revalidateOnPublish(CACHE_TAGS.earningsAnalyses, doc)
-        if (doc._status === 'published' && doc.slug) {
-          pingCollectionPage('/earnings-analysis', doc.slug as string)
+        try {
+          revalidateOnPublish(CACHE_TAGS.earningsAnalyses, doc)
+          if (doc._status === 'published' && doc.slug) {
+            pingCollectionPage('/earnings-analysis', doc.slug as string)
+          }
+        } catch (err) {
+          console.error('[EarningsAnalyses afterChange] hook error — save succeeded, revalidation skipped:', err)
         }
       },
     ],

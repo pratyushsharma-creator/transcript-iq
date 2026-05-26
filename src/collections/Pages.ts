@@ -223,7 +223,11 @@ export const Pages: CollectionConfig = {
   hooks: {
     afterChange: [
       ({ doc }) => {
-        revalidateOnPublish(CACHE_TAGS.pages, doc)
+        try {
+          revalidateOnPublish(CACHE_TAGS.pages, doc)
+        } catch (err) {
+          console.error('[Pages afterChange] hook error — save succeeded, revalidation skipped:', err)
+        }
       },
     ],
   },
