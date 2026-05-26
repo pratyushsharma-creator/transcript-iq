@@ -4,10 +4,10 @@
 const PAGE_CONFIG = {
   eyebrow:     'Custom Research',
   heading:     'Request a Custom Earnings Analysis',
-  subheading:  'Tell us which company and quarter you need covered. We produce deep-dive earnings analyses for any public company — MNPI-screened, buy-side ready, delivered within 36 hours.',
-  price:       '$179',
+  subheading:  'Tell us which company and quarter you need covered. We produce deep-dive earnings analyses for any public company — MNPI-screened, buy-side ready, delivered same day.',
+  price:       '$99',
   priceLabel:  'per analysis',
-  deliverySLA: '36 hours',
+  deliverySLA: 'same day',
   whatYouGet: [
     'Full earnings call transcript — verbatim Q&A with management',
     'Analyst-written deep-dive commentary on beats, misses, and guidance',

@@ -1,12 +1,17 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import { SectionShell, SectionHeader, MintGradientHeading } from './SectionShell'
 import { CTAButtons } from './CTAButtons'
-import { BackgroundBeams } from '@/components/ui/background-beams'
+
+const BackgroundBeams = dynamic(
+  () => import('@/components/ui/background-beams').then((m) => m.BackgroundBeams),
+  { ssr: false, loading: () => null },
+)
 
 // ── CTABlock ──────────────────────────────────────────────────────────────
 

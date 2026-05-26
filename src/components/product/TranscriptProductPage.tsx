@@ -479,7 +479,24 @@ export function TranscriptProductPage({
                   </div>
 
                   <div className="text-center pt-3">
-                    <button className="inline-flex items-center justify-center gap-[9px] max-w-[340px] mx-auto bg-[var(--accent)] text-white text-[15px] font-semibold tracking-[-0.01em] px-5 py-[14px] rounded-[10px] border-0 transition-all hover:bg-[var(--accent-deep)] hover:-translate-y-px cursor-pointer shadow-[0_0_0_1px_var(--accent-border),0_8px_24px_-8px_var(--accent-glow)]">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!inCart) {
+                          addItem({
+                            id: transcript.slug,
+                            slug: transcript.slug,
+                            type: 'transcript',
+                            title: transcript.title,
+                            tier: transcript.tier,
+                            priceUsd: transcript.priceUsd,
+                            originalPriceUsd: transcript.originalPriceUsd,
+                          })
+                        }
+                        router.push('/checkout')
+                      }}
+                      className="inline-flex items-center justify-center gap-[9px] max-w-[340px] mx-auto bg-[var(--accent)] text-white text-[15px] font-semibold tracking-[-0.01em] px-5 py-[14px] rounded-[10px] border-0 transition-all hover:bg-[var(--accent-deep)] hover:-translate-y-px cursor-pointer shadow-[0_0_0_1px_var(--accent-border),0_8px_24px_-8px_var(--accent-glow)]"
+                    >
                       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <path d="M1 1h2l2 7h6l1-5H4"/>
                         <circle cx="6" cy="12" r="0.7" fill="currentColor"/>

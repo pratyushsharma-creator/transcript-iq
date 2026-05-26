@@ -154,10 +154,13 @@ function DocMockup({ activeKey }: { activeKey: string }) {
         <div className="mb-4 text-[14px] font-medium leading-snug tracking-[-0.01em] text-[var(--ink)]">
           AI Compute Migration in ASEAN: Shift to AI Infrastructure and the Rise of Sovereign Data Strategies
         </div>
-        <div className="mb-5 flex flex-wrap gap-3 border-b border-[var(--border)] pb-4 font-mono text-[10px] text-[var(--mist)]">
+        <div className="mb-3 flex flex-wrap gap-3 border-b border-[var(--border)] pb-3 font-mono text-[10px] text-[var(--mist)]">
           <span>Technology / SaaS</span>
           <span>APAC</span>
           <span>$GOOGL · $AMZN · $AMD</span>
+        </div>
+        <div className="mb-4 font-mono text-[9px] text-[var(--mist)]">
+          Expert: Former VP Infrastructure · Tier-1 APAC Hyperscaler · 14 yrs
         </div>
 
         {/* Section 01 — Executive Summary */}
@@ -195,30 +198,8 @@ function DocMockup({ activeKey }: { activeKey: string }) {
           </div>
         </div>
 
-        {/* Section 03 — Expert Profile */}
-        <div className={`${base} ${activeKey === 'profile' ? highlight : normal}`}>
-          <div className="mb-1.5 font-mono text-[9px] uppercase tracking-[0.12em] text-[var(--accent)]">
-            03 — Expert Profile
-          </div>
-          <div className="flex items-start gap-2.5">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[var(--accent-deep)] to-[var(--accent)] font-mono text-[9px] font-semibold text-[#064E3B]">
-              EXP
-            </div>
-            <p className="text-[11px] leading-relaxed text-[var(--ink-2)]">
-              Former VP Infrastructure, Tier-1 APAC hyperscaler. 14 years in regional data center strategy.
-              Currently an independent advisor.
-            </p>
-          </div>
-        </div>
-
-        {/* Compliance strip */}
-        <div
-          className={`flex items-center gap-2 rounded-lg border p-3 transition-all duration-200 ${
-            activeKey === 'compliance'
-              ? 'border-[var(--accent-border)] bg-[var(--accent-tint)] ring-1 ring-[var(--accent-border)]'
-              : 'border-[var(--accent-border)] bg-[var(--accent-tint)]'
-          }`}
-        >
+        {/* Compliance strip — always-on built-in guarantee */}
+        <div className="flex items-center gap-2 rounded-lg border border-[var(--accent-border)] bg-[var(--accent-tint)] p-3">
           <span className="h-1.5 w-1.5 animate-pulse-soft rounded-full bg-[var(--accent)]" />
           <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-[var(--accent)]">
             MNPI Screened · PII Redacted · Anonymised · Compliant
@@ -250,9 +231,9 @@ export function TranscriptAnatomyRenderer({ block }: { block: TranscriptAnatomyB
       </motion.div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
-        {/* Section cards */}
+        {/* Section cards — profile and compliance are not purchasable sections */}
         <div className="flex flex-col gap-1.5">
-          {sections.map((item, i) => (
+          {sections.filter(item => !['profile', 'compliance'].includes(item.sectionKey)).map((item, i) => (
             <motion.button
               key={item.sectionKey}
               initial={{ opacity: 0, y: 16 }}

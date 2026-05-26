@@ -56,7 +56,10 @@ export default async function FreeTranscriptRoute() {
     )
   }
 
-  const blocks = (page.layout ?? []) as Array<{ blockType: string } & Record<string, unknown>>
+  // Suppress stat bar and research-community blocks — not shown on free-transcript
+  const blocks = (page.layout ?? []).filter(
+    (b: unknown) => (b as { blockType: string }).blockType !== 'trustNumbers',
+  ) as Array<{ blockType: string } & Record<string, unknown>>
   return (
     <>
       <JsonLd schema={faqPageSchema(FREE_TRANSCRIPT_FAQS)} />

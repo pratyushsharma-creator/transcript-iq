@@ -110,6 +110,11 @@ export function EarningsAnalysisCard({
     openCart()
   }
 
+  // Prefetch on hover so the route JS is ready before the click
+  const handleMouseEnter = () => {
+    router.prefetch(productUrl)
+  }
+
   // Clicking anywhere on the card navigates to the product page
   const handleCardClick = () => {
     router.push(productUrl)
@@ -122,6 +127,7 @@ export function EarningsAnalysisCard({
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }}
       onClick={handleCardClick}
+      onMouseEnter={handleMouseEnter}
       className={`group relative flex flex-col gap-3 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] p-5 cursor-pointer ${hoverClass(hoverEffect)}`}
     >
       <div className="flex items-center justify-between">
@@ -157,39 +163,43 @@ export function EarningsAnalysisCard({
       )}
 
       {/* Footer */}
-      <div className="mt-1 flex items-end justify-between border-t border-[var(--border)] pt-3">
-        <div className="flex items-baseline gap-2">
-          {data.originalPriceUsd && data.originalPriceUsd > data.priceUsd && (
-            <span className="font-mono text-[12px] text-[var(--mist)] line-through">${data.originalPriceUsd}</span>
-          )}
-          <span className="font-mono text-[18px] font-semibold text-[var(--accent)]">${data.priceUsd}</span>
-          {data.discountPercent && data.discountPercent > 0 && (
-            <span className="inline-flex items-center rounded-md bg-[var(--accent)] px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-[0.08em] text-white">
-              {data.discountPercent}% OFF
-            </span>
-          )}
+      <div className="mt-1 border-t border-[var(--border)] pt-3 flex flex-col gap-3">
+        <div className="flex items-end justify-between">
+          <div className="flex items-baseline gap-2">
+            {data.originalPriceUsd && data.originalPriceUsd > data.priceUsd && (
+              <span className="font-mono text-[12px] text-[var(--mist)] line-through">${data.originalPriceUsd}</span>
+            )}
+            <span className="font-mono text-[18px] font-semibold text-[var(--accent)]">${data.priceUsd}</span>
+            {data.discountPercent && data.discountPercent > 0 && (
+              <span className="inline-flex items-center rounded-md bg-[var(--accent)] px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-[0.08em] text-white">
+                {data.discountPercent}% OFF
+              </span>
+            )}
+          </div>
+          <p className="text-[11px] text-[var(--mist)] font-mono pb-0.5">flat · instant PDF</p>
         </div>
 
         {/* Action buttons — stopPropagation prevents card navigation */}
-        <div className="flex items-center gap-2">
+        <div className="flex gap-[8px]">
           <button
             type="button"
             onClick={handleAddToCart}
-            className={`inline-flex items-center gap-1 rounded-md border px-2.5 py-1.5 font-mono text-[10px] font-medium transition-all duration-fast ${
+            className={`flex-1 inline-flex items-center justify-center gap-1 rounded-[8px] border py-[9px] font-sans text-[12px] font-medium tracking-[-0.01em] transition-all duration-150 ${
               inCart
                 ? 'border-[var(--accent-border)] bg-[var(--accent-tint)] text-[var(--accent)]'
-                : 'border-[var(--border)] text-[var(--mist)] hover:border-[var(--accent-border)] hover:text-[var(--accent)]'
+                : 'border-[var(--border)] bg-transparent text-[var(--ink-2)] hover:border-[var(--border-2)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]'
             }`}
           >
-            <ShoppingCart className="h-2.5 w-2.5" />
-            {inCart ? 'In Cart' : 'Add'}
+            <ShoppingCart className="h-[11px] w-[11px] shrink-0" />
+            {inCart ? 'In Cart' : 'Add to Cart'}
           </button>
           <button
             type="button"
             onClick={handleBuyNow}
-            className="inline-flex items-center gap-1 rounded-md bg-btn-primary px-2.5 py-1.5 font-mono text-[10px] font-semibold text-btn-primary-fg shadow-cta transition-all duration-fast hover:-translate-y-px hover:bg-btn-primary-hover"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-[8px] bg-btn-primary py-[9px] font-sans text-[12px] font-semibold tracking-[-0.01em] text-btn-primary-fg shadow-cta transition-all duration-base ease-out hover:-translate-y-px hover:bg-btn-primary-hover"
           >
-            Buy Now →
+            <ShoppingCart className="h-[11px] w-[11px] shrink-0" />
+            Buy Now
           </button>
         </div>
       </div>

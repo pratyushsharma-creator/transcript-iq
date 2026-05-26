@@ -1,5 +1,6 @@
 import { getPageBySlug } from '@/lib/cache/queries'
 import { RenderBlocks } from '@/components/blocks/RenderBlocks'
+import { TestimonialStrip } from '@/components/site/TestimonialStrip'
 import { organizationSchema, websiteSchema, faqPageSchema, JsonLd } from '@/lib/seo/jsonld'
 import { HOME_FAQS } from '@/lib/seo/faq-data'
 import { canonical } from '@/lib/seo/metadata'
@@ -56,6 +57,7 @@ export default async function HomePage() {
       <JsonLd schema={websiteSchema()} />
       <JsonLd schema={faqPageSchema(HOME_FAQS)} />
       <RenderBlocks blocks={blocks} />
+      <TestimonialStrip />
     </>
   )
 }

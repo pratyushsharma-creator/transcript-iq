@@ -68,7 +68,7 @@ function StencilHero({ block }: { block: HeroBlock }) {
       <section
         id={block.anchorId ?? undefined}
         className="relative overflow-hidden"
-        style={{ background: 'var(--bg)', minHeight: 'calc(100vh - 56px)' }}
+        style={{ background: 'var(--bg)' }}
       >
         {/* Ambient orbs — spread full width since there is no right-side graphic */}
         <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
@@ -115,7 +115,7 @@ function StencilHero({ block }: { block: HeroBlock }) {
 
         {/* ── Copy — left-aligned, max-width container ── */}
         <div
-          className="relative mx-auto max-w-[1280px] px-5 pt-10 pb-10 sm:px-8 sm:pt-14 sm:pb-12 lg:px-12 lg:pt-20 lg:pb-18"
+          className="relative mx-auto max-w-[1280px] px-5 pt-10 pb-10 sm:px-8 sm:pt-12 sm:pb-10 lg:px-12 lg:pt-12 lg:pb-12"
           style={{ zIndex: 1 }}
         >
           {/* Eyebrow pill */}
@@ -129,7 +129,7 @@ function StencilHero({ block }: { block: HeroBlock }) {
                 padding: '5px 16px',
                 background: 'var(--accent-tint)',
                 border: '1px solid var(--accent-border)',
-                marginBottom: 40,
+                marginBottom: 24,
               }}
             >
               <span
@@ -141,7 +141,7 @@ function StencilHero({ block }: { block: HeroBlock }) {
           )}
 
           {/* ── 3-line heading ── */}
-          <div style={{ marginBottom: 36 }}>
+          <div style={{ marginBottom: 20 }}>
             {line1 && (
               <motion.span
                 className="block"
@@ -208,7 +208,7 @@ function StencilHero({ block }: { block: HeroBlock }) {
                 fontSize: 18,
                 lineHeight: 1.70,
                 maxWidth: 680,
-                marginBottom: 44,
+                marginBottom: 28,
                 fontWeight: 400,
                 color: 'var(--ink-2)',
               }}
@@ -444,7 +444,7 @@ function HeroVisual({
   if (variant === 'mockup') return <GenericMockup label={visual.mockupType ?? 'transcriptPreview'} />
   if (variant === 'animated' || variant === 'split') {
     if (visual.image?.url) {
-      return <Image src={visual.image.url} alt={visual.image.alt ?? ''} fill className="object-cover" priority />
+      return <Image src={visual.image.url} alt={visual.image.alt ?? ''} fill className="object-cover" priority sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 560px" />
     }
     return <AbstractGraphic />
   }

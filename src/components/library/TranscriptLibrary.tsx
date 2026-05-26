@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCart } from '@/context/CartContext'
@@ -124,11 +125,13 @@ function FilterGroup({
   items,
   active,
   onToggle,
+  counts,
 }: {
   label: string
   items: { label: string; value: string }[]
   active: Set<string>
   onToggle: (value: string) => void
+  counts?: Record<string, number>
 }) {
   const [open, setOpen] = useState(true)
   const hasActive = items.some((i) => active.has(i.value))
@@ -191,11 +194,21 @@ function FilterGroup({
                   )}
                 </span>
                 <span
-                  className={`text-[13px] leading-[1.3] transition-colors ${
+                  className={`flex-1 text-[13px] leading-[1.3] transition-colors ${
                     checked ? 'text-[var(--ink)] font-medium' : 'text-[var(--ink-2)] group-hover:text-[var(--ink)]'
                   }`}
                 >
                   {item.label}
+                  {counts?.[item.value] != null && (
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.2, delay: 0.05 }}
+                      className="ml-1 text-[var(--mist)] font-normal"
+                    >
+                      ({counts[item.value]})
+                    </motion.span>
+                  )}
                 </span>
               </button>
             )
@@ -213,11 +226,18 @@ function FilterPanel({
   filters,
   onToggle,
   onClearAll,
+  counts,
 }: {
   industries: Industry[]
   filters: ActiveFilters
   onToggle: (group: keyof ActiveFilters, value: string) => void
   onClearAll: () => void
+  counts?: {
+    industry: Record<string, number>
+    geography: Record<string, number>
+    level: Record<string, number>
+    tier: Record<string, number>
+  }
 }) {
   const hasFilters =
     filters.industry.size > 0 ||
@@ -245,6 +265,7 @@ function FilterPanel({
           items={industries.map((i) => ({ label: i.name, value: i.slug }))}
           active={filters.industry}
           onToggle={(v) => onToggle('industry', v)}
+          counts={counts?.industry}
         />
       )}
       <FilterGroup
@@ -252,18 +273,21 @@ function FilterPanel({
         items={GEO_OPTIONS}
         active={filters.geography}
         onToggle={(v) => onToggle('geography', v)}
+        counts={counts?.geography}
       />
       <FilterGroup
         label="Expert Level"
         items={LEVEL_OPTIONS}
         active={filters.level}
         onToggle={(v) => onToggle('level', v)}
+        counts={counts?.level}
       />
       <FilterGroup
         label="Tier"
         items={TIER_OPTIONS}
         active={filters.tier}
         onToggle={(v) => onToggle('tier', v)}
+        counts={counts?.tier}
       />
     </div>
   )
@@ -390,7 +414,7 @@ function TranscriptCard({ doc, view }: { doc: TranscriptDoc; view: 'grid' | 'lis
         {/* Compliance */}
         <div className="flex-1 pl-[14px]">
           <div className="mb-[4px] font-mono text-[8px] uppercase tracking-[0.16em] text-[var(--mist)]">Compliance</div>
-          <div className="text-[12px] font-medium text-[var(--accent)]">
+          <div className="text-[12px] font-medium text-[var(--ink-2)]">
             {doc.complianceBadges?.includes('mnpi-screened') ? 'MNPI Screened' : 'Verified'}
           </div>
         </div>
@@ -502,7 +526,6 @@ interface TranscriptLibraryProps {
 
 export function TranscriptLibrary({ initialDocs, totalDocs, industries }: TranscriptLibraryProps) {
   const [docs, setDocs] = useState<TranscriptDoc[]>(initialDocs)
-  const [total, setTotal] = useState(totalDocs)
   const [filters, setFilters] = useState<ActiveFilters>(emptyFilters())
   const [sort, setSort] = useState('-dateConducted')
   const [view, setView] = useState<'grid' | 'list'>('grid')
@@ -510,6 +533,7 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
   const [hasNext, setHasNext] = useState(initialDocs.length < totalDocs)
   const [loading, setLoading] = useState(false)
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
 
   const buildParams = useCallback((f: ActiveFilters, s: string, p: number) => {
     const params = new URLSearchParams()
@@ -531,7 +555,6 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
         const res = await fetch(`/api/expert-transcripts?${buildParams(f, s, p)}`)
         const data = await res.json()
         setDocs((prev) => (append ? [...prev, ...(data.docs ?? [])] : (data.docs ?? [])))
-        setTotal(data.totalDocs ?? 0)
         setHasNext(data.hasNextPage ?? false)
         setPage(p)
         const u = new URLSearchParams()
@@ -565,6 +588,7 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
   function clearAll() {
     const f = emptyFilters()
     setFilters(f)
+    setSearchQuery('')
     fetchDocs(f, sort, 1)
   }
 
@@ -572,6 +596,36 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
     setSort(val)
     fetchDocs(filters, val, 1)
   }
+
+  // Derived: client-side search filter on top of server-filtered docs
+  const displayDocs = searchQuery.trim()
+    ? docs.filter((d) => {
+        const q = searchQuery.toLowerCase()
+        return (
+          d.title.toLowerCase().includes(q) ||
+          (d.expertFormerTitle ?? '').toLowerCase().includes(q) ||
+          (d.companies ?? '').toLowerCase().includes(q)
+        )
+      })
+    : docs
+
+  // Compute filter value counts from the full initial dataset (before any active filters)
+  const filterCounts = useMemo(() => {
+    const counts = {
+      industry: {} as Record<string, number>,
+      geography: {} as Record<string, number>,
+      level: {} as Record<string, number>,
+      tier: {} as Record<string, number>,
+    }
+    for (const doc of initialDocs) {
+      const sector = doc.sectors?.find(isPopulated) as Industry | undefined
+      if (sector?.slug) counts.industry[sector.slug] = (counts.industry[sector.slug] ?? 0) + 1
+      for (const g of doc.geography ?? []) counts.geography[g] = (counts.geography[g] ?? 0) + 1
+      if (doc.expertLevel) counts.level[doc.expertLevel] = (counts.level[doc.expertLevel] ?? 0) + 1
+      counts.tier[doc.tier] = (counts.tier[doc.tier] ?? 0) + 1
+    }
+    return counts
+  }, [initialDocs])
 
   // Active chips for the results bar
   const activeChips: { group: keyof ActiveFilters; value: string; label: string }[] = []
@@ -592,7 +646,7 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
     <>
       {/* ── Page header ────────────────────────────────────────────────── */}
       <div
-        className="relative overflow-hidden"
+        className="relative"
         style={{
           background:
             'radial-gradient(ellipse 900px 400px at 70% -20%, var(--accent-tint-2), transparent 55%), radial-gradient(ellipse 500px 300px at 0% 100%, var(--accent-tint), transparent 60%), var(--bg)',
@@ -614,11 +668,11 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
             <span className="text-[var(--border-2)]">›</span>
             <span>Transcript Library</span>
           </div>
-          <div className="flex flex-wrap items-end justify-between gap-4 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-4">
             <h1 className="text-[clamp(32px,4vw,52px)] font-semibold tracking-[-0.04em] leading-[1]">
               Expert Call <em className="not-italic text-[var(--accent)] font-[400]">Transcripts</em>
             </h1>
-            <div className="flex items-center gap-4 shrink-0 pb-1">
+            <div className="flex items-center gap-4 pb-1">
               <span className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.1em] uppercase text-[var(--accent)] px-2.5 py-1.5 bg-[var(--accent-tint)] border border-[var(--accent-border)] rounded-full">
                 <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
                 Expert Research
@@ -644,11 +698,52 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
             filters={filters}
             onToggle={toggleFilter}
             onClearAll={clearAll}
+            counts={filterCounts}
           />
         </aside>
 
         {/* ── Content column ────────────────────────────────────────────── */}
         <div className="flex-1 min-w-0">
+
+          {/* Search bar */}
+          <div className="relative mb-4">
+            <svg
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--mist)] pointer-events-none"
+            >
+              <circle cx="6.5" cy="6.5" r="4.5" />
+              <path d="M10 10l3.5 3.5" strokeLinecap="round" />
+            </svg>
+            <input
+              type="search"
+              placeholder="Search by title, expert, or company…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] pl-8 pr-4 py-2.5 font-mono text-[12px] text-[var(--ink)] placeholder-[var(--mist)] outline-none transition-all duration-150 focus:border-[var(--accent-border)] focus:ring-1 focus:ring-[var(--accent-border)]"
+            />
+            <AnimatePresence>
+              {searchQuery && (
+                <motion.button
+                  key="clear"
+                  initial={{ opacity: 0, scale: 0.7 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.7 }}
+                  transition={{ duration: 0.12, ease: [0.16, 1, 0.3, 1] }}
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--mist)] hover:text-[var(--ink)] transition-colors"
+                  aria-label="Clear search"
+                >
+                  <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3 w-3">
+                    <path d="M2 2l8 8M10 2l-8 8" strokeLinecap="round" />
+                  </svg>
+                </motion.button>
+              )}
+            </AnimatePresence>
+          </div>
 
           {/* Toolbar */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-5 border-b border-[var(--border)]">
@@ -669,8 +764,8 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
               </button>
 
               <span className="font-mono text-[11px] text-[var(--mist)] tracking-[0.06em] whitespace-nowrap">
-                <strong className="text-[var(--ink)]">{docs.length}</strong>
-                {hasFilters ? ' matching' : ''} transcript{docs.length !== 1 ? 's' : ''}
+                <strong className="text-[var(--ink)]">{displayDocs.length}</strong>
+                {(hasFilters || searchQuery) ? ' matching' : ''} transcript{displayDocs.length !== 1 ? 's' : ''}
               </span>
 
               {/* Active filter chips */}
@@ -724,9 +819,9 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
           </div>
 
           {/* Cards */}
-          {loading && docs.length === 0 ? (
+          {loading && displayDocs.length === 0 ? (
             <div className="py-20 text-center font-mono text-[11px] text-[var(--mist)]">Loading…</div>
-          ) : docs.length === 0 ? (
+          ) : displayDocs.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-[var(--border-2)] rounded-[18px] bg-[var(--surface)]">
               <div className="w-[52px] h-[52px] rounded-[14px] bg-[var(--accent-tint)] border border-[var(--accent-border)] flex items-center justify-center mb-5">
                 <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-[22px] h-[22px] text-[var(--accent)]">
@@ -746,12 +841,12 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
             </div>
           ) : (
             <div className={view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 gap-3' : 'flex flex-col gap-3'}>
-              {docs.map((doc) => <TranscriptCard key={doc.id} doc={doc} view={view} />)}
+              {displayDocs.map((doc) => <TranscriptCard key={doc.id} doc={doc} view={view} />)}
             </div>
           )}
 
           {/* Load more */}
-          {hasNext && docs.length > 0 && (
+          {hasNext && displayDocs.length > 0 && (
             <div className="flex justify-center pt-10 mt-10 border-t border-[var(--border)]">
               <button
                 onClick={() => fetchDocs(filters, sort, page + 1, true)}
@@ -819,6 +914,7 @@ export function TranscriptLibrary({ initialDocs, totalDocs, industries }: Transc
                 filters={filters}
                 onToggle={toggleFilter}
                 onClearAll={clearAll}
+                counts={filterCounts}
               />
             </div>
 

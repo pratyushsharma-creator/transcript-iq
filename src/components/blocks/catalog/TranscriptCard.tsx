@@ -164,6 +164,11 @@ export function TranscriptCard({
     openCart()
   }
 
+  // Prefetch on hover so the route JS is ready before the click
+  const handleMouseEnter = () => {
+    router.prefetch(productUrl)
+  }
+
   // Clicking anywhere on the card body navigates to the product page
   const handleCardClick = () => {
     router.push(productUrl)
@@ -182,6 +187,7 @@ export function TranscriptCard({
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }}
       onClick={handleCardClick}
+      onMouseEnter={handleMouseEnter}
       className="group relative flex flex-col overflow-hidden cursor-pointer shadow-[0_2px_8px_-2px_rgba(0,0,0,.08),0_8px_24px_-8px_rgba(0,0,0,.08)] hover:-translate-y-[3px] hover:shadow-[0_4px_16px_-4px_rgba(0,0,0,.16),0_20px_48px_-12px_rgba(0,0,0,.18)]"
       style={{
         background: 'var(--surface)',
@@ -251,7 +257,7 @@ export function TranscriptCard({
           <div className="mb-[4px] font-mono text-[8px] uppercase tracking-[0.16em] text-[var(--mist)]">
             Compliance
           </div>
-          <div className="text-[12px] font-medium text-[var(--accent)]">
+          <div className="text-[12px] font-medium text-[var(--ink-2)]">
             {data.complianceBadges?.includes('mnpi-screened') ? 'MNPI Screened' : 'Verified'}
           </div>
         </div>
