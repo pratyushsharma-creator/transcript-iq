@@ -83,7 +83,6 @@ import {
   CTASplitRenderer,
   NewsletterSignupRenderer,
   FormBlockRenderer,
-  TestimonialRenderer,
   CaseStudyHighlightRenderer,
 } from './Conversion'
 import {
@@ -234,7 +233,7 @@ export async function RenderBlocks({ blocks }: { blocks: AnyBlock[] | undefined 
           case 'formBlock':
             return <FormBlockRenderer key={key} block={block as never} />
           case 'testimonial':
-            return <TestimonialRenderer key={key} block={block as never} />
+            return null
           case 'caseStudyHighlight':
             return <CaseStudyHighlightRenderer key={key} block={block as never} />
           case 'marqueeText':

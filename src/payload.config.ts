@@ -1,7 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { seoPlugin } from '@payloadcms/plugin-seo'
-import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { stripePlugin } from '@payloadcms/plugin-stripe'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'path'
@@ -46,9 +45,6 @@ const plugins: Plugin[] = [
       (doc?.executiveSummaryPreview as string | undefined) ??
       (doc?.description as string | undefined) ??
       '',
-  }),
-  redirectsPlugin({
-    collections: ['pages', 'blog-posts'],
   }),
 ]
 
