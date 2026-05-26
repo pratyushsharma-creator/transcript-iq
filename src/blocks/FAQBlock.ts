@@ -34,7 +34,12 @@ export const FAQBlock: Block = {
       minRows: 1,
       fields: [
         { name: 'question', type: 'text', required: true },
-        { name: 'answer', type: 'richText', required: true },
+        {
+          name: 'answer',
+          type: 'textarea',
+          required: true,
+          admin: { description: 'Plain text. Use double line-breaks for separate paragraphs.' },
+        },
       ],
     },
     {
