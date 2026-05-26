@@ -447,6 +447,22 @@ export function EarningsProductPage({
 
                   <div className="text-center pt-2.5">
                     <button
+                      type="button"
+                      onClick={() => {
+                        if (!inCart) {
+                          addItem({
+                            id: analysis.slug,
+                            slug: analysis.slug,
+                            type: 'earnings',
+                            title: analysis.title,
+                            ticker: analysis.ticker,
+                            quarter: analysis.quarter,
+                            priceUsd: analysis.priceUsd,
+                            originalPriceUsd: analysis.originalPriceUsd,
+                          })
+                        }
+                        router.push('/checkout')
+                      }}
                       className="inline-flex items-center justify-center gap-[9px] max-w-[300px] mx-auto bg-[var(--accent)] text-white text-[15px] font-semibold tracking-[-0.01em] px-5 py-[14px] rounded-[10px] border-0 transition-all hover:bg-[var(--accent-deep)] hover:-translate-y-px cursor-pointer shadow-[0_0_0_1px_var(--accent-border),0_8px_24px_-8px_var(--accent-glow)]"
                     >
                       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
