@@ -108,9 +108,9 @@ export const EarningsAnalyses: CollectionConfig = {
                 },
                 {
                   name: 'exchange',
-                  type: 'select',
+                  type: 'text',
                   required: true,
-                  options: ['NASDAQ', 'NYSE', 'NSE', 'BSE', 'LSE', 'HKEX', 'SGX', 'TSE', 'ASX'],
+                  admin: { description: 'Uppercase — e.g. NASDAQ, NYSE, NSE, BSE, LSE, HKEX, SGX, TSE, ASX' },
                 },
               ],
             },
