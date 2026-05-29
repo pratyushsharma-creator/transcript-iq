@@ -197,7 +197,7 @@ export const Pages: CollectionConfig = {
       admin: { position: 'sidebar', description: 'Page route. "home" is special — renders at /.' },
       hooks: {
         beforeValidate: [
-          ({ value, data }) => value || slugify(data?.title as string | undefined),
+          ({ value, data }) => slugify((value ?? data?.title) as string | undefined),
         ],
       },
     },

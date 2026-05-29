@@ -21,7 +21,7 @@ export const Bundles: CollectionConfig = {
       admin: { position: 'sidebar' },
       hooks: {
         beforeValidate: [
-          ({ value, data }) => value || slugify(data?.name as string | undefined),
+          ({ value, data }) => slugify((value ?? data?.name) as string | undefined),
         ],
       },
     },

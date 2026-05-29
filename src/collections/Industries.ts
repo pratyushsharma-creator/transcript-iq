@@ -21,7 +21,7 @@ export const Industries: CollectionConfig = {
       unique: true,
       hooks: {
         beforeValidate: [
-          ({ value, data }) => value || slugify(data?.name as string | undefined),
+          ({ value, data }) => slugify((value ?? data?.name) as string | undefined),
         ],
       },
     },

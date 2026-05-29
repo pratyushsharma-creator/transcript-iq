@@ -29,7 +29,7 @@ export const ExpertTranscripts: CollectionConfig = {
       admin: { position: 'sidebar' },
       hooks: {
         beforeValidate: [
-          ({ value, data }) => value || slugify(data?.title as string | undefined),
+          ({ value, data }) => slugify((value ?? data?.title) as string | undefined),
         ],
       },
     },

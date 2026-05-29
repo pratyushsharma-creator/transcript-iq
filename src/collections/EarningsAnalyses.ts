@@ -29,7 +29,7 @@ export const EarningsAnalyses: CollectionConfig = {
       admin: { position: 'sidebar', description: 'Auto-generated from title. Edit only if needed.' },
       hooks: {
         beforeValidate: [
-          ({ value, data }) => value || slugify(data?.title as string | undefined),
+          ({ value, data }) => slugify((value ?? data?.title) as string | undefined),
         ],
       },
     },
