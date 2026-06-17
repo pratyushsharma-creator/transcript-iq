@@ -15,9 +15,10 @@ export const EV_REPORT = {
   consultRateUsd: 350,
   datePublished: '2026-06-17',
   // Above-the-fold sell angle
-  headline: 'Europe lost the battery war. The next winners aren’t decided yet.',
+  headline: 'The next fortunes in Europe’s EV ecosystem are still up for grabs.',
   subhead:
-    'A 25-page practitioner report on Europe’s EV value chain — from the people who ran the gigafactory ramps and built the charging networks. Where margin moves next, and the bets that won’t survive.',
+    'A 25-page practitioner report on Europe’s EV value chain — from the people who ran the gigafactory ramps and built the charging networks.',
+  subheadEmphasis: 'Where margin moves next, and the bets that won’t survive.',
   benefits: [
     'Skip the gigafactories that won’t survive.',
     'See where margin goes once cells commoditise.',
