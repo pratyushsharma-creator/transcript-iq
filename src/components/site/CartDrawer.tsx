@@ -5,11 +5,13 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { X, ShoppingCart, Trash2, ArrowRight, ShieldCheck } from 'lucide-react'
 import { useCart, type CartItem } from '@/context/CartContext'
+import { trackEvent } from '@/lib/analytics/events'
 
 // ── Item type icon ──────────────────────────────────────────────────────────────
 
 function ItemIcon({ type, ticker }: { type: CartItem['type']; ticker?: string }) {
   const isEarnings = type === 'earnings'
+  const label = isEarnings && ticker ? `$${ticker}` : type === 'report' ? 'RPT' : 'EXP'
   return (
     <div
       className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg font-mono text-[9px] font-semibold"
@@ -19,7 +21,7 @@ function ItemIcon({ type, ticker }: { type: CartItem['type']; ticker?: string })
           : { background: 'var(--accent-tint)', border: '1px solid var(--accent-border)', color: 'var(--accent)' }
       }
     >
-      {isEarnings && ticker ? `$${ticker}` : 'EXP'}
+      {label}
     </div>
   )
 }
@@ -32,6 +34,8 @@ function CartItemRow({ item }: { item: CartItem }) {
   const typeLabel =
     item.type === 'earnings'
       ? `Earnings Analysis${item.quarter ? ` · ${item.quarter}` : ''}`
+      : item.type === 'report'
+      ? 'Research Report'
       : `Expert Transcript${item.tier ? ` · ${item.tier.charAt(0).toUpperCase() + item.tier.slice(1)}` : ''}`
 
   return (
@@ -84,6 +88,7 @@ export function CartDrawer() {
   }, [closeCart])
 
   const handleCheckout = () => {
+    trackEvent('begin_checkout', { currency: 'USD', value: subtotal, num_items: itemCount })
     closeCart()
     router.push('/checkout')
   }

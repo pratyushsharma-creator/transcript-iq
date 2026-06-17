@@ -43,6 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/how-to-use`, priority: 0.7, changeFrequency: 'monthly', lastModified: new Date() },
     { url: `${BASE_URL}/custom-reports`, priority: 0.7, changeFrequency: 'monthly', lastModified: new Date() },
     { url: `${BASE_URL}/why-primary-research-wins`, priority: 0.7, changeFrequency: 'monthly', lastModified: new Date() },
+    { url: `${BASE_URL}/reports/ev-ecosystem`, priority: 0.95, changeFrequency: 'weekly', lastModified: new Date() },
     { url: `${BASE_URL}/contact`, priority: 0.6, changeFrequency: 'monthly', lastModified: new Date() },
   ]
 

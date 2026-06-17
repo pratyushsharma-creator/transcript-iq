@@ -12,7 +12,7 @@ import {
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
-export type CartItemType = 'transcript' | 'earnings'
+export type CartItemType = 'transcript' | 'earnings' | 'report'
 
 export type CartItem = {
   id: string           // unique per item (slug works)

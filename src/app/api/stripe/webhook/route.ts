@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
-import { sendReceipt, sendPurchaseAlert } from '@/lib/resend'
+import { sendReceipt, sendPurchaseAlert, sendEvReportAlert } from '@/lib/resend'
 import { generateDownloadToken } from '@/lib/downloadToken'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
@@ -95,7 +95,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   // Parse items from metadata
   let items: Array<{
     slug: string
-    type: 'transcript' | 'earnings'
+    type: 'transcript' | 'earnings' | 'report'
     title: string
     ticker?: string
     quarter?: string
@@ -122,7 +122,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
       const productMeta = product?.metadata ?? {}
       return {
         slug: productMeta.slug ?? '',
-        type: (productMeta.type as 'transcript' | 'earnings') ?? 'transcript',
+        type: (productMeta.type as 'transcript' | 'earnings' | 'report') ?? 'transcript',
         title: product?.name ?? li.description ?? '',
         ticker: productMeta.ticker || undefined,
         quarter: productMeta.quarter || undefined,
@@ -175,11 +175,13 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   }
 
   // ── Generate signed download tokens for each item ─────────────────────────
+  // Reports are fulfilled manually (PDF emailed by the team) — no download token.
   const itemsWithDownloads = items.map((i) => {
-    const { url: downloadUrl } = generateDownloadToken(i.slug, i.type)
+    const downloadUrl =
+      i.type === 'report' ? undefined : generateDownloadToken(i.slug, i.type as 'transcript' | 'earnings').url
     return {
       title: i.title,
-      type: i.type,
+      type: i.type === 'report' ? ('transcript' as const) : i.type,
       ticker: i.ticker,
       priceUsd: i.priceUsd,
       downloadUrl,
@@ -215,5 +217,26 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     console.log('[webhook] Purchase alert sent for ref:', orderRef)
   } catch (err) {
     console.error('[webhook] Failed to send purchase alert:', err)
+  }
+
+  // ── EV report is manually fulfilled — alert the research team to send the PDF ──
+  if (items.some((i) => i.type === 'report')) {
+    try {
+      await sendEvReportAlert({
+        orderRef,
+        customerEmail,
+        customerName: customerName || undefined,
+        totalUsd: totalPaid,
+        utm: {
+          utm_source: meta.utm_source,
+          utm_medium: meta.utm_medium,
+          utm_campaign: meta.utm_campaign,
+          utm_content: meta.utm_content,
+        },
+      })
+      console.log('[webhook] EV report alert sent for ref:', orderRef)
+    } catch (err) {
+      console.error('[webhook] Failed to send EV report alert:', err)
+    }
   }
 }

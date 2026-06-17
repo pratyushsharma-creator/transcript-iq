@@ -81,6 +81,7 @@ export interface Config {
     subscriptions: Subscription;
     media: Media;
     'transcript-files': TranscriptFile;
+    'ev-report-leads': EvReportLead;
     redirects: Redirect;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -103,6 +104,7 @@ export interface Config {
     subscriptions: SubscriptionsSelect<false> | SubscriptionsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'transcript-files': TranscriptFilesSelect<false> | TranscriptFilesSelect<true>;
+    'ev-report-leads': EvReportLeadsSelect<false> | EvReportLeadsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -3084,6 +3086,26 @@ export interface Company {
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "orders".
  */
+export interface EvReportLead {
+  id: number;
+  name: string;
+  email: string;
+  company: string;
+  role?: string | null;
+  message?: string | null;
+  utm_source?: string | null;
+  utm_medium?: string | null;
+  utm_campaign?: string | null;
+  utm_content?: string | null;
+  page_referrer?: string | null;
+  status?: ('new' | 'contacted' | 'qualified' | 'converted' | 'not_a_fit') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
 export interface Order {
   id: number;
   /**
@@ -3253,6 +3275,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'transcript-files';
         value: number | TranscriptFile;
+      } | null)
+    | ({
+        relationTo: 'ev-report-leads';
+        value: number | EvReportLead;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -5328,6 +5354,25 @@ export interface IndustriesSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
   description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders_select".
+ */
+export interface EvReportLeadsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  company?: T;
+  role?: T;
+  message?: T;
+  utm_source?: T;
+  utm_medium?: T;
+  utm_campaign?: T;
+  utm_content?: T;
+  page_referrer?: T;
+  status?: T;
   updatedAt?: T;
   createdAt?: T;
 }
