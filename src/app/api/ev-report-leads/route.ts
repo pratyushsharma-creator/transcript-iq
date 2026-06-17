@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
-import { getEvReportNotificationTo, getNotificationCC } from '@/lib/notifications'
+import { getNotificationTo, getNotificationCC } from '@/lib/notifications'
 import { sendLeadConfirmation } from '@/lib/resend'
 
 export const runtime = 'nodejs'
@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
   // 4. Notify the team (non-fatal)
   const apiKey = process.env.RESEND_API_KEY
   const from = process.env.RESEND_FROM_EMAIL ?? 'hello@transcript-iq.com'
-  const to = getEvReportNotificationTo()
+  const to = getNotificationTo()
   const cc = getNotificationCC()
 
   const utmLines = [
