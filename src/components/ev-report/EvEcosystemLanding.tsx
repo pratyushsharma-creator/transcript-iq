@@ -19,6 +19,7 @@ import { trackEvent } from '@/lib/analytics/events'
 import { AnalystLeadForm } from './AnalystLeadForm'
 
 const INVOICE_EMAIL = 'hatim.janjali@nextyn.com'
+const FAQ_CONTACT_EMAIL = 'info@nextyn.com'
 
 // Role-specific icons, one per expert (Audi → gigafactory, Sunlight → energy, E-GAP → charging)
 const EXPERT_ICONS = [Factory, Sun, PlugZap]
@@ -157,9 +158,9 @@ export function EvEcosystemLanding() {
             className="mt-7 grid max-w-2xl gap-x-8 gap-y-3 sm:grid-cols-2"
           >
             {EV_REPORT.benefits.map((b) => (
-              <li key={b} className="flex items-center gap-2.5 text-sm text-[var(--ink-2)]">
-                <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden />
-                <span>{b}</span>
+              <li key={b} className="flex items-start gap-2.5 text-sm text-[var(--ink-2)]">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden />
+                <span className="text-pretty">{b}</span>
               </li>
             ))}
           </motion.ul>
@@ -319,10 +320,10 @@ export function EvEcosystemLanding() {
               <div className="mt-8 flex flex-col gap-1">
                 <span className="text-[13px] text-[var(--mist)]">Still have questions?</span>
                 <a
-                  href={`mailto:${INVOICE_EMAIL}`}
+                  href={`mailto:${FAQ_CONTACT_EMAIL}`}
                   className="font-mono text-[13px] tracking-[0.05em] text-[var(--accent)] transition-opacity hover:opacity-80"
                 >
-                  {INVOICE_EMAIL} →
+                  {FAQ_CONTACT_EMAIL} →
                 </a>
               </div>
             </motion.div>
