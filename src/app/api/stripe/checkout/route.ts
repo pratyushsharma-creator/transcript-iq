@@ -60,6 +60,30 @@ export async function POST(req: NextRequest) {
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://transcript-iq.com'
 
+    // Campaign attribution — UTM params captured client-side into the `tiq-utm` cookie
+    let utm: Record<string, string> = {}
+    try {
+      const raw = req.cookies.get('tiq-utm')?.value
+      if (raw) {
+        const parsed = JSON.parse(raw) as Record<string, string>
+        utm = {
+          utm_source: parsed.utm_source ?? '',
+          utm_medium: parsed.utm_medium ?? '',
+          utm_campaign: parsed.utm_campaign ?? '',
+          utm_content: parsed.utm_content ?? '',
+        }
+      }
+    } catch {
+      // malformed cookie — ignore
+    }
+
+    // EV report purchases land on a dedicated thank-you page (fires GA4 purchase +
+    // Google Ads conversion); everything else uses the standard confirmation page.
+    const hasReport = items.some((i) => i.type === 'report')
+    const successUrl = hasReport
+      ? `${siteUrl}/reports/ev-ecosystem/thank-you?session_id={CHECKOUT_SESSION_ID}`
+      : `${siteUrl}/checkout/confirmation?session_id={CHECKOUT_SESSION_ID}`
+
     // Build line items — using price_data since we don't pre-create Stripe Products
     const lineItems = items.map((item) => {
       const subtitle =
@@ -101,7 +125,7 @@ export async function POST(req: NextRequest) {
       billing_address_collection: 'auto',
 
       // Success / cancel URLs
-      success_url: `${siteUrl}/checkout/confirmation?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: successUrl,
       cancel_url: `${siteUrl}/checkout?cancelled=true`,
 
       // Pass our data as metadata so the webhook can reconstruct the order
@@ -130,6 +154,8 @@ export async function POST(req: NextRequest) {
             priceUsd: i.priceUsd,
           }))
         ).slice(0, 500), // Stripe metadata values have a 500-char limit; full data is in line items
+        // Campaign attribution (persisted on the Stripe session + read by the webhook)
+        ...utm,
       },
 
       // Store full items as session-level custom text (no limit)

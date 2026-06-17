@@ -118,6 +118,11 @@ export function EvEcosystemLanding() {
 
   function handleBuy(location: string) {
     trackEvent('click_buy_report', { location })
+    trackEvent('add_to_cart', {
+      currency: 'USD',
+      value: EV_REPORT.priceUsd,
+      item_name: 'ev-ecosystem-report',
+    })
     addItem(REPORT_CART_ITEM)
     openCart()
   }

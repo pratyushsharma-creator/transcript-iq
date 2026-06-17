@@ -227,6 +227,12 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
         customerEmail,
         customerName: customerName || undefined,
         totalUsd: totalPaid,
+        utm: {
+          utm_source: meta.utm_source,
+          utm_medium: meta.utm_medium,
+          utm_campaign: meta.utm_campaign,
+          utm_content: meta.utm_content,
+        },
       })
       console.log('[webhook] EV report alert sent for ref:', orderRef)
     } catch (err) {

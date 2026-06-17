@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { X, ShoppingCart, Trash2, ArrowRight, ShieldCheck } from 'lucide-react'
 import { useCart, type CartItem } from '@/context/CartContext'
+import { trackEvent } from '@/lib/analytics/events'
 
 // ── Item type icon ──────────────────────────────────────────────────────────────
 
@@ -87,6 +88,7 @@ export function CartDrawer() {
   }, [closeCart])
 
   const handleCheckout = () => {
+    trackEvent('begin_checkout', { currency: 'USD', value: subtotal, num_items: itemCount })
     closeCart()
     router.push('/checkout')
   }

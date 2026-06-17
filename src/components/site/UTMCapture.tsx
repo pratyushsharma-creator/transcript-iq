@@ -43,10 +43,14 @@ export function UTMCapture() {
       if (document.referrer) captured.page_referrer = document.referrer
 
       if (Object.keys(captured).length > 0) {
-        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(captured))
+        const json = JSON.stringify(captured)
+        sessionStorage.setItem(STORAGE_KEY, json)
+        // Also persist as a cookie so the server (Stripe checkout route) can attach
+        // campaign attribution to the order. 30-day window, first-touch.
+        document.cookie = `${STORAGE_KEY}=${encodeURIComponent(json)}; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Lax`
       }
     } catch {
-      // sessionStorage unavailable — non-fatal
+      // sessionStorage/cookie unavailable — non-fatal
     }
   }, [])
 
