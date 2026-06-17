@@ -8,27 +8,29 @@
 export const EV_REPORT = {
   url: 'https://www.transcript-iq.com/reports/ev-ecosystem',
   title: 'Can Europe Win the EV Ecosystem?',
-  subTheme: 'Europe’s EV Value Chain — the execution gap, quantified by the people who lived it.',
   publisher: 'Nextyn Research',
-  pages: 54,
+  pages: 25,
   priceUsd: 3499,
   originalPriceUsd: 5000,
   consultRateUsd: 350,
   datePublished: '2026-06-17',
-  heroStat: {
-    value: '~10%',
-    label: 'Share of announced European gigafactory projects that reached commercial production.',
-  },
-  heroQuote: {
-    text: 'The battery war is over, and we lost. So whatever we do, it will not change the whole picture. They tried, and in the end they failed. If Northvolt could not make it, nobody would.',
-    attribution: 'Former Director, Sunlight Group',
-  },
-  trustBar: ['54 pages', '3 practitioner interviews', '7 contested questions'],
+  // Above-the-fold sell angle
+  subhead:
+    'Before you back a gigafactory, a charging network, or a battery-software platform — know where the value actually goes, and where it doesn’t.',
+  pitch:
+    'Europe lost the battery race on execution, not technology — and most of the market still hasn’t priced it in. This 25-page report is built from three practitioners who ran the ramps, deployed the networks, and commercialised the platforms. Direct citations, not model estimates — so you can move with conviction instead of consensus.',
+  benefits: [
+    'Spot the gigafactory bets that won’t survive the valley of death — before you fund one.',
+    'See where defensible margin migrates once the battery cell is commoditised.',
+    'Price V2G and charging infrastructure on the economics that actually decide returns.',
+    'Walk into your IC or board with primary-source conviction, not consensus.',
+  ],
+  trustBar: ['25 pages', '3 practitioner interviews', '7 contested questions'],
 } as const
 
 export const STATS: { value: string; interpretation: string }[] = [
   {
-    value: '~10%',
+    value: '10%',
     interpretation: 'Of announced European gigafactory projects reached commercial production. The battery race was lost on execution, not technology.',
   },
   {
@@ -41,30 +43,15 @@ export const STATS: { value: string; interpretation: string }[] = [
   },
   {
     value: '95%+',
-    interpretation: 'Manufacturing yield required for commercial viability — most European independents never reached it. Northvolt raised $5.8bn and still failed.',
+    interpretation: 'Manufacturing yield required for commercial viability. Most European independents never reached it.',
   },
   {
-    value: '~10 yrs',
+    value: '$5.8bn',
+    interpretation: 'Raised by Northvolt — Europe’s flagship independent — which still failed to reach commercial-scale yield.',
+  },
+  {
+    value: '10 yrs',
     interpretation: 'Before consumer V2G moves beyond captive-fleet deployments. The market is pricing V2G wrong today.',
-  },
-]
-
-export const PERSONAS: { title: string; body: string }[] = [
-  {
-    title: 'PE & strategic investors',
-    body: 'Pressure-test a thesis before you commit capital to a gigafactory, a charging network, or a battery-software platform.',
-  },
-  {
-    title: 'OEM & Tier-1 automotive executives',
-    body: 'The make-vs-import cost reality and where defensible margin actually sits.',
-  },
-  {
-    title: 'Strategy consultants & equity research',
-    body: 'Primary-source citations you can put in front of a client or an investment committee.',
-  },
-  {
-    title: 'Policy, government & think tanks',
-    body: 'What the subsidy programmes are — and aren’t — actually buying.',
   },
 ]
 
@@ -83,7 +70,7 @@ export const EXPERTS: { title: string; domain: string }[] = [
   },
 ]
 
-/** Visible H3 + answer blocks AND FAQPage schema source — keep these identical. */
+/** Visible accordion questions AND FAQPage schema source — keep these identical. */
 export const FAQS: { question: string; answer: string }[] = [
   {
     question: 'Why did Europe lose the EV battery manufacturing race?',

@@ -148,11 +148,11 @@ function OrderSummary({
                   : { background: 'var(--accent-tint)', border: '1px solid var(--accent-border)', color: 'var(--accent)' }
               }
             >
-              {item.type === 'earnings' && item.ticker ? `$${item.ticker}` : 'EXP'}
+              {item.type === 'earnings' && item.ticker ? `$${item.ticker}` : item.type === 'report' ? 'RPT' : 'EXP'}
             </div>
             <div className="min-w-0 flex-1">
               <p className="font-mono text-[9px] uppercase tracking-[0.1em] text-[var(--mist)]">
-                {item.type === 'earnings' ? 'Earnings Analysis' : 'Expert Transcript'}
+                {item.type === 'earnings' ? 'Earnings Analysis' : item.type === 'report' ? 'Research Report' : 'Expert Transcript'}
                 {item.tier && ` · ${item.tier.charAt(0).toUpperCase() + item.tier.slice(1)}`}
               </p>
               <p className="mt-0.5 line-clamp-2 text-[12px] leading-[1.35] text-[var(--ink)]">{item.title}</p>

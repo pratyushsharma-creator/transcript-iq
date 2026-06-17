@@ -7,7 +7,7 @@ import { verifyTurnstile } from '@/lib/turnstile'
 type CartItem = {
   id: string
   slug: string
-  type: 'transcript' | 'earnings'
+  type: 'transcript' | 'earnings' | 'report'
   title: string
   ticker?: string
   quarter?: string
@@ -63,7 +63,9 @@ export async function POST(req: NextRequest) {
     // Build line items — using price_data since we don't pre-create Stripe Products
     const lineItems = items.map((item) => {
       const subtitle =
-        item.type === 'earnings'
+        item.type === 'report'
+          ? 'Nextyn Research · Research Report'
+          : item.type === 'earnings'
           ? `${item.ticker ?? ''} · ${item.quarter ?? ''} Earnings Analysis`
           : `Expert Transcript · ${item.tier ? item.tier.charAt(0).toUpperCase() + item.tier.slice(1) + ' tier' : 'Standard'}`
 

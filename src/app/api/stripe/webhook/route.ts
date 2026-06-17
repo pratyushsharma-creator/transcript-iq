@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
-import { sendReceipt, sendPurchaseAlert, sendEvReportConfirmation, sendEvReportAlert } from '@/lib/resend'
+import { sendReceipt, sendPurchaseAlert, sendEvReportAlert } from '@/lib/resend'
 import { generateDownloadToken } from '@/lib/downloadToken'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
@@ -47,12 +47,7 @@ export async function POST(req: NextRequest) {
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
-        const session = event.data.object as Stripe.Checkout.Session
-        if (session.metadata?.product === 'ev-ecosystem-report') {
-          await handleEvReportPurchase(session)
-        } else {
-          await handleCheckoutComplete(session)
-        }
+        await handleCheckoutComplete(event.data.object as Stripe.Checkout.Session)
         break
       }
 
@@ -100,7 +95,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   // Parse items from metadata
   let items: Array<{
     slug: string
-    type: 'transcript' | 'earnings'
+    type: 'transcript' | 'earnings' | 'report'
     title: string
     ticker?: string
     quarter?: string
@@ -127,7 +122,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
       const productMeta = product?.metadata ?? {}
       return {
         slug: productMeta.slug ?? '',
-        type: (productMeta.type as 'transcript' | 'earnings') ?? 'transcript',
+        type: (productMeta.type as 'transcript' | 'earnings' | 'report') ?? 'transcript',
         title: product?.name ?? li.description ?? '',
         ticker: productMeta.ticker || undefined,
         quarter: productMeta.quarter || undefined,
@@ -180,11 +175,13 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   }
 
   // ── Generate signed download tokens for each item ─────────────────────────
+  // Reports are fulfilled manually (PDF emailed by the team) — no download token.
   const itemsWithDownloads = items.map((i) => {
-    const { url: downloadUrl } = generateDownloadToken(i.slug, i.type)
+    const downloadUrl =
+      i.type === 'report' ? undefined : generateDownloadToken(i.slug, i.type as 'transcript' | 'earnings').url
     return {
       title: i.title,
-      type: i.type,
+      type: i.type === 'report' ? ('transcript' as const) : i.type,
       ticker: i.ticker,
       priceUsd: i.priceUsd,
       downloadUrl,
@@ -221,79 +218,19 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   } catch (err) {
     console.error('[webhook] Failed to send purchase alert:', err)
   }
-}
 
-// ── EV Ecosystem report purchase handler ──────────────────────────────────────
-// Manual fulfilment: record the order, tell the buyer the report will be emailed,
-// and alert the research team to send the PDF. No download tokens are generated.
-
-async function handleEvReportPurchase(session: Stripe.Checkout.Session) {
-  const meta = session.metadata ?? {}
-  const customerEmail = session.customer_email ?? session.customer_details?.email ?? ''
-  const customerName = session.customer_details?.name ?? ''
-
-  if (!customerEmail) {
-    console.error('[webhook] EV report — no customer email in session:', session.id)
-    return
-  }
-
-  const totalPaid = (session.amount_total ?? 0) / 100
-  const orderRef = generateOrderRef()
-
-  // ── Record the order (manual fulfilment) ─────────────────────────────────────
-  try {
-    const payload = await getPayload({ config: await config })
-    await payload.create({
-      collection: 'orders',
-      data: {
-        customerEmail,
-        customerName,
-        lineItems: [
-          {
-            slug: 'ev-ecosystem-report',
-            type: 'report',
-            title: 'Can Europe Win the EV Ecosystem? — Research Report',
-            priceUsd: totalPaid,
-          },
-        ],
-        totalUsd: totalPaid,
-        currency: 'usd',
-        status: 'paid',
-        paymentProvider: 'stripe',
-        stripeCheckoutId: session.id,
-        stripePaymentIntentId:
-          typeof session.payment_intent === 'string'
-            ? session.payment_intent
-            : (session.payment_intent as Stripe.PaymentIntent | null)?.id ?? '',
+  // ── EV report is manually fulfilled — alert the research team to send the PDF ──
+  if (items.some((i) => i.type === 'report')) {
+    try {
+      await sendEvReportAlert({
         orderRef,
-      },
-      overrideAccess: true,
-    })
-  } catch (err) {
-    console.error('[webhook] EV report — failed to create order:', err)
-    // Non-fatal — still send the emails
-  }
-
-  const utm = {
-    utm_source: meta.utm_source,
-    utm_medium: meta.utm_medium,
-    utm_campaign: meta.utm_campaign,
-    utm_content: meta.utm_content,
-  }
-
-  // ── Buyer confirmation: "your report will be emailed to you" ─────────────────
-  try {
-    await sendEvReportConfirmation({ to: customerEmail, customerName, orderRef })
-    console.log('[webhook] EV report confirmation sent to:', customerEmail, 'ref:', orderRef)
-  } catch (err) {
-    console.error('[webhook] EV report — failed to send buyer confirmation:', err)
-  }
-
-  // ── Internal alert: send the PDF manually ────────────────────────────────────
-  try {
-    await sendEvReportAlert({ orderRef, customerEmail, customerName, totalUsd: totalPaid, utm })
-    console.log('[webhook] EV report alert sent for ref:', orderRef)
-  } catch (err) {
-    console.error('[webhook] EV report — failed to send team alert:', err)
+        customerEmail,
+        customerName: customerName || undefined,
+        totalUsd: totalPaid,
+      })
+      console.log('[webhook] EV report alert sent for ref:', orderRef)
+    } catch (err) {
+      console.error('[webhook] Failed to send EV report alert:', err)
+    }
   }
 }

@@ -7,7 +7,7 @@ import { UTMCapture } from '@/components/site/UTMCapture'
 export const metadata: Metadata = {
   title: 'Can Europe Win the EV Ecosystem? | Research Report — Nextyn Research',
   description:
-    'A 54-page practitioner research report on Europe’s EV value chain. Only ~10% of announced gigafactory projects reached production. Find out where value goes next. $3,499.',
+    'A 25-page practitioner research report on Europe’s EV value chain. Only 10% of announced gigafactory projects reached production. Find out where value goes next. $3,499.',
   keywords: [
     'European EV value chain report',
     'EV ecosystem research report',
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Can Europe Win the EV Ecosystem?',
     description:
-      '~10% of announced gigafactories reached commercial production. Read the full expert analysis. $3,499.',
+      '10% of announced gigafactories reached commercial production. Read the full expert analysis. $3,499.',
   },
   alternates: { canonical: EV_REPORT.url },
   robots: { index: true, follow: true },
@@ -42,7 +42,7 @@ function JsonLd() {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: 'Can Europe Win the EV Ecosystem? — Research Report',
-    description: '54-page practitioner research report on Europe’s EV value chain execution gap.',
+    description: '25-page practitioner research report on Europe’s EV value chain execution gap.',
     brand: { '@type': 'Organization', name: EV_REPORT.publisher },
     offers: {
       '@type': 'Offer',
