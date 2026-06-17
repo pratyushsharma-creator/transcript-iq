@@ -3,6 +3,7 @@ import { EV_REPORT, FAQS } from '@/lib/ev-report/content'
 import { EvEcosystemLanding } from '@/components/ev-report/EvEcosystemLanding'
 import { Rb2bPageScript } from '@/components/site/Rb2bPageScript'
 import { UTMCapture } from '@/components/site/UTMCapture'
+import { AnalyticsTags } from '@/components/site/AnalyticsTags'
 
 export const metadata: Metadata = {
   title: 'Can Europe Win the EV Ecosystem? | Research Report — Nextyn Research',
@@ -99,6 +100,7 @@ export default function EvEcosystemReportPage() {
   return (
     <>
       <JsonLd />
+      <AnalyticsTags />
       <UTMCapture />
       <Rb2bPageScript />
       <EvEcosystemLanding />

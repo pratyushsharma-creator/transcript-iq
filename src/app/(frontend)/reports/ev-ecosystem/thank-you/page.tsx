@@ -4,6 +4,7 @@ import { CheckCircle2, AlertCircle, Mail } from 'lucide-react'
 import { stripe } from '@/lib/stripe'
 import { EV_REPORT } from '@/lib/ev-report/content'
 import { ThankYouTracking } from '@/components/ev-report/ThankYouTracking'
+import { AnalyticsTags } from '@/components/site/AnalyticsTags'
 
 export const metadata: Metadata = {
   title: 'Thank you — Can Europe Win the EV Ecosystem? | Nextyn Research',
@@ -49,6 +50,7 @@ export default async function EvReportThankYouPage({
 
   return (
     <div className="min-h-[70vh] bg-[var(--bg)] text-[var(--ink)]">
+      <AnalyticsTags />
       <div className="mx-auto max-w-2xl px-6 py-24">
         {showSuccess && result ? (
           <>
