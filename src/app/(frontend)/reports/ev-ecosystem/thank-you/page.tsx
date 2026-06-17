@@ -34,18 +34,25 @@ const RETURN_LINK =
 export default async function EvReportThankYouPage({
   searchParams,
 }: {
-  searchParams: Promise<{ session_id?: string }>
+  searchParams: Promise<{ session_id?: string; preview?: string }>
 }) {
-  const { session_id } = await searchParams
-  const result = await verifySession(session_id)
-  const ok = result?.paid === true
+  const { session_id, preview } = await searchParams
+  const isPreview = preview === '1'
+  const verified = await verifySession(session_id)
+  const ok = verified?.paid === true
+
+  // Preview mode renders the exact success layout with placeholder data, without
+  // calling Stripe and WITHOUT firing the purchase/conversion tracking.
+  const result: VerifiedSession | null =
+    verified ?? (isPreview ? { paid: true, email: 'you@yourfirm.com', amountUsd: EV_REPORT.priceUsd, sessionId: 'preview' } : null)
+  const showSuccess = ok || (isPreview && result !== null)
 
   return (
     <div className="min-h-[70vh] bg-[var(--bg)] text-[var(--ink)]">
       <div className="mx-auto max-w-2xl px-6 py-24">
-        {ok && result ? (
+        {showSuccess && result ? (
           <>
-            <ThankYouTracking sessionId={result.sessionId} value={result.amountUsd} />
+            {ok && <ThankYouTracking sessionId={result.sessionId} value={result.amountUsd} />}
 
             <div className="flex flex-col items-center text-center">
               <CheckCircle2 className="h-14 w-14 text-[var(--accent)]" aria-hidden />
