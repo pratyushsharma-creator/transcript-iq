@@ -1,7 +1,7 @@
 import { Resend } from 'resend'
 import { PurchaseReceipt } from '../../emails/PurchaseReceipt'
 import { LeadConfirmation, type LeadConfirmationProps } from '../../emails/LeadConfirmation'
-import { getNotificationTo, getNotificationCC, getEvReportNotificationTo } from './notifications'
+import { getNotificationTo, getNotificationCC } from './notifications'
 
 if (!process.env.RESEND_API_KEY) {
   throw new Error('Missing RESEND_API_KEY environment variable')
@@ -170,10 +170,14 @@ export type EvReportAlertOptions = {
   utm?: Record<string, string | undefined>
 }
 
-/** Internal alert to the research/sales team: an EV report was purchased — send the PDF. */
+/**
+ * Internal alert to the team: an EV report was purchased — send the PDF.
+ * Routes to the same recipients as every other site notification
+ * (LEAD_NOTIFICATION_EMAIL primary + NOTIFICATION_CC_EMAILS).
+ */
 export async function sendEvReportAlert(opts: EvReportAlertOptions) {
   const from = process.env.RESEND_FROM_EMAIL ?? 'hello@transcript-iq.com'
-  const to   = getEvReportNotificationTo()
+  const to   = getNotificationTo()
   const cc   = getNotificationCC()
 
   const { orderRef, customerEmail, customerName, totalUsd, utm } = opts
