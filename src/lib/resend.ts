@@ -125,7 +125,7 @@ export async function sendPurchaseAlert(opts: PurchaseAlertOptions) {
 }
 
 // ── EV Ecosystem report — manual-fulfilment emails ──────────────────────────────
-// The 54-page report is delivered manually by the research team (no auto download),
+// The 25-page report is delivered manually by the research team (no auto download),
 // so the buyer gets a "we'll email it to you" confirmation and the team gets an alert.
 
 export type EvReportPurchaseOptions = {
@@ -145,7 +145,7 @@ export async function sendEvReportConfirmation(opts: EvReportPurchaseOptions) {
     `Thank you for purchasing "Can Europe Win the EV Ecosystem?" — Nextyn Research.`,
     `Your payment has been received (order ${orderRef}).`,
     ``,
-    `Our research team will email the full 54-page report (PDF) and data appendix`,
+    `Our research team will email the full 25-page report (PDF) and data appendix`,
     `to this address shortly — typically within one business day.`,
     ``,
     `Want to go deeper? You can book time with the practitioner behind the report`,
@@ -195,7 +195,7 @@ export async function sendEvReportAlert(opts: EvReportAlertOptions) {
     `Purchased: ${new Date().toISOString()}`,
     ``,
     `─── ACTION REQUIRED ────────────────────────────────`,
-    `Email the 54-page EV report PDF + data appendix to`,
+    `Email the 25-page EV report PDF + data appendix to`,
     `the customer above. Fulfilment is manual for this product.`,
     `────────────────────────────────────────────────────`,
   ]

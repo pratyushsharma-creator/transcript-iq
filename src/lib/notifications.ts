@@ -42,5 +42,5 @@ export function getNotificationCC(): string[] {
  * from the general LEAD_NOTIFICATION_EMAIL. Override with EV_REPORT_NOTIFICATION_EMAIL.
  */
 export function getEvReportNotificationTo(): string {
-  return process.env.EV_REPORT_NOTIFICATION_EMAIL ?? 'hatim.janjali@nextyn.com'
+  return process.env.EV_REPORT_NOTIFICATION_EMAIL ?? 'info@nextyn.com'
 }
