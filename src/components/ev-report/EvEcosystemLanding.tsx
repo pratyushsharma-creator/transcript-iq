@@ -155,6 +155,14 @@ export function EvEcosystemLanding() {
           >
             {EV_REPORT.subhead}
           </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.16 }}
+            className="mt-3 max-w-xl text-lg font-medium leading-relaxed text-[var(--ink)]"
+          >
+            {EV_REPORT.subheadEmphasis}
+          </motion.p>
 
           <motion.ul
             initial={{ opacity: 0, y: 16 }}
