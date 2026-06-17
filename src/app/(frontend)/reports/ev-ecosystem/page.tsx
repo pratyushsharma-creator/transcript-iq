@@ -56,7 +56,8 @@ function JsonLd() {
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: FAQS.map((f) => ({
+    // Top 5 — kept in sync with the visible FAQ accordion (Google requires visible content)
+    mainEntity: FAQS.slice(0, 5).map((f) => ({
       '@type': 'Question',
       name: f.question,
       acceptedAnswer: { '@type': 'Answer', text: f.answer },

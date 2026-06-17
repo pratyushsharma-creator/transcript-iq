@@ -15,15 +15,14 @@ export const EV_REPORT = {
   consultRateUsd: 350,
   datePublished: '2026-06-17',
   // Above-the-fold sell angle
+  headline: 'Europe lost the battery war. The market hasn’t repriced what comes next.',
   subhead:
-    'Before you back a gigafactory, a charging network, or a battery-software platform — know where the value actually goes, and where it doesn’t.',
-  pitch:
-    'Europe lost the battery race on execution, not technology — and most of the market still hasn’t priced it in. This 25-page report is built from three practitioners who ran the ramps, deployed the networks, and commercialised the platforms. Direct citations, not model estimates — so you can move with conviction instead of consensus.',
+    'A 25-page practitioner report on Europe’s EV value chain — from the people who ran the gigafactory ramps and built the charging networks. Where margin moves next, and the bets that won’t survive.',
   benefits: [
-    'Spot the gigafactory bets that won’t survive the valley of death — before you fund one.',
-    'See where defensible margin migrates once the battery cell is commoditised.',
-    'Price V2G and charging infrastructure on the economics that actually decide returns.',
-    'Walk into your IC or board with primary-source conviction, not consensus.',
+    'Skip the gigafactories that won’t survive.',
+    'See where margin goes once cells commoditise.',
+    'Price V2G and charging on real economics.',
+    'Arm your IC with primary-source conviction.',
   ],
   trustBar: ['25 pages', '3 practitioner interviews', '7 contested questions'],
 } as const
@@ -70,7 +69,11 @@ export const EXPERTS: { title: string; domain: string }[] = [
   },
 ]
 
-/** Visible accordion questions AND FAQPage schema source — keep these identical. */
+/**
+ * Ordered by search intent / keyword priority (highest first).
+ * The FAQ accordion shows the top 5; the "what it answers" list shows the top 6;
+ * the top 5 also feed the FAQPage schema (kept in sync with what's visible).
+ */
 export const FAQS: { question: string; answer: string }[] = [
   {
     question: 'Why did Europe lose the EV battery manufacturing race?',
@@ -78,9 +81,29 @@ export const FAQS: { question: string; answer: string }[] = [
       'Europe lost on execution, not technology. According to practitioners interviewed for Nextyn Research’s 2026 EV Ecosystem Report, the cell know-how existed, but the tacit manufacturing-knowledge transfer required to hit commercial yield never happened. The race is effectively over: only around 10% of announced European gigafactory projects reached commercial production.',
   },
   {
+    question: 'Who are the major players in European battery manufacturing?',
+    answer:
+      'The European battery landscape spans OEM-backed cell ventures, independents such as Northvolt, and the policy scaffolding of the European Battery Alliance and EU Battery Regulation (2023/1542). Nextyn Research’s report assesses which of these survive the shift from announced capacity to commercial production.',
+  },
+  {
     question: 'Which European gigafactory projects survive?',
     answer:
       'OEM backing predicts survival more reliably than any engineering metric. Independent gigafactories consistently fail in the “valley of death” between pilot and volume production — Northvolt raised $5.8bn and still failed. Projects anchored to a committed OEM offtake are the ones that reach the 95%+ yield needed for viability.',
+  },
+  {
+    question: 'Where should capital go in EV charging infrastructure?',
+    answer:
+      'Maintenance economics are the most systematically mispriced element of EV charging. Investors who model charger count rather than uptime and maintenance cost will misjudge the return profile. The return lives in operations, not installation.',
+  },
+  {
+    question: 'What will vehicle-to-grid (V2G) actually look like this decade?',
+    answer:
+      'Near-term V2G is car-to-BESS-to-grid, not true car-to-grid. Consumer V2G at scale is roughly a 10-year horizon and remains confined to captive-fleet deployments today. Investors pricing in mass consumer V2G this decade are pricing it wrong.',
+  },
+  {
+    question: 'What is AI’s real role in the EV ecosystem, and who captures it?',
+    answer:
+      'AI is a multiplier for whoever already holds the data and the deployed asset base — not a leapfrog path for latecomers. It compounds existing advantage rather than creating new entrants, so incumbents with deployed assets and data capture most of the upside.',
   },
   {
     question: 'Where does value go when the battery cell is commoditised?',
@@ -91,25 +114,5 @@ export const FAQS: { question: string; answer: string }[] = [
     question: 'Will software or battery manufacturers capture the EV ecosystem?',
     answer:
       'This is genuinely contested. The outcome depends on data regulation, not on technology — specifically, who is allowed to own and use the operational data generated by the asset base. Manufacturers who secure rights to that data can defend the value; if the data opens up, software platforms capture it.',
-  },
-  {
-    question: 'What will vehicle-to-grid (V2G) actually look like this decade?',
-    answer:
-      'Near-term V2G is car-to-BESS-to-grid, not true car-to-grid. Consumer V2G at scale is roughly a 10-year horizon and remains confined to captive-fleet deployments today. Investors pricing in mass consumer V2G this decade are pricing it wrong.',
-  },
-  {
-    question: 'Where should capital go in EV charging infrastructure?',
-    answer:
-      'Maintenance economics are the most systematically mispriced element of EV charging. Investors who model charger count rather than uptime and maintenance cost will misjudge the return profile. The return lives in operations, not installation.',
-  },
-  {
-    question: 'What is AI’s real role in the EV ecosystem, and who captures it?',
-    answer:
-      'AI is a multiplier for whoever already holds the data and the deployed asset base — not a leapfrog path for latecomers. It compounds existing advantage rather than creating new entrants, so incumbents with deployed assets and data capture most of the upside.',
-  },
-  {
-    question: 'Who are the major players in European battery manufacturing?',
-    answer:
-      'The European battery landscape spans OEM-backed cell ventures, independents such as Northvolt, and the policy scaffolding of the European Battery Alliance and EU Battery Regulation (2023/1542). Nextyn Research’s report assesses which of these survive the shift from announced capacity to commercial production.',
   },
 ]

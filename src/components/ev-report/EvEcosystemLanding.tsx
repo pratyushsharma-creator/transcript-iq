@@ -7,9 +7,11 @@ import {
   FileText,
   Users,
   CheckCircle2,
-  Building2,
   ShieldCheck,
-  ChevronDown,
+  Plus,
+  Factory,
+  Sun,
+  PlugZap,
 } from 'lucide-react'
 import { EV_REPORT, STATS, EXPERTS, FAQS } from '@/lib/ev-report/content'
 import { useCart } from '@/context/CartContext'
@@ -17,6 +19,9 @@ import { trackEvent } from '@/lib/analytics/events'
 import { AnalystLeadForm } from './AnalystLeadForm'
 
 const INVOICE_EMAIL = 'hatim.janjali@nextyn.com'
+
+// Role-specific icons, one per expert (Audi → gigafactory, Sunlight → energy, E-GAP → charging)
+const EXPERT_ICONS = [Factory, Sun, PlugZap]
 
 const REPORT_CART_ITEM = {
   id: 'ev-ecosystem-report',
@@ -29,6 +34,19 @@ const REPORT_CART_ITEM = {
 
 function fmt(n: number) {
   return n.toLocaleString('en-US')
+}
+
+// Illustrative strike-through: a diagonal line drawn over the old price (no font-size change)
+function OldPrice({ className = '' }: { className?: string }) {
+  return (
+    <span className={`relative inline-block text-[var(--mist)] ${className}`}>
+      ${fmt(EV_REPORT.originalPriceUsd)}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute left-[-3px] right-[-3px] top-1/2 h-[2px] -translate-y-1/2 -rotate-[12deg] rounded-full bg-[#E24B4A]"
+      />
+    </span>
+  )
 }
 
 const fadeUp = {
@@ -57,7 +75,7 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
 
 export function EvEcosystemLanding() {
   const { addItem, openCart } = useCart()
-  const [openFaq, setOpenFaq] = useState<number | null>(null)
+  const [openFaq, setOpenFaq] = useState<Set<number>>(new Set([0]))
   const firedDepth = useRef<{ d50: boolean; d90: boolean }>({ d50: false, d90: false })
 
   useEffect(() => {
@@ -83,18 +101,27 @@ export function EvEcosystemLanding() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  function toggleFaq(i: number) {
+    setOpenFaq((prev) => {
+      const next = new Set(prev)
+      if (next.has(i)) next.delete(i)
+      else next.add(i)
+      return next
+    })
+  }
+
   function scrollToAnalyst(location: string) {
     trackEvent('click_talk_analyst', { location })
     document.getElementById('analyst')?.scrollIntoView({ behavior: 'smooth' })
   }
 
-  // Buy → add the report to the site cart and open the cart drawer (same flow
-  // as every other product; checkout uses price_data so no extra Stripe env).
   function handleBuy(location: string) {
     trackEvent('click_buy_report', { location })
     addItem(REPORT_CART_ITEM)
     openCart()
   }
+
+  const topFaqs = FAQS.slice(0, 5)
 
   return (
     <div className="bg-[var(--bg)] text-[var(--ink)]">
@@ -109,38 +136,29 @@ export function EvEcosystemLanding() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.06 }}
-            className="mt-6 max-w-3xl text-[40px] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--ink)] sm:text-[64px]"
+            className="mt-6 max-w-4xl text-[40px] font-semibold leading-[1.04] tracking-[-0.04em] text-[var(--ink)] sm:text-[64px]"
           >
-            {EV_REPORT.title}
+            {EV_REPORT.headline}
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.12 }}
-            className="mt-5 max-w-2xl text-lg text-[var(--ink)] sm:text-xl"
+            className="mt-5 max-w-xl text-lg leading-relaxed text-[var(--ink-2)]"
           >
             {EV_REPORT.subhead}
-          </motion.p>
-
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.18 }}
-            className="mt-5 max-w-2xl leading-relaxed text-[var(--ink-2)]"
-          >
-            {EV_REPORT.pitch}
           </motion.p>
 
           <motion.ul
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.24 }}
+            transition={{ duration: 0.55, delay: 0.2 }}
             className="mt-7 grid max-w-2xl gap-x-8 gap-y-3 sm:grid-cols-2"
           >
             {EV_REPORT.benefits.map((b) => (
-              <li key={b} className="flex items-start gap-2.5 text-sm text-[var(--ink-2)]">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden />
+              <li key={b} className="flex items-center gap-2.5 text-sm text-[var(--ink-2)]">
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden />
                 <span>{b}</span>
               </li>
             ))}
@@ -149,11 +167,11 @@ export function EvEcosystemLanding() {
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.3 }}
+            transition={{ duration: 0.55, delay: 0.28 }}
             className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-4"
           >
             <div className="flex items-baseline gap-3">
-              <span className="text-lg text-[var(--mist)] line-through">${fmt(EV_REPORT.originalPriceUsd)}</span>
+              <OldPrice className="text-lg" />
               <span className="text-3xl font-semibold text-[var(--ink)]">${fmt(EV_REPORT.priceUsd)}</span>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -169,7 +187,7 @@ export function EvEcosystemLanding() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            transition={{ duration: 0.6, delay: 0.38 }}
             className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--mist)]"
           >
             {EV_REPORT.trustBar.map((item, i) => (
@@ -194,18 +212,23 @@ export function EvEcosystemLanding() {
           </motion.p>
 
           <div className="mt-12 grid gap-5 md:grid-cols-3">
-            {EXPERTS.map((e, i) => (
-              <motion.div
-                key={e.title}
-                {...fadeUp}
-                transition={{ ...fadeUp.transition, delay: i * 0.05 }}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-6"
-              >
-                <Building2 className="h-7 w-7 text-[var(--accent)]" aria-hidden />
-                <h3 className="mt-4 font-semibold text-[var(--ink)]">{e.title}</h3>
-                <p className="mt-2 text-sm text-[var(--ink-2)]">{e.domain}</p>
-              </motion.div>
-            ))}
+            {EXPERTS.map((e, i) => {
+              const Icon = EXPERT_ICONS[i] ?? Factory
+              return (
+                <motion.div
+                  key={e.title}
+                  {...fadeUp}
+                  transition={{ ...fadeUp.transition, delay: i * 0.05 }}
+                  className="rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-6"
+                >
+                  <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-[var(--accent-border)] bg-[var(--accent-tint)] text-[var(--accent)]">
+                    <Icon className="h-5 w-5" aria-hidden />
+                  </div>
+                  <h3 className="mt-4 font-semibold text-[var(--ink)]">{e.title}</h3>
+                  <p className="mt-2 text-sm text-[var(--ink-2)]">{e.domain}</p>
+                </motion.div>
+              )
+            })}
           </div>
 
           <motion.p {...fadeUp} className="mt-8 flex items-center gap-2 text-sm text-[var(--mist)]">
@@ -224,37 +247,23 @@ export function EvEcosystemLanding() {
               What you&rsquo;re actually buying
             </h2>
             <p className="mt-4 max-w-2xl text-lg text-[var(--ink-2)]">
-              Not a macro overview. A {EV_REPORT.pages}-page read on the seven questions practitioners actually argue
-              about — each answered with first-hand citation, so you can act on it.
+              Not a macro overview. A {EV_REPORT.pages}-page read on the questions practitioners actually argue about —
+              each answered with first-hand citation, so you can act on it.
             </p>
           </motion.div>
 
           <motion.div {...fadeUp} className="mt-12">
             <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
-              The seven contested questions
+              The questions it answers
             </h3>
             <ul className="mt-5 grid gap-x-10 gap-y-4 sm:grid-cols-2">
-              {FAQS.slice(0, 7).map((f, i) => (
+              {FAQS.slice(0, 6).map((f, i) => (
                 <li key={f.question} className="flex gap-3 text-[var(--ink-2)]">
                   <span className="font-mono text-sm text-[var(--accent)]">{String(i + 1).padStart(2, '0')}</span>
                   <span>{f.question}</span>
                 </li>
               ))}
             </ul>
-          </motion.div>
-
-          <motion.div
-            {...fadeUp}
-            className="mt-12 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-6"
-          >
-            <h3 className="mb-2 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--mist)]">
-              Methodology
-            </h3>
-            <p className="text-[var(--ink-2)]">
-              Findings are drawn from three expert interviews conducted May–June 2026 with practitioners who ran
-              gigafactory ramps, built charging networks, and deployed energy-platform software. These are not model
-              estimates — they are direct expert citations.
-            </p>
           </motion.div>
 
           <motion.div {...fadeUp} className="mt-10">
@@ -293,46 +302,75 @@ export function EvEcosystemLanding() {
         </div>
       </section>
 
-      {/* ── Section 5 — Frequently Asked Questions (accordion) ────────────── */}
+      {/* ── Section 5 — FAQ (mirrors the homepage accordion design) ───────── */}
       <section className="border-b border-[var(--border)]">
-        <div className="mx-auto max-w-3xl px-6 py-20">
-          <motion.h2 {...fadeUp} className="text-3xl font-semibold tracking-[-0.03em] text-[var(--ink)] sm:text-4xl">
-            Frequently Asked Questions
-          </motion.h2>
-          <motion.p {...fadeUp} className="mt-4 text-[var(--ink-2)]">
-            The report&rsquo;s position on each contested question. The evidence, the dissent, and the implications for
-            capital are in the full {EV_REPORT.pages} pages.
-          </motion.p>
+        <div className="mx-auto max-w-5xl px-6 py-20">
+          <div className="grid items-start gap-12 lg:grid-cols-[320px_1fr] lg:gap-20">
+            {/* LEFT — heading + contact prompt (sticky) */}
+            <motion.div {...fadeUp} className="lg:sticky lg:top-24">
+              <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--accent)]">FAQ</span>
+              <h2 className="mt-3 text-[28px] font-semibold leading-[1.15] tracking-[-0.02em] text-[var(--ink)] sm:text-[32px]">
+                Frequently Asked Questions
+              </h2>
+              <p className="mt-4 text-[14px] leading-relaxed text-[var(--ink-2)]">
+                The report&rsquo;s position on each contested question. The evidence and implications for capital are in
+                the full {EV_REPORT.pages} pages.
+              </p>
+              <div className="mt-8 flex flex-col gap-1">
+                <span className="text-[13px] text-[var(--mist)]">Still have questions?</span>
+                <a
+                  href={`mailto:${INVOICE_EMAIL}`}
+                  className="font-mono text-[13px] tracking-[0.05em] text-[var(--accent)] transition-opacity hover:opacity-80"
+                >
+                  {INVOICE_EMAIL} →
+                </a>
+              </div>
+            </motion.div>
 
-          <div className="mt-10 divide-y divide-[var(--border)] border-y border-[var(--border)]">
-            {FAQS.map((f, i) => {
-              const isOpen = openFaq === i
-              return (
-                <div key={f.question}>
-                  <button
-                    onClick={() => setOpenFaq(isOpen ? null : i)}
-                    aria-expanded={isOpen}
-                    className="flex w-full items-center justify-between gap-4 py-5 text-left"
+            {/* RIGHT — accordion list */}
+            <motion.div
+              {...fadeUp}
+              className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]"
+            >
+              {topFaqs.map((f, i) => {
+                const isOpen = openFaq.has(i)
+                return (
+                  <div
+                    key={f.question}
+                    className={`transition-colors duration-base ${isOpen ? 'bg-[var(--surface-2)]' : 'bg-[var(--surface)]'} ${
+                      i < topFaqs.length - 1 ? 'border-b border-[var(--border)]' : ''
+                    }`}
                   >
-                    <span className="text-base font-medium text-[var(--ink)]">{f.question}</span>
-                    <ChevronDown
-                      className={`h-5 w-5 shrink-0 text-[var(--accent)] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-                      aria-hidden
-                    />
-                  </button>
-                  {isOpen && (
-                    <motion.p
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      transition={{ duration: 0.25 }}
-                      className="overflow-hidden pb-5 pr-9 leading-relaxed text-[var(--ink-2)]"
+                    <button
+                      onClick={() => toggleFaq(i)}
+                      aria-expanded={isOpen}
+                      className="flex w-full items-center justify-between gap-4 px-7 py-6 text-left"
                     >
-                      {f.answer}
-                    </motion.p>
-                  )}
-                </div>
-              )
-            })}
+                      <h3 className="text-[16px] font-medium leading-snug tracking-[-0.005em] text-[var(--ink)]">
+                        {f.question}
+                      </h3>
+                      <span
+                        className={`inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[var(--accent-border)] bg-[var(--accent-tint)] text-[var(--accent)] transition-transform duration-base ${
+                          isOpen ? 'rotate-45' : ''
+                        }`}
+                      >
+                        <Plus className="h-3.5 w-3.5" />
+                      </span>
+                    </button>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                        className="-mt-1 px-7 pb-6"
+                      >
+                        <p className="text-[14px] leading-relaxed text-[var(--ink-2)]">{f.answer}</p>
+                      </motion.div>
+                    )}
+                  </div>
+                )
+              })}
+            </motion.div>
           </div>
         </div>
       </section>
@@ -351,7 +389,7 @@ export function EvEcosystemLanding() {
             className="mx-auto mt-10 max-w-xl rounded-2xl border border-[var(--accent-border)] bg-[var(--accent-tint)] p-8"
           >
             <div className="flex items-end justify-center gap-3">
-              <span className="text-2xl text-[var(--mist)] line-through">${fmt(EV_REPORT.originalPriceUsd)}</span>
+              <OldPrice className="text-2xl" />
               <span className="text-5xl font-semibold text-[var(--ink)]">${fmt(EV_REPORT.priceUsd)}</span>
             </div>
             <p className="mt-2 text-center font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--mist)]">
@@ -362,7 +400,7 @@ export function EvEcosystemLanding() {
               {[
                 `The full ${EV_REPORT.pages}-page research report (PDF)`,
                 'Data appendix',
-                'All seven questions answered with direct practitioner citation',
+                'Every question answered with direct practitioner citation',
               ].map((item) => (
                 <li key={item} className="flex items-start gap-3 text-[var(--ink-2)]">
                   <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[var(--accent)]" aria-hidden />
