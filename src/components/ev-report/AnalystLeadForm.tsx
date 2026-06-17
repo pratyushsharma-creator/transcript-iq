@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import { CheckCircle2, Loader2 } from 'lucide-react'
 import { getStoredUtm } from '@/components/site/UTMCapture'
-import { trackEvent, trackAdsConversion } from '@/lib/analytics/events'
+import { trackEvent, trackAdsConversion, trackBingEvent, trackTaboolaEvent } from '@/lib/analytics/events'
 
 type Status = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -59,6 +59,9 @@ export function AnalystLeadForm() {
       // Separate Ads conversion action for leads (uses NEXT_PUBLIC_GOOGLE_ADS_LEAD_CONVERSION
       // when set; otherwise dormant until configured).
       trackAdsConversion({ conversionLabel: process.env.NEXT_PUBLIC_GOOGLE_ADS_LEAD_CONVERSION })
+      // Microsoft Ads + Taboola lead conversions (dormant until their IDs are set)
+      trackBingEvent('lead', { event_category: 'ev_report', event_label: 'analyst_consultation' })
+      trackTaboolaEvent('lead')
     } catch (err) {
       setStatus('error')
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')

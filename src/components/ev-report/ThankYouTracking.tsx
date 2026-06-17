@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { trackEvent, trackAdsConversion } from '@/lib/analytics/events'
+import { trackEvent, trackAdsConversion, trackBingEvent, trackTaboolaEvent } from '@/lib/analytics/events'
 
 /**
  * Fires the GA4 `purchase` event and the Google Ads purchase conversion exactly
@@ -24,6 +24,9 @@ export function ThankYouTracking({
 
     trackEvent('purchase', { transaction_id: sessionId, value, currency })
     trackAdsConversion({ value, currency, transactionId: sessionId })
+    // Microsoft Ads + Taboola purchase conversions (dormant until their IDs are set)
+    trackBingEvent('purchase', { revenue_value: value, currency, transaction_id: sessionId })
+    trackTaboolaEvent('make_purchase', { revenue: value, currency })
   }, [sessionId, value, currency])
 
   return null

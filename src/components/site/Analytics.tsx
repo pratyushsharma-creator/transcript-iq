@@ -51,6 +51,8 @@ export function Analytics() {
   const clarityId = process.env.NEXT_PUBLIC_CLARITY_ID
   const metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID
   const linkedInPartnerId = process.env.NEXT_PUBLIC_LINKEDIN_PARTNER_ID
+  const bingUetId = process.env.NEXT_PUBLIC_BING_UET_ID
+  const taboolaId = process.env.NEXT_PUBLIC_TABOOLA_ID
 
   return (
     <>
@@ -137,6 +139,42 @@ export function Analytics() {
               b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
               s.parentNode.insertBefore(b, s);
             })(window.lintrk);
+          `}
+        </Script>
+      )}
+
+      {/* ── Microsoft Advertising (Bing) UET ─────────────────────────────── */}
+      {bingUetId && (
+        <Script id="bing-uet" strategy="afterInteractive">
+          {`
+            (function(w,d,t,r,u){
+              var f,n,i;
+              w[u]=w[u]||[],f=function(){
+                var o={ti:"${bingUetId}", enableAutoSpaTracking:true};
+                o.q=w[u],w[u]=new UET(o),w[u].push("pageLoad")
+              },
+              n=d.createElement(t),n.src=r,n.async=1,n.onload=n.onreadystatechange=function(){
+                var s=this.readyState;
+                s&&s!=="loaded"&&s!=="complete"||(f(),n.onload=n.onreadystatechange=null)
+              },
+              i=d.getElementsByTagName(t)[0],i.parentNode.insertBefore(n,i)
+            })(window,document,"script","//bat.bing.com/bat.js","uetq");
+          `}
+        </Script>
+      )}
+
+      {/* ── Taboola Pixel ───────────────────────────────────────────────── */}
+      {taboolaId && (
+        <Script id="taboola-pixel" strategy="afterInteractive">
+          {`
+            window._tfa = window._tfa || [];
+            !function (t, f, a, x) {
+              if (!document.getElementById(x)) {
+                t.async = 1; t.src = a; t.id = x; f.parentNode.insertBefore(t, f);
+              }
+            }(document.createElement('script'), document.getElementsByTagName('script')[0],
+              '//cdn.taboola.com/libtrc/unip/${taboolaId}/tfa.js', 'tb_tfa_script');
+            _tfa.push({ notify: 'event', name: 'page_view', id: ${taboolaId} });
           `}
         </Script>
       )}
