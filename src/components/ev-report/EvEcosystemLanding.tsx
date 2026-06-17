@@ -474,22 +474,22 @@ export function EvEcosystemLanding() {
         <div className="mx-auto max-w-5xl px-6 py-14">
           <div className="flex items-center gap-2 text-[var(--ink)]">
             <FileText className="h-5 w-5 text-[var(--accent)]" aria-hidden />
-            <span className="font-semibold">{EV_REPORT.publisher}</span>
+            <span className="font-semibold">Nextyn Advisory</span>
           </div>
           <p className="mt-3 max-w-xl text-sm text-[var(--mist)]">
             Primary research for people who can&rsquo;t afford to be wrong. Single-user licence. No refunds after
             download. Contact us for team licences.
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-[var(--mist)]">
-            <a href={`mailto:${INVOICE_EMAIL}`} className="hover:text-[var(--accent)]">
-              {INVOICE_EMAIL}
+            <a href="mailto:info@nextyn.com" className="hover:text-[var(--accent)]">
+              info@nextyn.com
             </a>
             <span className="text-[var(--border-2)]">·</span>
             <a href="/privacy" className="hover:text-[var(--accent)]">
               Privacy Policy
             </a>
             <span className="text-[var(--border-2)]">·</span>
-            <span>© 2026 {EV_REPORT.publisher}</span>
+            <span>© 2026 Nextyn Advisory</span>
           </div>
         </div>
       </section>
