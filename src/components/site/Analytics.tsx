@@ -19,8 +19,8 @@ const STORAGE_KEY = 'tiq-cookie-consent'
  *   NEXT_PUBLIC_META_PIXEL_ID     — Meta Pixel ID (optional)
  *   NEXT_PUBLIC_LINKEDIN_PARTNER_ID — LinkedIn Insight Tag partner ID (optional)
  *
- * NOTE: Warmly is intentionally NOT loaded here. It is page-specific — see
- * <WarmlyPageScript /> (currently only on the EV Ecosystem report landing page).
+ * NOTE: RB2B (visitor de-anonymisation) is intentionally NOT loaded here. It is
+ * page-specific — see <Rb2bPageScript /> (currently only on the EV report landing page).
  */
 export function Analytics() {
   const [consent, setConsent] = useState(false)

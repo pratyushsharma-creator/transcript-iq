@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { EV_REPORT, FAQS } from '@/lib/ev-report/content'
 import { EvEcosystemLanding } from '@/components/ev-report/EvEcosystemLanding'
-import { WarmlyPageScript } from '@/components/site/WarmlyPageScript'
+import { Rb2bPageScript } from '@/components/site/Rb2bPageScript'
 import { UTMCapture } from '@/components/site/UTMCapture'
 
 export const metadata: Metadata = {
@@ -100,7 +100,7 @@ export default function EvEcosystemReportPage() {
     <>
       <JsonLd />
       <UTMCapture />
-      <WarmlyPageScript />
+      <Rb2bPageScript />
       <EvEcosystemLanding />
     </>
   )
