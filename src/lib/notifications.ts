@@ -35,3 +35,12 @@ export function getNotificationCC(): string[] {
   const raw = process.env.NOTIFICATION_CC_EMAILS ?? ''
   return raw.split(',').map((e) => e.trim()).filter(Boolean)
 }
+
+/**
+ * Primary recipient for EV Ecosystem report notifications (leads + purchases).
+ * The EV report is owned by the research/sales team, so it routes separately
+ * from the general LEAD_NOTIFICATION_EMAIL. Override with EV_REPORT_NOTIFICATION_EMAIL.
+ */
+export function getEvReportNotificationTo(): string {
+  return process.env.EV_REPORT_NOTIFICATION_EMAIL ?? 'hatim.janjali@nextyn.com'
+}

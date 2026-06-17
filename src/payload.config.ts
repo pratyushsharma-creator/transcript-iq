@@ -23,6 +23,7 @@ import {
   Orders,
   Subscriptions,
   TranscriptFiles,
+  EvReportLeads,
 } from './collections'
 import { SiteSettings } from './globals'
 
@@ -113,6 +114,7 @@ export default buildConfig({
     Subscriptions,
     Media,
     TranscriptFiles,
+    EvReportLeads,
   ],
   globals: [SiteSettings],
   editor: lexicalEditor(),

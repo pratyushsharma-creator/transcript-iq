@@ -9,8 +9,18 @@ const STORAGE_KEY = 'tiq-cookie-consent'
  * Consent-aware analytics tags.
  * Reads the same localStorage key as CookieBanner so consent is always in sync.
  * Loads nothing until the user has accepted cookies.
- * All three tags are loaded together — if the user accepted, all fire;
+ * All tags are loaded together — if the user accepted, all fire;
  * if they declined (or haven't decided), nothing loads.
+ *
+ * Env vars required (set in Vercel + .env.local):
+ *   NEXT_PUBLIC_GA4_ID            — Google Analytics 4 measurement ID (G-XXXXXXXX)
+ *   NEXT_PUBLIC_GOOGLE_ADS_ID     — Google Ads tag ID (AW-XXXXXXXXX) for conversion tracking (optional)
+ *   NEXT_PUBLIC_CLARITY_ID        — Microsoft Clarity project ID
+ *   NEXT_PUBLIC_META_PIXEL_ID     — Meta Pixel ID (optional)
+ *   NEXT_PUBLIC_LINKEDIN_PARTNER_ID — LinkedIn Insight Tag partner ID (optional)
+ *
+ * NOTE: Warmly is intentionally NOT loaded here. It is page-specific — see
+ * <WarmlyPageScript /> (currently only on the EV Ecosystem report landing page).
  */
 export function Analytics() {
   const [consent, setConsent] = useState(false)
@@ -37,6 +47,8 @@ export function Analytics() {
   if (!consent) return null
 
   const ga4Id = process.env.NEXT_PUBLIC_GA4_ID
+  const googleAdsId = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID
+  const clarityId = process.env.NEXT_PUBLIC_CLARITY_ID
   const metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID
   const linkedInPartnerId = process.env.NEXT_PUBLIC_LINKEDIN_PARTNER_ID
 
@@ -58,6 +70,37 @@ export function Analytics() {
             `}
           </Script>
         </>
+      )}
+
+      {/* ── Google Ads (conversion tracking) ────────────────────────────── */}
+      {googleAdsId && (
+        <>
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${googleAdsId}`}
+            strategy="afterInteractive"
+          />
+          <Script id="google-ads-init" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${googleAdsId}');
+            `}
+          </Script>
+        </>
+      )}
+
+      {/* ── Microsoft Clarity ───────────────────────────────────────────── */}
+      {clarityId && (
+        <Script id="clarity-init" strategy="afterInteractive">
+          {`
+            (function(c,l,a,r,i,t,y){
+              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window,document,"clarity","script","${clarityId}");
+          `}
+        </Script>
       )}
 
       {/* ── Meta Pixel ──────────────────────────────────────────────────── */}
