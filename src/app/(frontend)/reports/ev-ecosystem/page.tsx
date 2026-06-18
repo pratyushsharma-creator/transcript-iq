@@ -3,6 +3,7 @@ import { EV_REPORT, FAQS } from '@/lib/ev-report/content'
 import { EvEcosystemLanding } from '@/components/ev-report/EvEcosystemLanding'
 import { Rb2bPageScript } from '@/components/site/Rb2bPageScript'
 import { HappierLeadsPageScript } from '@/components/site/HappierLeadsPageScript'
+import { ClarityPageScript } from '@/components/site/ClarityPageScript'
 import { UTMCapture } from '@/components/site/UTMCapture'
 import { AnalyticsTags } from '@/components/site/AnalyticsTags'
 
@@ -101,7 +102,9 @@ export default function EvEcosystemReportPage() {
   return (
     <>
       <JsonLd />
-      <AnalyticsTags />
+      {/* Clarity loaded inline here (in the page source) — so AnalyticsTags skips it to avoid a double-load */}
+      <ClarityPageScript />
+      <AnalyticsTags clarity={false} />
       <UTMCapture />
       <Rb2bPageScript />
       <HappierLeadsPageScript />

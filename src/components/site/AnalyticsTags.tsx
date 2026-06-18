@@ -11,12 +11,16 @@ import Script from 'next/script'
  *   - The EV report landing + thank-you pages — render this ungated (per decision),
  *     and <Analytics> skips those routes so nothing loads twice.
  *
+ * Props:
+ *   clarity — set false to suppress the Clarity tag (e.g. when the page loads
+ *             Clarity itself via ClarityPageScript, to avoid a double-load).
+ *
  * Env vars:
  *   NEXT_PUBLIC_GA4_ID, NEXT_PUBLIC_GOOGLE_ADS_ID, NEXT_PUBLIC_CLARITY_ID,
  *   NEXT_PUBLIC_META_PIXEL_ID, NEXT_PUBLIC_LINKEDIN_PARTNER_ID,
  *   NEXT_PUBLIC_BING_UET_ID, NEXT_PUBLIC_TABOOLA_ID
  */
-export function AnalyticsTags() {
+export function AnalyticsTags({ clarity = true }: { clarity?: boolean } = {}) {
   const ga4Id = process.env.NEXT_PUBLIC_GA4_ID
   const googleAdsId = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID
   const clarityId = process.env.NEXT_PUBLIC_CLARITY_ID
@@ -27,7 +31,7 @@ export function AnalyticsTags() {
 
   return (
     <>
-      {/* ── Google Analytics 4 ──────────────────────────────────────────── */}
+      {/* ── Google Analytics 4 ────────────────────────────────── */}
       {ga4Id && (
         <>
           <Script
@@ -45,7 +49,7 @@ export function AnalyticsTags() {
         </>
       )}
 
-      {/* ── Google Ads (conversion tracking) ────────────────────────────── */}
+      {/* ── Google Ads (conversion tracking) ────────────────── */}
       {googleAdsId && (
         <>
           <Script
@@ -63,8 +67,8 @@ export function AnalyticsTags() {
         </>
       )}
 
-      {/* ── Microsoft Clarity ───────────────────────────────────────────── */}
-      {clarityId && (
+      {/* ── Microsoft Clarity ──────────────────────────────── */}
+      {clarity && clarityId && (
         <Script id="clarity-init" strategy="afterInteractive">
           {`
             (function(c,l,a,r,i,t,y){
@@ -76,7 +80,7 @@ export function AnalyticsTags() {
         </Script>
       )}
 
-      {/* ── Meta Pixel ──────────────────────────────────────────────────── */}
+      {/* ── Meta Pixel ─────────────────────────────────── */}
       {metaPixelId && (
         <Script id="meta-pixel" strategy="afterInteractive">
           {`
@@ -94,7 +98,7 @@ export function AnalyticsTags() {
         </Script>
       )}
 
-      {/* ── LinkedIn Insight Tag ─────────────────────────────────────────── */}
+      {/* ── LinkedIn Insight Tag ─────────────────────────── */}
       {linkedInPartnerId && (
         <Script id="linkedin-insight" strategy="afterInteractive">
           {`
@@ -114,7 +118,7 @@ export function AnalyticsTags() {
         </Script>
       )}
 
-      {/* ── Microsoft Advertising (Bing) UET ─────────────────────────────── */}
+      {/* ── Microsoft Advertising (Bing) UET ────────────────── */}
       {bingUetId && (
         <Script id="bing-uet" strategy="afterInteractive">
           {`
@@ -134,7 +138,7 @@ export function AnalyticsTags() {
         </Script>
       )}
 
-      {/* ── Taboola Pixel ───────────────────────────────────────────────── */}
+      {/* ── Taboola Pixel ───────────────────────────────── */}
       {taboolaId && (
         <Script id="taboola-pixel" strategy="afterInteractive">
           {`
