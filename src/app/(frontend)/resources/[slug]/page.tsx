@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { getBlogPostBySlug, getRelatedBlogPosts, getNextBlogPost } from '@/lib/cache/queries'
 import { ReadingProgress } from './ReadingProgress'
 import { ArticleSidebar } from './ArticleSidebar'
+import type { BlogLeadFormConfig } from './BlogLeadForm'
 import { blogPostingSchema, breadcrumbSchema, faqPageSchema, JsonLd } from '@/lib/seo/jsonld'
 import { canonical, truncate } from '@/lib/seo/metadata'
 import { ARTICLE_FAQS } from '@/lib/seo/faq-data'
@@ -58,6 +60,8 @@ export default async function ResourceArticlePage({
     featured?: boolean
     body?: unknown
     author?: { name?: string; role?: string } | null
+    coverImage?: { url?: string; alt?: string } | null
+    leadForm?: BlogLeadFormConfig | null
   }
 
   // CALL 2: related articles (via cached helper)
@@ -78,6 +82,11 @@ export default async function ResourceArticlePage({
         day: 'numeric',
       })
     : ''
+
+  const coverUrl =
+    post.coverImage && typeof post.coverImage === 'object' ? post.coverImage.url ?? null : null
+  const coverAlt =
+    (post.coverImage && typeof post.coverImage === 'object' && post.coverImage.alt) || post.title
 
   // Extract h2 headings from body for TOC
   const headings = extractBodyHeadings(post.body)
@@ -113,44 +122,40 @@ export default async function ResourceArticlePage({
             height: 500,
             borderRadius: '50%',
             filter: 'blur(96px)',
-            background: 'radial-gradient(circle,rgba(52,211,153,0.13) 0%,transparent 68%)',
+            background: 'radial-gradient(circle,var(--accent-tint-2) 0%,transparent 68%)',
             top: -200,
             right: -80,
           }}
         />
       </div>
 
-      {/* Article header */}
-      <div
-        style={{
-          padding: '64px 0 0',
-          position: 'relative',
-          zIndex: 1,
-        }}
-      >
-        <div className="max-w-[760px] mx-auto px-5 pb-[52px] sm:px-8 lg:px-12">
+      {/* Widened container (was 1200 → 1500, +25%). Header + body share this frame
+          and a common left edge. */}
+      <div className="max-w-[1500px] mx-auto px-5 sm:px-8 lg:px-12 relative z-[1]">
+        {/* ── Article header — left-aligned, capped to the reading-column width ── */}
+        <header className="pt-12 lg:pt-16 lg:max-w-[calc(100%_-_404px)]">
           {/* Breadcrumb */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: 8,
-              fontFamily: 'var(--font-mono)',
-              fontSize: 9,
+              fontFamily: 'var(--font-geist-mono)',
+              fontSize: 10,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
-              color: 'rgba(68,68,64,1)',
-              marginBottom: 28,
+              color: 'var(--mist)',
+              marginBottom: 26,
             }}
           >
-            <Link href="/" style={{ color: 'rgba(68,68,64,1)', textDecoration: 'none' }}>
+            <Link href="/" style={{ color: 'var(--mist)', textDecoration: 'none' }}>
               Home
             </Link>
-            <span style={{ color: 'rgba(37,37,40,1)' }}>›</span>
-            <Link href="/resources" style={{ color: 'rgba(68,68,64,1)', textDecoration: 'none' }}>
+            <span style={{ color: 'var(--border-2)' }}>›</span>
+            <Link href="/resources" style={{ color: 'var(--mist)', textDecoration: 'none' }}>
               Resources
             </Link>
-            <span style={{ color: 'rgba(37,37,40,1)' }}>›</span>
+            <span style={{ color: 'var(--border-2)' }}>›</span>
             <span>{catLabel}</span>
           </div>
 
@@ -160,16 +165,16 @@ export default async function ResourceArticlePage({
               display: 'inline-flex',
               alignItems: 'center',
               gap: 6,
-              fontFamily: 'var(--font-mono)',
-              fontSize: 9,
+              fontFamily: 'var(--font-geist-mono)',
+              fontSize: 10,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
-              color: 'var(--accent)',
-              background: 'rgba(52,211,153,0.08)',
-              border: '1px solid rgba(52,211,153,0.26)',
-              padding: '3px 10px',
+              color: 'var(--accent-deep)',
+              background: 'var(--accent-tint-2)',
+              border: '1px solid var(--accent-border)',
+              padding: '4px 11px',
               borderRadius: 99,
-              marginBottom: 18,
+              marginBottom: 20,
             }}
           >
             {catLabel}
@@ -178,11 +183,12 @@ export default async function ResourceArticlePage({
           {/* Title */}
           <h1
             style={{
-              fontSize: 'clamp(30px, 4vw, 52px)',
+              fontSize: 'clamp(32px, 4.2vw, 56px)',
               fontWeight: 700,
               letterSpacing: '-0.04em',
               lineHeight: 1.04,
               marginBottom: 20,
+              maxWidth: '20ch',
             }}
           >
             {post.title}
@@ -192,11 +198,12 @@ export default async function ResourceArticlePage({
           {post.excerpt && (
             <p
               style={{
-                fontSize: 18,
-                color: 'var(--ink-2)',
-                lineHeight: 1.65,
+                fontSize: 19,
+                color: 'var(--slate)',
+                lineHeight: 1.6,
                 marginBottom: 32,
                 fontWeight: 400,
+                maxWidth: '60ch',
               }}
             >
               {post.excerpt}
@@ -209,55 +216,53 @@ export default async function ResourceArticlePage({
               display: 'flex',
               alignItems: 'center',
               gap: 20,
-              padding: '20px 0',
-              borderTop: '1px solid rgba(255,255,255,0.07)',
-              borderBottom: '1px solid rgba(255,255,255,0.07)',
+              padding: '18px 0',
+              borderTop: '1px solid var(--border)',
+              borderBottom: '1px solid var(--border)',
               flexWrap: 'wrap',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
               <div
                 style={{
-                  width: 34,
-                  height: 34,
+                  width: 36,
+                  height: 36,
                   borderRadius: '50%',
                   background: 'linear-gradient(135deg,#10B981,#34D399)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: 10,
+                  fontFamily: 'var(--font-geist-mono)',
+                  fontSize: 11,
                   fontWeight: 600,
-                  color: '#064E3B',
+                  color: '#04341f',
                   flexShrink: 0,
                 }}
               >
-                PS
+                {initials(authorName)}
               </div>
               <div>
                 <div style={{ fontSize: 14, fontWeight: 500 }}>{authorName}</div>
                 <div
                   style={{
-                    fontFamily: 'var(--font-mono)',
+                    fontFamily: 'var(--font-geist-mono)',
                     fontSize: 9,
-                    letterSpacing: '0.08em',
-                    color: 'var(--ink-3)',
+                    letterSpacing: '0.06em',
+                    color: 'var(--mist)',
                   }}
                 >
                   {authorRole}
                 </div>
               </div>
             </div>
-            <div
-              style={{ width: 1, height: 24, background: 'rgba(255,255,255,0.07)' }}
-            />
+            <div style={{ width: 1, height: 24, background: 'var(--border)' }} />
             {publishedAt && (
               <div
                 style={{
-                  fontFamily: 'var(--font-mono)',
+                  fontFamily: 'var(--font-geist-mono)',
                   fontSize: 10,
-                  letterSpacing: '0.08em',
-                  color: 'var(--ink-3)',
+                  letterSpacing: '0.06em',
+                  color: 'var(--mist)',
                 }}
               >
                 {publishedAt}
@@ -265,15 +270,13 @@ export default async function ResourceArticlePage({
             )}
             {post.readTime && (
               <>
-                <div
-                  style={{ width: 1, height: 24, background: 'rgba(255,255,255,0.07)' }}
-                />
+                <div style={{ width: 1, height: 24, background: 'var(--border)' }} />
                 <div
                   style={{
-                    fontFamily: 'var(--font-mono)',
+                    fontFamily: 'var(--font-geist-mono)',
                     fontSize: 10,
-                    letterSpacing: '0.08em',
-                    color: 'var(--ink-3)',
+                    letterSpacing: '0.06em',
+                    color: 'var(--mist)',
                   }}
                 >
                   {post.readTime} min read
@@ -281,67 +284,106 @@ export default async function ResourceArticlePage({
               </>
             )}
           </div>
-        </div>
-      </div>
+        </header>
 
-      {/* Article layout: body + sidebar */}
-      <div className="max-w-[1200px] mx-auto px-5 pb-16 sm:px-8 lg:px-12 lg:pb-24 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-10 lg:gap-16 items-start relative z-[1]">
-        {/* Article body */}
-        <article className="pt-8 lg:pt-12">
-          <ArticleBody body={post.body} />
+        {/* ── Body + sidebar ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_340px] gap-10 lg:gap-16 items-start pt-10 lg:pt-12 pb-16 lg:pb-24">
+          {/* Content column: cover image + article */}
+          <div>
+            {coverUrl && (
+              <figure
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  aspectRatio: '16 / 9',
+                  borderRadius: 16,
+                  overflow: 'hidden',
+                  border: '1px solid var(--border)',
+                  background: 'var(--surface-2)',
+                  margin: '0 0 40px',
+                }}
+              >
+                <Image
+                  src={coverUrl}
+                  alt={coverAlt}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 1000px"
+                  style={{ objectFit: 'cover' }}
+                  priority
+                />
+              </figure>
+            )}
 
-          {/* Article footer */}
-          <div
-            style={{
-              borderTop: '1px solid rgba(255,255,255,0.07)',
-              paddingTop: 40,
-              marginTop: 48,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: 20,
-              flexWrap: 'wrap',
-            }}
-          >
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-              {['Expert Networks', 'Primary Research', 'MNPI Compliance', 'Institutional Research'].map(
-                (tag) => (
-                  <span
-                    key={tag}
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: 9,
-                      letterSpacing: '0.06em',
-                      color: 'var(--ink-3)',
-                      background: 'var(--s2)',
-                      border: '1px solid rgba(255,255,255,0.07)',
-                      padding: '3px 9px',
-                      borderRadius: 4,
-                    }}
-                  >
-                    {tag}
-                  </span>
-                ),
-              )}
-            </div>
+            <article>
+              <ArticleBody body={post.body} />
+
+              {/* Article footer */}
+              <div
+                style={{
+                  borderTop: '1px solid var(--border)',
+                  paddingTop: 32,
+                  marginTop: 44,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 20,
+                  flexWrap: 'wrap',
+                }}
+              >
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  {['Expert Networks', 'Primary Research', 'MNPI Compliance', 'Institutional Research'].map(
+                    (tag) => (
+                      <span
+                        key={tag}
+                        style={{
+                          fontFamily: 'var(--font-geist-mono)',
+                          fontSize: 10,
+                          letterSpacing: '0.05em',
+                          color: 'var(--mist)',
+                          background: 'var(--surface-2)',
+                          border: '1px solid var(--border)',
+                          padding: '4px 10px',
+                          borderRadius: 5,
+                        }}
+                      >
+                        {tag}
+                      </span>
+                    ),
+                  )}
+                </div>
+              </div>
+            </article>
           </div>
-        </article>
 
-        {/* Sidebar */}
-        <ArticleSidebar headings={headings} related={related} />
+          {/* Sidebar */}
+          <ArticleSidebar
+            headings={headings}
+            related={related}
+            leadForm={post.leadForm ?? null}
+            blogSlug={post.slug}
+            blogTitle={post.title}
+          />
+        </div>
+
+        {/* ── FAQ — moved ABOVE the next-article section, left-aligned to column ── */}
+        {articleFaqs.length > 0 && (
+          <div className="lg:max-w-[calc(100%_-_404px)] pb-16 lg:pb-24">
+            <FaqAccordion faqs={articleFaqs} contained={false} />
+          </div>
+        )}
       </div>
 
-      {/* Next article */}
+      {/* ── Next article — full-bleed band, AFTER the FAQ ── */}
       {nextPost && (
-        <div className="bg-[var(--s1)] border-t border-[rgba(255,255,255,0.07)] px-5 py-8 sm:px-8 lg:px-12 lg:py-12 relative z-[1]">
-          <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div className="bg-[var(--surface)] border-t border-[var(--border)] px-5 py-8 sm:px-8 lg:px-12 lg:py-12 relative z-[1]">
+          <div style={{ maxWidth: 1500, margin: '0 auto' }}>
             <span
               style={{
-                fontFamily: 'var(--font-mono)',
+                fontFamily: 'var(--font-geist-mono)',
                 fontSize: 9,
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
-                color: 'var(--ink-3)',
+                color: 'var(--mist)',
                 marginBottom: 16,
                 display: 'block',
               }}
@@ -350,12 +392,12 @@ export default async function ResourceArticlePage({
             </span>
             <Link
               href={`/resources/${nextPost.slug}`}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-0 border border-[rgba(255,255,255,0.07)] rounded-[14px] overflow-hidden no-underline text-inherit transition-all duration-200"
+              className="grid grid-cols-1 sm:grid-cols-2 gap-0 border border-[var(--border)] rounded-[14px] overflow-hidden no-underline text-inherit transition-all duration-200 hover:border-[var(--accent-border)] max-w-[920px]"
             >
-              <div className="p-7 sm:px-8 border-b border-[rgba(255,255,255,0.07)] sm:border-b-0 sm:border-r">
+              <div className="p-7 sm:px-8 border-b border-[var(--border)] sm:border-b-0 sm:border-r">
                 <div
                   style={{
-                    fontFamily: 'var(--font-mono)',
+                    fontFamily: 'var(--font-geist-mono)',
                     fontSize: 9,
                     letterSpacing: '0.1em',
                     textTransform: 'uppercase',
@@ -378,7 +420,7 @@ export default async function ResourceArticlePage({
                   {nextPost.title}
                 </div>
                 {nextPost.excerpt && (
-                  <div style={{ fontSize: 13, color: 'var(--ink-2)', lineHeight: 1.6 }}>
+                  <div style={{ fontSize: 13, color: 'var(--slate)', lineHeight: 1.6 }}>
                     {nextPost.excerpt}
                   </div>
                 )}
@@ -390,7 +432,7 @@ export default async function ResourceArticlePage({
                   alignItems: 'center',
                   justifyContent: 'flex-end',
                   gap: 8,
-                  fontFamily: 'var(--font-mono)',
+                  fontFamily: 'var(--font-geist-mono)',
                   fontSize: 10,
                   letterSpacing: '0.1em',
                   textTransform: 'uppercase',
@@ -401,12 +443,6 @@ export default async function ResourceArticlePage({
               </div>
             </Link>
           </div>
-        </div>
-      )}
-
-      {articleFaqs.length > 0 && (
-        <div className="max-w-[760px] mx-auto px-5 sm:px-8 lg:px-12">
-          <FaqAccordion faqs={articleFaqs} />
         </div>
       )}
     </>
@@ -427,6 +463,15 @@ const CATEGORY_MAP: Record<string, string> = {
 
 function categoryLabel(value: string) {
   return CATEGORY_MAP[value] ?? value
+}
+
+function initials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? '')
+    .join('')
 }
 
 // Extract h2 headings from Lexical body for TOC
@@ -465,7 +510,7 @@ function extractBodyHeadings(
 function ArticleBody({ body }: { body: unknown }) {
   if (!body || typeof body !== 'object') {
     return (
-      <p style={{ fontSize: 16, color: 'var(--ink-2)', lineHeight: 1.78 }}>
+      <p style={{ fontSize: 17, color: 'var(--ink-2)', lineHeight: 1.78 }}>
         Article content coming soon.
       </p>
     )
@@ -483,6 +528,105 @@ function ArticleBody({ body }: { body: unknown }) {
   )
 }
 
+// In-body CTA banner — renders the `blogCta` Lexical block (see blocks/BlogCta.ts).
+// Button design is intentionally identical to the sidebar lead-form button.
+function BlogCtaBanner({
+  eyebrow,
+  heading,
+  subline,
+  buttonLabel,
+  buttonUrl,
+}: {
+  eyebrow?: string
+  heading?: string
+  subline?: string
+  buttonLabel?: string
+  buttonUrl?: string
+}) {
+  if (!heading && !buttonLabel) return null
+  const url = buttonUrl || '/free-transcript'
+  const isExternal = /^https?:\/\//i.test(url)
+  const btnClass =
+    'inline-flex items-center justify-center gap-2 rounded-[9px] bg-[var(--accent)] px-5 py-3 text-[14px] font-semibold text-white shadow-cta transition-all duration-150 hover:-translate-y-px hover:bg-[var(--accent-bright)]'
+  const arrow = (
+    <svg width={14} height={14} viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M2.5 7h9M7.5 3l4 4-4 4" />
+    </svg>
+  )
+  return (
+    <div
+      style={{
+        position: 'relative',
+        margin: '44px 0',
+        padding: '36px 38px',
+        borderRadius: 18,
+        background: 'linear-gradient(150deg, var(--accent-tint-2), var(--surface) 60%)',
+        border: '1px solid var(--accent-border)',
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: 0,
+          height: 2,
+          background: 'linear-gradient(90deg,transparent,var(--accent),transparent)',
+        }}
+      />
+      {eyebrow && (
+        <span
+          style={{
+            fontFamily: 'var(--font-geist-mono)',
+            fontSize: 10,
+            letterSpacing: '0.16em',
+            textTransform: 'uppercase',
+            color: 'var(--accent-deep)',
+            display: 'block',
+            marginBottom: 12,
+          }}
+        >
+          {eyebrow}
+        </span>
+      )}
+      {heading && (
+        <h3
+          style={{
+            fontSize: 25,
+            fontWeight: 600,
+            letterSpacing: '-0.03em',
+            lineHeight: 1.18,
+            margin: '0 0 12px',
+            color: 'var(--ink)',
+            maxWidth: '24ch',
+          }}
+        >
+          {heading}
+        </h3>
+      )}
+      {subline && (
+        <p style={{ fontSize: 16, color: 'var(--slate)', lineHeight: 1.6, margin: '0 0 24px', maxWidth: '56ch' }}>
+          {subline}
+        </p>
+      )}
+      {buttonLabel &&
+        (isExternal ? (
+          <a href={url} className={btnClass} target="_blank" rel="noopener noreferrer">
+            {buttonLabel}
+            {arrow}
+          </a>
+        ) : (
+          <Link href={url} className={btnClass}>
+            {buttonLabel}
+            {arrow}
+          </Link>
+        ))}
+    </div>
+  )
+}
+
 function LexicalNode({ node }: { node: unknown }) {
   if (!node || typeof node !== 'object') return null
   const n = node as {
@@ -494,6 +638,30 @@ function LexicalNode({ node }: { node: unknown }) {
     url?: string
     value?: { root?: { children?: unknown[] } }
     fields?: Record<string, unknown>
+  }
+
+  // Inline rich-text block (e.g. the CTA banner)
+  if (n.type === 'block') {
+    const fields = (n.fields ?? {}) as {
+      blockType?: string
+      eyebrow?: string
+      heading?: string
+      subline?: string
+      buttonLabel?: string
+      buttonUrl?: string
+    }
+    if (fields.blockType === 'blogCta') {
+      return (
+        <BlogCtaBanner
+          eyebrow={fields.eyebrow}
+          heading={fields.heading}
+          subline={fields.subline}
+          buttonLabel={fields.buttonLabel}
+          buttonUrl={fields.buttonUrl}
+        />
+      )
+    }
+    return null
   }
 
   if (n.type === 'heading') {
@@ -508,12 +676,13 @@ function LexicalNode({ node }: { node: unknown }) {
         <h2
           id={id}
           style={{
-            fontSize: 26,
+            fontSize: 28,
             fontWeight: 600,
             letterSpacing: '-0.025em',
             lineHeight: 1.2,
-            margin: '40px 0 16px',
+            margin: '46px 0 18px',
             paddingTop: 8,
+            scrollMarginTop: 90,
             color: 'var(--ink)',
           }}
         >
@@ -525,11 +694,11 @@ function LexicalNode({ node }: { node: unknown }) {
       return (
         <h3
           style={{
-            fontSize: 20,
+            fontSize: 21,
             fontWeight: 600,
             letterSpacing: '-0.02em',
             lineHeight: 1.25,
-            margin: '32px 0 12px',
+            margin: '34px 0 12px',
             color: 'var(--ink)',
           }}
         >
@@ -543,7 +712,7 @@ function LexicalNode({ node }: { node: unknown }) {
     const children = n.children ?? []
     if (children.length === 0) return null
     return (
-      <p style={{ fontSize: 16, color: 'var(--ink-2)', lineHeight: 1.78, marginBottom: 20 }}>
+      <p style={{ fontSize: 17, color: 'var(--ink-2)', lineHeight: 1.78, marginBottom: 22 }}>
         <InlineChildren children={children} />
       </p>
     )
@@ -553,12 +722,12 @@ function LexicalNode({ node }: { node: unknown }) {
     const items = n.children ?? []
     if (n.tag === 'ol') {
       return (
-        <ol style={{ paddingLeft: 0, marginBottom: 20, listStyle: 'none', counterReset: 'li' }}>
+        <ol style={{ paddingLeft: 0, marginBottom: 22, listStyle: 'none', counterReset: 'li' }}>
           {items.map((item, i) => (
             <li
               key={i}
               style={{
-                fontSize: 16,
+                fontSize: 17,
                 color: 'var(--ink-2)',
                 lineHeight: 1.72,
                 marginBottom: 10,
@@ -570,7 +739,7 @@ function LexicalNode({ node }: { node: unknown }) {
               <span
                 style={{
                   color: 'var(--accent)',
-                  fontFamily: 'var(--font-mono)',
+                  fontFamily: 'var(--font-geist-mono)',
                   fontSize: 11,
                   fontWeight: 500,
                   marginTop: 3,
@@ -589,12 +758,12 @@ function LexicalNode({ node }: { node: unknown }) {
       )
     }
     return (
-      <ul style={{ paddingLeft: 0, marginBottom: 20, listStyle: 'none' }}>
+      <ul style={{ paddingLeft: 0, marginBottom: 22, listStyle: 'none' }}>
         {items.map((item, i) => (
           <li
             key={i}
             style={{
-              fontSize: 16,
+              fontSize: 17,
               color: 'var(--ink-2)',
               lineHeight: 1.72,
               marginBottom: 10,
@@ -628,8 +797,8 @@ function LexicalNode({ node }: { node: unknown }) {
         style={{
           margin: '36px 0',
           padding: '24px 28px',
-          background: 'var(--s1)',
-          border: '1px solid rgba(255,255,255,0.13)',
+          background: 'var(--surface-2)',
+          border: '1px solid var(--border-2)',
           borderLeft: '2px solid var(--accent)',
           borderRadius: '0 12px 12px 0',
         }}
@@ -678,9 +847,9 @@ function InlineNode({ node }: { node: unknown }) {
     if (!n.text) return null
     let content: React.ReactNode = n.text
     const format = n.format ?? 0
-    if (format & 1) content = <strong style={{ color: 'var(--ink)', fontWeight: 500 }}>{content}</strong>
+    if (format & 1) content = <strong style={{ color: 'var(--ink)', fontWeight: 600 }}>{content}</strong>
     if (format & 2) content = <em>{content}</em>
-    if (format & 8) content = <code style={{ fontFamily: 'var(--font-mono)', fontSize: '0.875em', color: 'var(--accent)' }}>{content}</code>
+    if (format & 8) content = <code style={{ fontFamily: 'var(--font-geist-mono)', fontSize: '0.875em', color: 'var(--accent)' }}>{content}</code>
     return <>{content}</>
   }
 
@@ -691,7 +860,7 @@ function InlineNode({ node }: { node: unknown }) {
         style={{
           color: 'var(--accent)',
           textDecoration: 'none',
-          borderBottom: '1px solid rgba(52,211,153,0.26)',
+          borderBottom: '1px solid var(--accent-border)',
         }}
       >
         <InlineChildren children={n.children} />
