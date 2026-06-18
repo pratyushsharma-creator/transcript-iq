@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import React from 'react'
+import { headers } from 'next/headers'
 import '../globals.css'
 
 import { unstable_cache } from 'next/cache'
+import { EvReportHeadScripts } from '@/components/site/EvReportHeadScripts'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { CACHE_TAGS } from '@/lib/cache/revalidation'
@@ -76,6 +78,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   if (logo && typeof logo === 'object' && 'url' in logo) logoUrl = (logo as { url: string }).url ?? null
   if (logoDark && typeof logoDark === 'object' && 'url' in logoDark) logoDarkUrl = (logoDark as { url: string }).url ?? null
 
+  // Path comes from middleware (x-pathname). Used only to inject the EV report's
+  // <head> tracking scripts (Clarity + HappierLeads) on that one route.
+  const pathname = (await headers()).get('x-pathname') ?? ''
+  const isEvReport = pathname === '/reports/ev-ecosystem'
+
   return (
     <html
       lang="en"
@@ -83,6 +90,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       className={`${geist.variable} ${geistMono.variable}`}
     >
       <body className="font-sans antialiased min-h-screen flex flex-col">
+        {/* beforeInteractive scripts hoist to <head>; only emitted on the EV report route */}
+        {isEvReport && <EvReportHeadScripts />}
         <ThemeProvider>
           <CartProvider>
             <Header logoUrl={logoUrl} logoDarkUrl={logoDarkUrl} />
