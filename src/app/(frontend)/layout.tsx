@@ -5,7 +5,8 @@ import { headers } from 'next/headers'
 import '../globals.css'
 
 import { unstable_cache } from 'next/cache'
-import { EvReportHeadScripts } from '@/components/site/EvReportHeadScripts'
+import { HappierLeadsHeadScript } from '@/components/site/HappierLeadsHeadScript'
+import { ClarityHeadScript } from '@/components/site/ClarityHeadScript'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { CACHE_TAGS } from '@/lib/cache/revalidation'
@@ -78,8 +79,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   if (logo && typeof logo === 'object' && 'url' in logo) logoUrl = (logo as { url: string }).url ?? null
   if (logoDark && typeof logoDark === 'object' && 'url' in logoDark) logoDarkUrl = (logoDark as { url: string }).url ?? null
 
-  // Path comes from middleware (x-pathname). Used only to inject the EV report's
-  // <head> tracking scripts (Clarity + HappierLeads) on that one route.
+  // Path comes from middleware (x-pathname). Used only to inject Clarity into the
+  // EV report's <head> on that one route (HappierLeads loads site-wide regardless).
   const pathname = (await headers()).get('x-pathname') ?? ''
   const isEvReport = pathname === '/reports/ev-ecosystem'
 
@@ -89,13 +90,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       suppressHydrationWarning
       className={`${geist.variable} ${geistMono.variable}`}
     >
-      {/* EV report only: Clarity + HappierLeads authored directly into <head> (their install
-          instructions require it). Other routes don't render an explicit <head> — Next manages it. */}
-      {isEvReport && (
-        <head>
-          <EvReportHeadScripts />
-        </head>
-      )}
+      {/* Tracking pixels authored directly into <head> (their install instructions require it).
+          HappierLeads loads site-wide on every route; Clarity only on the EV report page. */}
+      <head>
+        <HappierLeadsHeadScript />
+        {isEvReport && <ClarityHeadScript />}
+      </head>
       <body className="font-sans antialiased min-h-screen flex flex-col">
         <ThemeProvider>
           <CartProvider>
