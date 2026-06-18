@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { EV_REPORT, FAQS } from '@/lib/ev-report/content'
 import { EvEcosystemLanding } from '@/components/ev-report/EvEcosystemLanding'
 import { Rb2bPageScript } from '@/components/site/Rb2bPageScript'
+import { HappierLeadsPageScript } from '@/components/site/HappierLeadsPageScript'
 import { UTMCapture } from '@/components/site/UTMCapture'
 import { AnalyticsTags } from '@/components/site/AnalyticsTags'
 
@@ -103,6 +104,7 @@ export default function EvEcosystemReportPage() {
       <AnalyticsTags />
       <UTMCapture />
       <Rb2bPageScript />
+      <HappierLeadsPageScript />
       <EvEcosystemLanding />
     </>
   )
