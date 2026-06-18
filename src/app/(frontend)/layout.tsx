@@ -78,8 +78,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   if (logo && typeof logo === 'object' && 'url' in logo) logoUrl = (logo as { url: string }).url ?? null
   if (logoDark && typeof logoDark === 'object' && 'url' in logoDark) logoDarkUrl = (logoDark as { url: string }).url ?? null
 
-  // Path comes from middleware (x-pathname). Used only to inject the EV report's
-  // <head> tracking scripts (Clarity + HappierLeads) on that one route.
+  // Path comes from middleware (x-pathname). Used to inject the EV report's <head>
+  // tracking scripts (Clarity + HappierLeads) on that route, and to suppress the
+  // site Header/Footer there (the EV report renders its own nav + footer).
   const pathname = (await headers()).get('x-pathname') ?? ''
   const isEvReport = pathname === '/reports/ev-ecosystem'
 
@@ -99,12 +100,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="font-sans antialiased min-h-screen flex flex-col">
         <ThemeProvider>
           <CartProvider>
-            <Header logoUrl={logoUrl} logoDarkUrl={logoDarkUrl} />
+            {/* The EV report landing renders its own nav + footer, so the site chrome is hidden there. */}
+            {!isEvReport && <Header logoUrl={logoUrl} logoDarkUrl={logoDarkUrl} />}
             <CartDrawer />
             <CookieBanner />
             <Analytics />
             <main className="flex-1">{children}</main>
-            <Footer logoUrl={logoUrl} logoDarkUrl={logoDarkUrl} />
+            {!isEvReport && <Footer logoUrl={logoUrl} logoDarkUrl={logoDarkUrl} />}
           </CartProvider>
         </ThemeProvider>
       </body>
