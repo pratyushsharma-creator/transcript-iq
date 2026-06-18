@@ -89,6 +89,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       suppressHydrationWarning
       className={`${geist.variable} ${geistMono.variable}`}
     >
+      {/* EV report only: Clarity + HappierLeads authored directly into <head> (their install
+          instructions require it). Other routes don't render an explicit <head> — Next manages it. */}
+      {isEvReport && (
+        <head>
+          <EvReportHeadScripts />
+        </head>
+      )}
       <body className="font-sans antialiased min-h-screen flex flex-col">
         <ThemeProvider>
           <CartProvider>
@@ -101,9 +108,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </CartProvider>
         </ThemeProvider>
       </body>
-      {/* beforeInteractive scripts placed as a sibling of <body> (Next docs pattern)
-          so Next injects them into <head>; only emitted on the EV report route */}
-      {isEvReport && <EvReportHeadScripts />}
     </html>
   )
 }
