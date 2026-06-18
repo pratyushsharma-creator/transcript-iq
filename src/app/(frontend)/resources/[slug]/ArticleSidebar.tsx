@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { BlogLeadForm, type BlogLeadFormConfig } from './BlogLeadForm'
 
 type Heading = { id: string; text: string }
 type RelatedPost = {
@@ -28,11 +29,18 @@ function catLabel(v: string) {
 export function ArticleSidebar({
   headings,
   related,
+  leadForm,
+  blogSlug,
+  blogTitle,
 }: {
   headings: Heading[]
   related: RelatedPost[]
+  leadForm?: BlogLeadFormConfig | null
+  blogSlug: string
+  blogTitle: string
 }) {
   const [activeId, setActiveId] = useState<string | null>(headings[0]?.id ?? null)
+  const formEnabled = Boolean(leadForm?.enabled)
 
   useEffect(() => {
     if (headings.length === 0) return
@@ -57,25 +65,29 @@ export function ArticleSidebar({
   }, [headings])
 
   return (
-    <aside style={{ position: 'sticky', top: 74 }}>
+    <aside style={{ position: 'sticky', top: 88, display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Lead form (per-post, controlled in Payload) */}
+      {formEnabled && leadForm && (
+        <BlogLeadForm config={leadForm} blogSlug={blogSlug} blogTitle={blogTitle} />
+      )}
+
       {/* TOC */}
       {headings.length > 0 && (
         <div
           style={{
-            background: 'var(--s1)',
-            border: '1px solid rgba(255,255,255,0.07)',
-            borderRadius: 14,
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: 16,
             padding: 20,
-            marginBottom: 16,
           }}
         >
           <span
             style={{
-              fontFamily: 'var(--font-mono)',
+              fontFamily: 'var(--font-geist-mono)',
               fontSize: 9,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color: 'var(--ink-3)',
+              color: 'var(--mist)',
               marginBottom: 14,
               display: 'block',
             }}
@@ -92,8 +104,7 @@ export function ArticleSidebar({
                   display: 'flex',
                   gap: 10,
                   padding: '7px 0',
-                  borderBottom:
-                    i < headings.length - 1 ? '1px solid rgba(255,255,255,0.07)' : 'none',
+                  borderBottom: i < headings.length - 1 ? '1px solid var(--border)' : 'none',
                   cursor: 'pointer',
                   transition: 'all 0.15s',
                   textDecoration: 'none',
@@ -102,9 +113,9 @@ export function ArticleSidebar({
               >
                 <span
                   style={{
-                    fontFamily: 'var(--font-mono)',
+                    fontFamily: 'var(--font-geist-mono)',
                     fontSize: 9,
-                    color: active ? 'var(--accent)' : 'rgba(68,68,64,1)',
+                    color: active ? 'var(--accent)' : 'var(--mist)',
                     minWidth: 20,
                     paddingTop: 1,
                   }}
@@ -114,7 +125,7 @@ export function ArticleSidebar({
                 <span
                   style={{
                     fontSize: 12,
-                    color: active ? 'var(--ink-2)' : 'var(--ink-3)',
+                    color: active ? 'var(--ink-2)' : 'var(--mist)',
                     lineHeight: 1.4,
                     transition: 'color 0.15s',
                   }}
@@ -127,116 +138,116 @@ export function ArticleSidebar({
         </div>
       )}
 
-      {/* CTA card */}
-      <div
-        style={{
-          background: 'linear-gradient(145deg,rgba(52,211,153,0.1),var(--s1))',
-          border: '1px solid rgba(52,211,153,0.26)',
-          borderRadius: 14,
-          padding: 20,
-          position: 'relative',
-          overflow: 'hidden',
-          marginBottom: 16,
-        }}
-      >
+      {/* Static "free to claim" CTA — only when the per-post lead form isn't enabled */}
+      {!formEnabled && (
         <div
           style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: 1,
-            background: 'linear-gradient(90deg,transparent,rgba(52,211,153,0.4),transparent)',
-          }}
-        />
-        <span
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: 9,
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-            color: 'var(--accent)',
-            marginBottom: 10,
-            display: 'block',
+            background: 'linear-gradient(145deg,var(--accent-tint-2),var(--surface))',
+            border: '1px solid var(--accent-border)',
+            borderRadius: 16,
+            padding: 20,
+            position: 'relative',
+            overflow: 'hidden',
           }}
         >
-          Free to claim
-        </span>
-        <div
-          style={{
-            fontSize: 15,
-            fontWeight: 600,
-            letterSpacing: '-0.015em',
-            lineHeight: 1.3,
-            marginBottom: 8,
-          }}
-        >
-          Get your first transcript free
-        </div>
-        <p
-          style={{
-            fontSize: 12,
-            color: 'var(--ink-2)',
-            lineHeight: 1.6,
-            marginBottom: 14,
-          }}
-        >
-          Choose your sector, enter your work email. Full PDF delivered within 24 hours. No credit card.
-        </p>
-        <Link
-          href="/free-transcript"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 7,
-            background: 'var(--accent)',
-            color: '#050A07',
-            fontFamily: 'var(--font-sans)',
-            fontSize: 13,
-            fontWeight: 600,
-            padding: '10px 16px',
-            borderRadius: 9,
-            textDecoration: 'none',
-            boxShadow:
-              '0 0 0 1px rgba(52,211,153,0.26), 0 6px 18px -6px rgba(52,211,153,0.28)',
-          }}
-        >
-          <svg
-            width={12}
-            height={12}
-            viewBox="0 0 12 12"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.8}
-            strokeLinecap="round"
-            strokeLinejoin="round"
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: 1,
+              background: 'linear-gradient(90deg,transparent,var(--accent),transparent)',
+            }}
+          />
+          <span
+            style={{
+              fontFamily: 'var(--font-geist-mono)',
+              fontSize: 9,
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: 'var(--accent-deep)',
+              marginBottom: 10,
+              display: 'block',
+            }}
           >
-            <path d="M2 6h8M6.5 2.5l4 3.5-4 3.5" />
-          </svg>
-          Claim Free Transcript
-        </Link>
-      </div>
+            Free to claim
+          </span>
+          <div
+            style={{
+              fontSize: 15,
+              fontWeight: 600,
+              letterSpacing: '-0.015em',
+              lineHeight: 1.3,
+              marginBottom: 8,
+            }}
+          >
+            Get your first transcript free
+          </div>
+          <p
+            style={{
+              fontSize: 12,
+              color: 'var(--slate)',
+              lineHeight: 1.6,
+              marginBottom: 14,
+            }}
+          >
+            Choose your sector, enter your work email. Full PDF delivered within 24 hours. No credit card.
+          </p>
+          <Link
+            href="/free-transcript"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 7,
+              background: 'var(--accent)',
+              color: '#fff',
+              fontFamily: 'var(--font-geist)',
+              fontSize: 13,
+              fontWeight: 600,
+              padding: '10px 16px',
+              borderRadius: 9,
+              textDecoration: 'none',
+              boxShadow: '0 8px 24px -8px rgba(16,185,129,0.38)',
+            }}
+          >
+            <svg
+              width={12}
+              height={12}
+              viewBox="0 0 12 12"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.8}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M2 6h8M6.5 2.5l4 3.5-4 3.5" />
+            </svg>
+            Claim Free Transcript
+          </Link>
+        </div>
+      )}
 
       {/* Related articles */}
       {related.length > 0 && (
         <div
           style={{
-            background: 'var(--s1)',
-            border: '1px solid rgba(255,255,255,0.07)',
-            borderRadius: 14,
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: 16,
             overflow: 'hidden',
           }}
         >
           <div
             style={{
               padding: '14px 16px',
-              borderBottom: '1px solid rgba(255,255,255,0.07)',
-              fontFamily: 'var(--font-mono)',
+              borderBottom: '1px solid var(--border)',
+              fontFamily: 'var(--font-geist-mono)',
               fontSize: 9,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color: 'var(--ink-3)',
+              color: 'var(--mist)',
             }}
           >
             Related articles
@@ -247,8 +258,7 @@ export function ArticleSidebar({
               href={`/resources/${r.slug}`}
               style={{
                 padding: '12px 16px',
-                borderBottom:
-                  i < related.length - 1 ? '1px solid rgba(255,255,255,0.07)' : 'none',
+                borderBottom: i < related.length - 1 ? '1px solid var(--border)' : 'none',
                 textDecoration: 'none',
                 display: 'block',
                 transition: 'background 0.15s',
@@ -256,7 +266,7 @@ export function ArticleSidebar({
             >
               <div
                 style={{
-                  fontFamily: 'var(--font-mono)',
+                  fontFamily: 'var(--font-geist-mono)',
                   fontSize: 8,
                   letterSpacing: '0.1em',
                   textTransform: 'uppercase',

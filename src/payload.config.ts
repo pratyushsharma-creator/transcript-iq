@@ -24,6 +24,7 @@ import {
   Subscriptions,
   TranscriptFiles,
   EvReportLeads,
+  BlogLeads,
 } from './collections'
 import { SiteSettings } from './globals'
 
@@ -115,6 +116,7 @@ export default buildConfig({
     Media,
     TranscriptFiles,
     EvReportLeads,
+    BlogLeads,
   ],
   globals: [SiteSettings],
   editor: lexicalEditor(),

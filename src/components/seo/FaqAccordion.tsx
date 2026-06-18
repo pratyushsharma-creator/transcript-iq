@@ -6,9 +6,12 @@ import type { FaqItem } from '@/lib/seo/jsonld'
 export function FaqAccordion({
   faqs,
   heading = 'Frequently Asked Questions',
+  contained = true,
 }: {
   faqs: FaqItem[]
   heading?: string
+  /** When false, drops the centered 760px frame so a parent can control width/alignment. */
+  contained?: boolean
 }) {
   const [open, setOpen] = useState<number | null>(null)
 
@@ -18,11 +21,11 @@ export function FaqAccordion({
 
   return (
     <section
-      style={{
-        maxWidth: 760,
-        margin: '0 auto',
-        padding: '80px 48px',
-      }}
+      style={
+        contained
+          ? { maxWidth: 760, margin: '0 auto', padding: '80px 48px' }
+          : { maxWidth: '100%', margin: 0, padding: 0 }
+      }
     >
       <h2
         style={{
@@ -54,7 +57,7 @@ export function FaqAccordion({
                 width: '100%',
                 textAlign: 'left',
                 padding: '18px 20px',
-                background: open === i ? 'var(--s1)' : 'transparent',
+                background: open === i ? 'var(--surface-2)' : 'transparent',
                 border: 'none',
                 cursor: 'pointer',
                 display: 'flex',
@@ -91,7 +94,7 @@ export function FaqAccordion({
                 fontSize: 14,
                 color: 'var(--ink-2)',
                 lineHeight: 1.72,
-                background: 'var(--s1)',
+                background: 'var(--surface-2)',
               }}
             >
               {faq.answer}
