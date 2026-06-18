@@ -100,9 +100,9 @@ export default function EvEcosystemReportPage() {
   return (
     <>
       <JsonLd />
-      {/* Clarity + HappierLeads load from <head> (see EvReportHeadScripts via the root layout);
-          AnalyticsTags skips Clarity here so it isn't loaded twice. RB2B stays inline below. */}
-      <AnalyticsTags clarity={false} />
+      {/* GA4 + Clarity + HappierLeads load from <head> via the root layout (EvReportHeadScripts).
+          AnalyticsTags skips GA4 + Clarity here so they aren't loaded twice. RB2B stays inline below. */}
+      <AnalyticsTags clarity={false} ga4={false} />
       <UTMCapture />
       <Rb2bPageScript />
       <EvEcosystemLanding />

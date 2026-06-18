@@ -12,15 +12,18 @@ import Script from 'next/script'
  *     and <Analytics> skips those routes so nothing loads twice.
  *
  * Props:
- *   clarity — set false to suppress the Clarity tag (e.g. when the page loads
- *             Clarity itself — the EV report page loads it in <head> — to avoid a double-load).
+ *   clarity — set false to suppress the Clarity tag.
+ *   ga4     — set false to suppress GA4.
+ *   (The EV report page loads GA4 + Clarity itself in <head> via EvReportHeadScripts,
+ *    because next/script does not reliably inject on that dynamic route — so it passes
+ *    ga4={false} + clarity={false} to avoid a double-load.)
  *
  * Env vars:
  *   NEXT_PUBLIC_GA4_ID, NEXT_PUBLIC_GOOGLE_ADS_ID, NEXT_PUBLIC_CLARITY_ID,
  *   NEXT_PUBLIC_META_PIXEL_ID, NEXT_PUBLIC_LINKEDIN_PARTNER_ID,
  *   NEXT_PUBLIC_BING_UET_ID, NEXT_PUBLIC_TABOOLA_ID
  */
-export function AnalyticsTags({ clarity = true }: { clarity?: boolean } = {}) {
+export function AnalyticsTags({ clarity = true, ga4 = true }: { clarity?: boolean; ga4?: boolean } = {}) {
   const ga4Id = process.env.NEXT_PUBLIC_GA4_ID
   const googleAdsId = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID
   const clarityId = process.env.NEXT_PUBLIC_CLARITY_ID
@@ -31,8 +34,8 @@ export function AnalyticsTags({ clarity = true }: { clarity?: boolean } = {}) {
 
   return (
     <>
-      {/* ── Google Analytics 4 ────────────────────────────────── */}
-      {ga4Id && (
+      {/* ── Google Analytics 4 ──────────────────────── */}
+      {ga4 && ga4Id && (
         <>
           <Script
             src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`}
@@ -49,7 +52,7 @@ export function AnalyticsTags({ clarity = true }: { clarity?: boolean } = {}) {
         </>
       )}
 
-      {/* ── Google Ads (conversion tracking) ────────────────── */}
+      {/* ── Google Ads (conversion tracking) ───────── */}
       {googleAdsId && (
         <>
           <Script
@@ -67,7 +70,7 @@ export function AnalyticsTags({ clarity = true }: { clarity?: boolean } = {}) {
         </>
       )}
 
-      {/* ── Microsoft Clarity ──────────────────────────────── */}
+      {/* ── Microsoft Clarity ───────────────── */}
       {clarity && clarityId && (
         <Script id="clarity-init" strategy="afterInteractive">
           {`
@@ -80,7 +83,7 @@ export function AnalyticsTags({ clarity = true }: { clarity?: boolean } = {}) {
         </Script>
       )}
 
-      {/* ── Meta Pixel ─────────────────────────────────── */}
+      {/* ── Meta Pixel ──────────────────── */}
       {metaPixelId && (
         <Script id="meta-pixel" strategy="afterInteractive">
           {`
@@ -98,7 +101,7 @@ export function AnalyticsTags({ clarity = true }: { clarity?: boolean } = {}) {
         </Script>
       )}
 
-      {/* ── LinkedIn Insight Tag ─────────────────────────── */}
+      {/* ── LinkedIn Insight Tag ──────────── */}
       {linkedInPartnerId && (
         <Script id="linkedin-insight" strategy="afterInteractive">
           {`
@@ -118,7 +121,7 @@ export function AnalyticsTags({ clarity = true }: { clarity?: boolean } = {}) {
         </Script>
       )}
 
-      {/* ── Microsoft Advertising (Bing) UET ────────────────── */}
+      {/* ── Microsoft Advertising (Bing) UET ──────── */}
       {bingUetId && (
         <Script id="bing-uet" strategy="afterInteractive">
           {`
@@ -138,7 +141,7 @@ export function AnalyticsTags({ clarity = true }: { clarity?: boolean } = {}) {
         </Script>
       )}
 
-      {/* ── Taboola Pixel ───────────────────────────────── */}
+      {/* ── Taboola Pixel ───────────────── */}
       {taboolaId && (
         <Script id="taboola-pixel" strategy="afterInteractive">
           {`

@@ -726,6 +726,7 @@ export function EvEcosystemLanding() {
   const [leadStatus, setLeadStatus] = useState<LeadStatus>('idle')
   const [leadError, setLeadError] = useState<string | null>(null)
   const formStarted = useRef(false)
+  const firedDepth = useRef({ d50: false, d90: false })
 
   function handleBuy(location: string) {
     trackEvent('click_buy_report', { location })
@@ -754,6 +755,12 @@ export function EvEcosystemLanding() {
         return
       }
 
+      const talk = target.closest('a[href="#talk"]') as HTMLElement | null
+      if (talk && root.contains(talk)) {
+        trackEvent('click_talk_analyst', { location: 'cta' })
+        // no preventDefault — let the anchor scroll to the lead form
+      }
+
       const faqBtn = target.closest('.faq-q') as HTMLElement | null
       if (faqBtn && root.contains(faqBtn)) {
         const faq = faqBtn.parentElement as HTMLElement | null
@@ -766,6 +773,27 @@ export function EvEcosystemLanding() {
     root.addEventListener('click', onClick)
     return () => root.removeEventListener('click', onClick)
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // GA4 page-view (view_item) on mount + scroll-depth milestones.
+  useEffect(() => {
+    trackEvent('view_item', { item_name: 'ev-ecosystem-report', price: EV_REPORT.priceUsd })
+    function onScroll() {
+      const doc = document.documentElement
+      const scrollable = doc.scrollHeight - doc.clientHeight
+      if (scrollable <= 0) return
+      const pct = (doc.scrollTop / scrollable) * 100
+      if (!firedDepth.current.d50 && pct >= 50) {
+        firedDepth.current.d50 = true
+        trackEvent('scroll_depth_50', { page: 'ev-report' })
+      }
+      if (!firedDepth.current.d90 && pct >= 90) {
+        firedDepth.current.d90 = true
+        trackEvent('scroll_depth_90', { page: 'ev-report' })
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   function handleFirstFocus() {

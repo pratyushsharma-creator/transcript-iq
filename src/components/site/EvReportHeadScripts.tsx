@@ -1,23 +1,32 @@
-// Public client ids. Overridable via env; default to the live / trial ids.
+// Public ids. Overridable via env; default to the live / trial ids.
+const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID ?? 'G-WWNHDYT1HZ'
 const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID ?? 'x8bt9licv7'
 const HAPPIERLEADS_CLIENT_ID =
   process.env.NEXT_PUBLIC_HAPPIERLEADS_CLIENT_ID ?? 'eP1KoANrhBtF8gNSi3ANg5'
 
 /**
- * Microsoft Clarity + HappierLeads loaders, rendered as raw inline <script>s.
+ * GA4 + Microsoft Clarity + HappierLeads loaders, rendered as raw inline <script>s.
  *
  * Mounted inside an explicit <head> element in the (frontend) root layout, gated
- * to /reports/ev-ecosystem (see middleware.ts + the layout) — so the snippets are
- * authored literally into the document <head> (both tools' install instructions
- * ask for them before </head>). Raw <script> is used instead of next/script
- * because beforeInteractive does not reliably hoist into <head> from a dynamic
- * layout in this app.
+ * to /reports/ev-ecosystem (see middleware.ts + the layout) — authored literally
+ * into the document <head>. Raw <script> is used instead of next/script because
+ * next/script (before/afterInteractive) does not reliably inject on this dynamic
+ * route in this app, so GA4 + Clarity + HappierLeads are loaded here directly.
  *
- * RB2B is intentionally NOT here — it already works inline on the page body.
+ * GA4 defines a global `gtag` so trackEvent (lib/analytics/events) works on this
+ * page. AnalyticsTags is passed ga4={false} + clarity={false} here to avoid a
+ * double-load. RB2B is intentionally NOT here — it already works inline on the body.
  */
 export function EvReportHeadScripts() {
   return (
     <>
+      {GA4_ID && (
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA4_ID}',{anonymize_ip:true});(function(){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=${GA4_ID}';var f=document.getElementsByTagName('script')[0];f.parentNode.insertBefore(s,f);})();`,
+          }}
+        />
+      )}
       {CLARITY_ID && (
         <script
           dangerouslySetInnerHTML={{
