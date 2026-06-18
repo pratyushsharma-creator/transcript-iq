@@ -1,21 +1,40 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { useCart } from '@/context/CartContext'
+import { EV_REPORT } from '@/lib/ev-report/content'
+import { getStoredUtm } from '@/components/site/UTMCapture'
+import {
+  trackEvent,
+  trackAdsConversion,
+  trackBingEvent,
+  trackTaboolaEvent,
+} from '@/lib/analytics/events'
+
+const REPORT_CART_ITEM = {
+  id: 'ev-ecosystem-report',
+  slug: 'ev-ecosystem-report',
+  type: 'report' as const,
+  title: 'Can Europe Win the EV Ecosystem? — Research Report',
+  priceUsd: EV_REPORT.priceUsd,
+  originalPriceUsd: EV_REPORT.originalPriceUsd,
+}
 
 /**
- * EV Ecosystem report landing — editorial redesign.
+ * EV Ecosystem report landing — editorial redesign (fully wired).
  *
- * PHASE 1: a faithful static render of the approved HTML design for visual
- * validation. The CSS + markup are ported verbatim (via inline <style> +
- * dangerouslySetInnerHTML) so the page matches the design 1:1.
+ * The approved HTML design is ported as scoped CSS + markup (MARKUP_TOP +
+ * MARKUP_FOOTER, via dangerouslySetInnerHTML) so the page matches the design 1:1.
  *
- * Buy buttons and the lead form are intentionally NOT yet wired to the cart /
- * lead API — that's phase 2. All tracking (Clarity + HappierLeads in <head>,
- * RB2B, AnalyticsTags) and Resend integrations are handled by the layout + page
- * and are untouched by this component.
+ * Interactivity:
+ *   - [data-ev-buy] CTAs add the report to the cart + open the drawer (Stripe flow).
+ *   - The lead form (#talk) is a real React <form> posting to /api/ev-report-leads
+ *     (same payload/behaviour as AnalystLeadForm: UTM capture, validation, conversions).
+ *   - The FAQ accordion is wired via event delegation.
  *
- * The design ships its own <nav> and <footer>, so the (frontend) layout
- * suppresses the site Header/Footer on this route.
+ * Tracking (Clarity + HappierLeads in <head>, RB2B, AnalyticsTags) and Resend are
+ * handled by the layout + page. The design ships its own <nav> and <footer>, so the
+ * (frontend) layout suppresses the site Header/Footer on this route.
  */
 
 const STYLES = `
@@ -290,7 +309,7 @@ const STYLES = `
   @media(prefers-reduced-motion:reduce){.ev-redesign *{animation:none!important;transition:none!important}}
 `
 
-const MARKUP = `
+const MARKUP_TOP = `
 <!-- NAV -->
 <nav class="nav">
   <div class="wrap nav-inner">
@@ -321,7 +340,7 @@ const MARKUP = `
         <span class="price-now serif">$3,499</span>
         <span class="price-anchor">≈ 3 expert calls, one synthesised view</span>
       </div>
-      <a href="#pricing" class="btn btn-emerald">Buy the report</a>
+      <a href="#pricing" class="btn btn-emerald" data-ev-buy="hero">Buy the report</a>
       <a href="#talk" class="btn btn-ghost">Talk to an analyst</a>
     </div>
     <div class="hero-meta">
@@ -626,7 +645,7 @@ const MARKUP = `
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>Every question answered with direct practitioner citation</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>Decision frame per question: act now, metric to track, what changes the call</li>
         </ul>
-        <a href="#" class="btn btn-emerald price-btn">Buy the report — $3,499</a>
+        <a href="#" class="btn btn-emerald price-btn" data-ev-buy="pricing">Buy the report — $3,499</a>
         <p class="price-sub">Secure checkout via Stripe · single-user licence<br>Prefer to be invoiced? <a href="mailto:hatim.janjali@nextyn.com">Email us</a> for a PO-ready quote.</p>
       </div>
       <div class="price-card">
@@ -650,44 +669,11 @@ const MARKUP = `
     </div>
   </div>
 </section>
+`
 
-<!-- LEAD FORM -->
-<section class="section" id="talk">
-  <div class="wrap">
-    <div class="lead-grid">
-      <div class="lead-copy">
-        <p class="eyebrow">Not ready to buy?</p>
-        <h2 class="serif">Talk to the analyst who built it.</h2>
-        <p>A 20-minute call on how the findings apply to your specific context — your portfolio, your platform, your policy question. No obligation, no script.</p>
-        <ul class="lead-points">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>Walk through the verdicts that matter to your mandate</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>Get team-licence and procurement options</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>Scope a follow-on custom study if you need one</li>
-        </ul>
-      </div>
-      <div class="form-card">
-        <div class="field"><label>Full name <span>*</span></label><input type="text" placeholder="Jane Doe"></div>
-        <div class="field"><label>Work email <span>*</span></label><input type="email" placeholder="jane@firm.com"></div>
-        <div class="field"><label>Company <span>*</span></label><input type="text" placeholder="Firm name"></div>
-        <div class="field"><label>You are a…</label>
-          <select>
-            <option>Private equity / venture / hedge fund</option>
-            <option>Management or strategy consultant</option>
-            <option>Corporate strategy / corp-dev</option>
-            <option>OEM / automotive</option>
-            <option>Energy / utility / charging operator</option>
-            <option>Policy / public sector</option>
-            <option>Other</option>
-          </select>
-        </div>
-        <div class="field"><label>What are you trying to decide?</label><textarea placeholder="e.g. Whether to underwrite a European charging platform on a 5-year horizon."></textarea></div>
-        <button class="btn btn-emerald">Request a conversation</button>
-        <p class="form-foot">We reply within one business day · info@nextyn.com</p>
-      </div>
-    </div>
-  </div>
-</section>
-
+// The lead form (#talk) is rendered as a real React <form> between MARKUP_TOP and
+// MARKUP_FOOTER so it can post to /api/ev-report-leads.
+const MARKUP_FOOTER = `
 <!-- FOOTER -->
 <footer class="footer">
   <div class="wrap">
@@ -732,25 +718,102 @@ const MARKUP = `
 </footer>
 `
 
+type LeadStatus = 'idle' | 'submitting' | 'success' | 'error'
+
 export function EvEcosystemLanding() {
   const rootRef = useRef<HTMLDivElement>(null)
+  const { addItem, openCart } = useCart()
+  const [leadStatus, setLeadStatus] = useState<LeadStatus>('idle')
+  const [leadError, setLeadError] = useState<string | null>(null)
+  const formStarted = useRef(false)
 
-  // FAQ accordion (ported from the design's vanilla-JS handler).
+  function handleBuy(location: string) {
+    trackEvent('click_buy_report', { location })
+    trackEvent('add_to_cart', {
+      currency: 'USD',
+      value: EV_REPORT.priceUsd,
+      item_name: 'ev-ecosystem-report',
+    })
+    addItem(REPORT_CART_ITEM)
+    openCart()
+  }
+
+  // Delegated handlers for the dangerouslySetInnerHTML content:
+  //  - [data-ev-buy] CTAs → add the report to the cart + open the drawer
+  //  - .faq-q → toggle the FAQ accordion
   useEffect(() => {
     const root = rootRef.current
     if (!root) return
     const onClick = (e: Event) => {
-      const btn = (e.target as HTMLElement).closest('.faq-q') as HTMLElement | null
-      if (!btn || !root.contains(btn)) return
-      const faq = btn.parentElement as HTMLElement | null
-      const ans = faq?.querySelector('.faq-a') as HTMLElement | null
-      if (!faq || !ans) return
-      const isOpen = faq.classList.toggle('open')
-      ans.style.maxHeight = isOpen ? `${ans.scrollHeight}px` : ''
+      const target = e.target as HTMLElement
+
+      const buy = target.closest('[data-ev-buy]') as HTMLElement | null
+      if (buy && root.contains(buy)) {
+        e.preventDefault()
+        handleBuy(buy.getAttribute('data-ev-buy') || 'cta')
+        return
+      }
+
+      const faqBtn = target.closest('.faq-q') as HTMLElement | null
+      if (faqBtn && root.contains(faqBtn)) {
+        const faq = faqBtn.parentElement as HTMLElement | null
+        const ans = faq?.querySelector('.faq-a') as HTMLElement | null
+        if (!faq || !ans) return
+        const isOpen = faq.classList.toggle('open')
+        ans.style.maxHeight = isOpen ? `${ans.scrollHeight}px` : ''
+      }
     }
     root.addEventListener('click', onClick)
     return () => root.removeEventListener('click', onClick)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  function handleFirstFocus() {
+    if (formStarted.current) return
+    formStarted.current = true
+    trackEvent('form_start', { form: 'analyst_lead' })
+  }
+
+  async function handleLeadSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setLeadError(null)
+    setLeadStatus('submitting')
+    const form = e.currentTarget
+    const data = new FormData(form)
+    const utm = getStoredUtm()
+    const payload = {
+      name: String(data.get('name') ?? '').trim(),
+      email: String(data.get('email') ?? '').trim(),
+      company: String(data.get('company') ?? '').trim(),
+      role: String(data.get('role') ?? '').trim(),
+      message: String(data.get('message') ?? '').trim(),
+      utm_source: utm.utm_source,
+      utm_medium: utm.utm_medium,
+      utm_campaign: utm.utm_campaign,
+      utm_content: utm.utm_content,
+      page_referrer: utm.page_referrer,
+    }
+
+    try {
+      const res = await fetch('/api/ev-report-leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string }
+        throw new Error(body.error || 'Something went wrong. Please try again.')
+      }
+      setLeadStatus('success')
+      trackEvent('generate_lead', { event_category: 'ev_report', event_label: 'analyst_consultation' })
+      trackAdsConversion({ conversionLabel: process.env.NEXT_PUBLIC_GOOGLE_ADS_LEAD_CONVERSION })
+      trackBingEvent('lead', { event_category: 'ev_report', event_label: 'analyst_consultation' })
+      trackTaboolaEvent('lead')
+    } catch (err) {
+      setLeadStatus('error')
+      setLeadError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+    }
+  }
 
   return (
     <>
@@ -761,7 +824,94 @@ export function EvEcosystemLanding() {
         rel="stylesheet"
       />
       <style dangerouslySetInnerHTML={{ __html: STYLES }} />
-      <div className="ev-redesign" ref={rootRef} dangerouslySetInnerHTML={{ __html: MARKUP }} />
+      <div className="ev-redesign" ref={rootRef}>
+        <div dangerouslySetInnerHTML={{ __html: MARKUP_TOP }} />
+
+        {/* LEAD FORM — real React form posting to /api/ev-report-leads */}
+        <section className="section" id="talk">
+          <div className="wrap">
+            <div className="lead-grid">
+              <div className="lead-copy">
+                <p className="eyebrow">Not ready to buy?</p>
+                <h2 className="serif">Talk to the analyst who built it.</h2>
+                <p>
+                  A 20-minute call on how the findings apply to your specific context — your portfolio, your
+                  platform, your policy question. No obligation, no script.
+                </p>
+                <ul className="lead-points">
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M20 6 9 17l-5-5" /></svg>
+                    Walk through the verdicts that matter to your mandate
+                  </li>
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M20 6 9 17l-5-5" /></svg>
+                    Get team-licence and procurement options
+                  </li>
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M20 6 9 17l-5-5" /></svg>
+                    Scope a follow-on custom study if you need one
+                  </li>
+                </ul>
+              </div>
+              <div className="form-card">
+                {leadStatus === 'success' ? (
+                  <div style={{ textAlign: 'center', padding: '24px 0' }}>
+                    <h3 className="serif" style={{ fontSize: '23px', color: 'var(--ink)', marginBottom: '10px' }}>
+                      Thanks — we&rsquo;ll be in touch within one business day.
+                    </h3>
+                    <p style={{ color: 'var(--muted)', fontSize: '15px' }}>
+                      Our research analyst will reach out to walk you through the findings and how they apply to
+                      your context.
+                    </p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleLeadSubmit} onFocusCapture={handleFirstFocus} noValidate>
+                    <div className="field">
+                      <label>Full name <span>*</span></label>
+                      <input name="name" type="text" placeholder="Jane Doe" autoComplete="name" required />
+                    </div>
+                    <div className="field">
+                      <label>Work email <span>*</span></label>
+                      <input name="email" type="email" placeholder="jane@firm.com" autoComplete="email" required />
+                    </div>
+                    <div className="field">
+                      <label>Company <span>*</span></label>
+                      <input name="company" type="text" placeholder="Firm name" autoComplete="organization" required />
+                    </div>
+                    <div className="field">
+                      <label>You are a…</label>
+                      <select name="role" defaultValue="Private equity / venture / hedge fund">
+                        <option>Private equity / venture / hedge fund</option>
+                        <option>Management or strategy consultant</option>
+                        <option>Corporate strategy / corp-dev</option>
+                        <option>OEM / automotive</option>
+                        <option>Energy / utility / charging operator</option>
+                        <option>Policy / public sector</option>
+                        <option>Other</option>
+                      </select>
+                    </div>
+                    <div className="field">
+                      <label>What are you trying to decide?</label>
+                      <textarea name="message" placeholder="e.g. Whether to underwrite a European charging platform on a 5-year horizon." />
+                    </div>
+                    {leadStatus === 'error' && leadError && (
+                      <p role="alert" style={{ color: '#B5614E', fontSize: '13px', marginBottom: '12px' }}>
+                        {leadError}
+                      </p>
+                    )}
+                    <button type="submit" className="btn btn-emerald" disabled={leadStatus === 'submitting'}>
+                      {leadStatus === 'submitting' ? 'Sending…' : 'Request a conversation'}
+                    </button>
+                    <p className="form-foot">We reply within one business day · info@nextyn.com</p>
+                  </form>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div dangerouslySetInnerHTML={{ __html: MARKUP_FOOTER }} />
+      </div>
     </>
   )
 }
