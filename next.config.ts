@@ -27,6 +27,10 @@ const nextConfig: NextConfig = {
       {
         pathname: '/api/media/file/**',
       },
+      {
+        // Self-hosted blog assets in /public/blog (e.g. per-article hero covers)
+        pathname: '/blog/**',
+      },
     ],
   },
   webpack: (webpackConfig) => {
