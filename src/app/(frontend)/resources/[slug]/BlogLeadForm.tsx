@@ -15,6 +15,7 @@ export type BlogLeadFormConfig = {
   successMessage?: string | null
   fineprint?: string | null
   recipient?: string | null
+  recipientCc?: string | null
 }
 
 const labelCls =
@@ -59,6 +60,7 @@ export function BlogLeadForm({
           blogTitle,
           blogSlug,
           recipient: config.recipient || undefined,
+          cc: config.recipientCc || undefined,
           page_referrer: typeof window !== 'undefined' ? window.location.href : undefined,
         }),
       })

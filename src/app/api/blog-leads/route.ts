@@ -16,6 +16,7 @@ type LeadBody = {
   blogTitle?: string
   blogSlug?: string
   recipient?: string
+  cc?: string
   page_referrer?: string
 }
 
@@ -108,7 +109,13 @@ export async function POST(req: NextRequest) {
   const from = process.env.RESEND_FROM_EMAIL ?? 'hello@transcript-iq.com'
   const override = body.recipient?.trim().toLowerCase()
   const to = override && EMAIL_RE.test(override) ? override : getNotificationTo()
-  const cc = getNotificationCC()
+  // CC = global NOTIFICATION_CC_EMAILS + any per-post CC (leadForm.recipientCc,
+  // comma/semicolon separated). Validate, de-duplicate, and drop the `to` address.
+  const perPostCc = (body.cc ?? '')
+    .split(/[,;]/)
+    .map((e) => e.trim().toLowerCase())
+    .filter((e) => EMAIL_RE.test(e))
+  const cc = Array.from(new Set([...getNotificationCC(), ...perPostCc])).filter((e) => e !== to)
 
   const lines = [
     `📨  NEW BLOG LEAD — request a conversation`,
