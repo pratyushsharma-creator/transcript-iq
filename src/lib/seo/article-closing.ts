@@ -22,4 +22,10 @@ export const ARTICLE_CLOSING: Record<string, ArticleClosing> = {
     linkLabel: 'Get the full report',
     linkUrl: 'https://www.transcript-iq.com/reports/ev-ecosystem',
   },
+  'europe-ev-market-insights': {
+    title: 'Can Europe Win the EV Ecosystem?',
+    body: 'Available now for $3,499. A one-hour consultation with the research expert is available post-purchase at $350/hour.',
+    linkLabel: 'Get the full report',
+    linkUrl: 'https://www.transcript-iq.com/reports/ev-ecosystem',
+  },
 }
