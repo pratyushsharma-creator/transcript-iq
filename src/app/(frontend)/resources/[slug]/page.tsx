@@ -9,6 +9,7 @@ import type { BlogLeadFormConfig } from './BlogLeadForm'
 import { blogPostingSchema, breadcrumbSchema, faqPageSchema, JsonLd } from '@/lib/seo/jsonld'
 import { canonical, truncate } from '@/lib/seo/metadata'
 import { ARTICLE_FAQS } from '@/lib/seo/faq-data'
+import { ARTICLE_CLOSING } from '@/lib/seo/article-closing'
 import { FaqAccordion } from '@/components/seo/FaqAccordion'
 
 export const revalidate = 86400
@@ -100,6 +101,7 @@ export default async function ResourceArticlePage({
   const headings = extractBodyHeadings(post.body)
 
   const articleFaqs = ARTICLE_FAQS[slug] ?? []
+  const closing = ARTICLE_CLOSING[slug]
 
   return (
     <>
@@ -375,8 +377,49 @@ export default async function ResourceArticlePage({
 
         {/* ── FAQ — moved ABOVE the next-article section, left-aligned to column ── */}
         {articleFaqs.length > 0 && (
-          <div className="lg:max-w-[calc(100%_-_404px)] pb-16 lg:pb-24">
+          <div className={`lg:max-w-[calc(100%_-_404px)] ${closing ? '' : 'pb-16 lg:pb-24'}`}>
             <FaqAccordion faqs={articleFaqs} headingAs="h3" contained={false} />
+          </div>
+        )}
+
+        {/* ── Closing block — rendered AFTER the FAQ (price + report link) ── */}
+        {closing && (
+          <div
+            className="lg:max-w-[calc(100%_-_404px)] pb-16 lg:pb-24"
+            style={{ marginTop: 40, paddingTop: 28, borderTop: '1px solid var(--border)' }}
+          >
+            {closing.title && (
+              <p
+                style={{
+                  fontSize: 24,
+                  fontWeight: 600,
+                  letterSpacing: '-0.025em',
+                  lineHeight: 1.2,
+                  color: 'var(--ink)',
+                  margin: '0 0 8px',
+                }}
+              >
+                {closing.title}
+              </p>
+            )}
+            {closing.body && (
+              <p style={{ fontSize: 17, color: 'var(--ink-2)', lineHeight: 1.75, margin: '0 0 14px' }}>
+                {closing.body}
+              </p>
+            )}
+            {closing.linkLabel && closing.linkUrl && (
+              <a
+                href={closing.linkUrl}
+                style={{
+                  color: 'var(--accent-deep)',
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  borderBottom: '1px solid var(--accent-border)',
+                }}
+              >
+                {closing.linkLabel}
+              </a>
+            )}
           </div>
         )}
       </div>
