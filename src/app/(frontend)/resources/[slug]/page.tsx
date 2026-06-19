@@ -10,6 +10,7 @@ import { blogPostingSchema, breadcrumbSchema, faqPageSchema, JsonLd } from '@/li
 import { canonical, truncate } from '@/lib/seo/metadata'
 import { ARTICLE_FAQS } from '@/lib/seo/faq-data'
 import { ARTICLE_CLOSING } from '@/lib/seo/article-closing'
+import { ARTICLE_COVER } from '@/lib/seo/article-cover'
 import { FaqAccordion } from '@/components/seo/FaqAccordion'
 
 export const revalidate = 86400
@@ -92,10 +93,17 @@ export default async function ResourceArticlePage({
       })
     : ''
 
+  // A per-article static cover (served from /public) takes precedence over the
+  // post's coverImage media relationship — lets a post have a working hero
+  // without depending on Blob storage.
+  const staticCover = ARTICLE_COVER[slug]
   const coverUrl =
-    post.coverImage && typeof post.coverImage === 'object' ? post.coverImage.url ?? null : null
+    staticCover?.src ??
+    (post.coverImage && typeof post.coverImage === 'object' ? post.coverImage.url ?? null : null)
   const coverAlt =
-    (post.coverImage && typeof post.coverImage === 'object' && post.coverImage.alt) || post.title
+    staticCover?.alt ||
+    (post.coverImage && typeof post.coverImage === 'object' && post.coverImage.alt) ||
+    post.title
 
   // Extract h2 headings from body for TOC
   const headings = extractBodyHeadings(post.body)
