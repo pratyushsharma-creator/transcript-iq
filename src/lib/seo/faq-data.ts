@@ -265,4 +265,41 @@ export const ARTICLE_FAQS: Record<string, FaqItem[]> = {
         'Yes. Each document includes a compliance certification. Cite as: Expert call, [Sector], via Transcript IQ, [Date]. This satisfies institutional compliance documentation requirements.',
     },
   ],
+  'why-europe-lost-the-gigafactory-race': [
+    {
+      question: 'Why did Europe lose the EV battery manufacturing race?',
+      answer:
+        'On execution, not technology. Europe imported Asian battery machinery but not the engineers who had run it at scale, then tried to master the process mid-ramp on investor money. The know-how existed; the speed, scale-up discipline, and sustained industrial policy did not.',
+    },
+    {
+      question: "Is Europe's EV battery manufacturing race actually lost?",
+      answer:
+        'For lithium-ion cell manufacturing, effectively yes: the three practitioners converge on that verdict. But the ecosystem above the cell (charging, stationary storage, grid integration, and the software that orchestrates them) is still wide open, and that is where Europe holds genuine competitive assets.',
+    },
+    {
+      question: 'Why did Northvolt go bankrupt?',
+      answer:
+        'Because it lacked an automotive parent to absorb losses through the long, low-yield production ramp. Northvolt reportedly raised billions, including a $5.8bn debt facility, before filing for bankruptcy in late 2024. The survivors, ACC and PowerCo, are OEM-backed and can withstand that valley of death.',
+    },
+    {
+      question: 'Which European gigafactories are still operating?',
+      answer:
+        'ACC and PowerCo (Volkswagen) remain, both backed by automotive OEMs able to absorb ramp losses. The well-funded independents (Northvolt, Morrow, Freyr, Britishvolt, and Italvolt) failed or never reached commercial scale. The dividing line is financial structure, not engineering quality.',
+    },
+    {
+      question: 'Now that EV batteries are commoditising, where does the value go?',
+      answer:
+        'The cell is becoming a price-taker commodity. Defensible margin moves to the layers above it: charging-network operations, predictive maintenance, stationary storage, and the energy-orchestration software that decides when to charge, discharge, and trade against the grid. The report examines who is positioned to capture it.',
+    },
+    {
+      question: 'What is inside "Can Europe Win the EV Ecosystem?"',
+      answer:
+        "A practitioner intelligence brief built from three expert interviews, structured around seven contested questions on European EV. It covers the battery verdict, where ecosystem value migrates, the real V2G timeline, charging-infrastructure mispricing, AI's actual role, and decision implications for investors, OEMs, and policymakers.",
+    },
+    {
+      question: 'Is the research independent and credible?',
+      answer:
+        "Yes. Every claim is drawn from three named former practitioners at Audi AG, Sunlight Group, and E-GAP, with direct operating experience in the relevant layer. No external analyst research or web content was added; the figures are the experts' own and are directional. This brief is not investment advice.",
+    },
+  ],
 }

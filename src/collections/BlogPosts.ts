@@ -182,6 +182,16 @@ export const BlogPosts: CollectionConfig = {
             condition: whenLeadFormEnabled,
           },
         },
+        {
+          name: 'recipientCc',
+          type: 'text',
+          label: 'CC these emails (optional)',
+          admin: {
+            description:
+              'Comma-separated emails to CC on this post’s lead notifications, in addition to the site default CC list.',
+            condition: whenLeadFormEnabled,
+          },
+        },
       ],
     },
   ],
