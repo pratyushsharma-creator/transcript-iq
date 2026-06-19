@@ -19,7 +19,7 @@ export const ARTICLE_COVER: Record<string, ArticleCover> = {
     alt: 'A map of Europe marked with pushpins on Germany, Austria and central Europe',
   },
   'can-europe-win-ev-ecosystem': {
-    src: '/blog/ev-ecosystem-cover.jpg',
-    alt: 'High-voltage electricity transmission pylons and power lines against a dramatic sky',
+    src: '/blog/ev-ecosystem-cover.avif',
+    alt: 'A row of Allego electric vehicle fast-charging stations in an empty parking lot lit up at night',
   },
 }
