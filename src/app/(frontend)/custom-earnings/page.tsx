@@ -22,6 +22,7 @@ const PAGE_CONFIG = {
 import { useState, useCallback } from 'react'
 import { Send } from 'lucide-react'
 import { TurnstileWidget } from '@/components/ui/Turnstile'
+import { trackLeadConversion } from '@/lib/analytics/events'
 
 const HAS_CAPTCHA = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY)
 
@@ -118,6 +119,7 @@ export default function CustomEarningsPage() {
       }
 
       setStatus('sent')
+      trackLeadConversion({ category: 'custom_earnings' })
     } catch {
       setErrorMsg('Something went wrong. Please try again.')
       setStatus('error')

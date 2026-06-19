@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { CheckCircle2, ArrowRight, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react'
+import { PurchaseTracking } from '@/components/site/PurchaseTracking'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -147,6 +148,9 @@ function ConfirmationContent() {
 
   return (
     <div className="mx-auto max-w-[680px] px-6 py-12">
+      {/* Fire purchase conversions (GA4 / Ads / Bing / Taboola) once, post-verification */}
+      <PurchaseTracking transactionId={o.ref} value={o.totalUsd} currency="USD" />
+
       <Steps current={3} />
 
       {/* Success header */}
