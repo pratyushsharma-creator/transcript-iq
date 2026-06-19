@@ -344,4 +344,46 @@ export const ARTICLE_FAQS: Record<string, FaqItem[]> = {
         'The report is $3,499, with a one-hour post-purchase consultation available at $350 per hour. You can buy it at transcript-iq.com or request it by emailing info@nextyn.com.',
     },
   ],
+  'europe-ev-market-insights': [
+    {
+      question: 'Why did so many European gigafactory projects fail?',
+      answer:
+        'The failures followed one pattern. Europe imported battery machinery but not the engineers who could run a line to commercial yield, and the well-funded independents lacked an automotive parent to absorb losses through the long scale-up ramp. The cause was execution and structure, not technology.',
+    },
+    {
+      question: "What can investors learn from Northvolt's bankruptcy?",
+      answer:
+        'Funding and engineering were not the deciding factors. Northvolt reportedly raised billions, including a $5.8bn debt facility, but had no automotive parent to absorb ramp losses through the valley of death. The survivors, ACC and PowerCo, are OEM-backed. Backing predicted survival more reliably than capital.',
+    },
+    {
+      question: "Were Europe's battery failures caused by a technology gap?",
+      answer:
+        'No. China and Korea hold no patents that Europe lacks. The gap was in speed, process discipline, and the tacit manufacturing knowledge that lets a line reach the ~95% yield required for commercial viability, knowledge that transfers with people, not with equipment alone.',
+    },
+    {
+      question: 'Which European gigafactories survived, and why?',
+      answer:
+        'ACC and PowerCo (Volkswagen) remain, both backed by automotive OEMs able to absorb ramp losses. The independents, Northvolt, Morrow, Freyr, Britishvolt, and Italvolt, failed or never reached commercial scale. The dividing line was financial structure, not engineering quality.',
+    },
+    {
+      question: 'Is the European EV opportunity over?',
+      answer:
+        'At the battery-cell level, largely: that contest is decided and China-dominated. But the layer above the cell, charging infrastructure, stationary storage, grid integration, and orchestration software, is undecided, and it is where Europe holds genuine competitive assets.',
+    },
+    {
+      question: 'What should Europe do differently at the layer above the battery?',
+      answer:
+        'The practitioners argue against repeating a hardware-volume bet. Defensible value sits in maintenance, grid services, storage, and the software that orchestrates them, rather than in charger or cell count. The report sets out the specific decisions, metrics to track, and what would change each call.',
+    },
+    {
+      question: 'Is the research independent and credible?',
+      answer:
+        "Yes. Every claim is drawn from three named former practitioners, at Audi AG, Sunlight Group, and E-GAP, with direct operating experience in the relevant layer. No external analyst research or web content was added; the figures are the experts' own and are directional. Not investment advice.",
+    },
+    {
+      question: 'How much does the report cost, and how do I access it?',
+      answer:
+        'The report is $3,499, with a one-hour post-purchase consultation available at $350 per hour. You can buy it at transcript-iq.com or request it by emailing info@nextyn.com.',
+    },
+  ],
 }

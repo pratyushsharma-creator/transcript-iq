@@ -14,4 +14,8 @@ export const ARTICLE_COVER: Record<string, ArticleCover> = {
     src: '/blog/ev-five-numbers-cover.jpg',
     alt: 'Close-up of an electric vehicle charging port with a charging cable connected',
   },
+  'europe-ev-market-insights': {
+    src: '/blog/ev-market-insights-cover.jpg',
+    alt: 'A map of Europe marked with pushpins on Germany, Austria and central Europe',
+  },
 }
