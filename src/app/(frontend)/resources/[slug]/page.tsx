@@ -24,13 +24,21 @@ export async function generateMetadata({
   const post = await getBlogPostBySlug(slug)
   if (!post) return { title: 'Article Not Found', robots: { index: false } }
 
+  // Prefer the per-post SEO fields (Payload SEO plugin's `meta` group) when set,
+  // falling back to the post title / excerpt. `meta.title` is emitted as an
+  // absolute <title> (no " | Transcript IQ" suffix) so a hand-tuned ≤60-char
+  // title isn't pushed over length by the global template.
+  const seo = (post as { meta?: { title?: string | null; description?: string | null } }).meta
+  const metaTitle = seo?.title?.trim() || undefined
+  const metaDescription = seo?.description?.trim() || truncate(post.excerpt, 155) || undefined
+
   return {
-    title: post.title,
-    description: truncate(post.excerpt, 155),
+    title: metaTitle ? { absolute: metaTitle } : post.title,
+    description: metaDescription,
     alternates: { canonical: canonical(`/resources/${slug}`) },
     openGraph: {
-      title: post.title,
-      description: truncate(post.excerpt, 155) || undefined,
+      title: metaTitle ?? post.title,
+      description: metaDescription,
       url: canonical(`/resources/${slug}`),
       type: 'article',
       publishedTime: post.publishedAt ?? undefined,
@@ -368,7 +376,7 @@ export default async function ResourceArticlePage({
         {/* ── FAQ — moved ABOVE the next-article section, left-aligned to column ── */}
         {articleFaqs.length > 0 && (
           <div className="lg:max-w-[calc(100%_-_404px)] pb-16 lg:pb-24">
-            <FaqAccordion faqs={articleFaqs} contained={false} />
+            <FaqAccordion faqs={articleFaqs} headingAs="h3" contained={false} />
           </div>
         )}
       </div>

@@ -6,10 +6,13 @@ import type { FaqItem } from '@/lib/seo/jsonld'
 export function FaqAccordion({
   faqs,
   heading = 'Frequently Asked Questions',
+  headingAs = 'h2',
   contained = true,
 }: {
   faqs: FaqItem[]
   heading?: string
+  /** Heading level for the section title. Defaults to h2; the blog template passes h3. */
+  headingAs?: 'h2' | 'h3'
   /** When false, drops the centered 760px frame so a parent can control width/alignment. */
   contained?: boolean
 }) {
@@ -19,6 +22,8 @@ export function FaqAccordion({
     setOpen((prev) => (prev === i ? null : i))
   }, [])
 
+  const Heading = headingAs
+
   return (
     <section
       style={
@@ -27,17 +32,17 @@ export function FaqAccordion({
           : { maxWidth: '100%', margin: 0, padding: 0 }
       }
     >
-      <h2
+      <Heading
         style={{
-          fontSize: 'clamp(24px, 3vw, 36px)',
-          fontWeight: 700,
+          fontSize: headingAs === 'h3' ? 'clamp(22px, 2.4vw, 30px)' : 'clamp(24px, 3vw, 36px)',
+          fontWeight: headingAs === 'h3' ? 600 : 700,
           letterSpacing: '-0.03em',
-          marginBottom: 40,
+          marginBottom: headingAs === 'h3' ? 32 : 40,
           color: 'var(--ink)',
         }}
       >
         {heading}
-      </h2>
+      </Heading>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {faqs.map((faq, i) => (
           <div
