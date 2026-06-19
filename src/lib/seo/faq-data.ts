@@ -386,4 +386,46 @@ export const ARTICLE_FAQS: Record<string, FaqItem[]> = {
         'The report is $3,499, with a one-hour post-purchase consultation available at $350 per hour. You can buy it at transcript-iq.com or request it by emailing info@nextyn.com.',
     },
   ],
+  'can-europe-win-ev-ecosystem': [
+    {
+      question: 'Can Europe win the EV ecosystem?',
+      answer:
+        'Not at the battery-cell level: that contest is decided and China-dominated. But the layer above the cell (charging, stationary storage, grid integration, and orchestration software) is still open, and it is where Europe holds genuine competitive assets. That is where the question is actually live.',
+    },
+    {
+      question: 'What seven questions does the report answer?',
+      answer:
+        "Why Europe lost the battery race and whether it is final; which gigafactory bets survive and why; where value migrates as the cell commoditises; whether software or the battery makers who own the data win; what V2G really looks like this decade; where charging capital should go and what is mispriced; and AI's real role and who captures it.",
+    },
+    {
+      question: 'Who controls the EV ecosystem, battery manufacturers or software platforms?',
+      answer:
+        'It is genuinely contested. One camp argues the battery makers hold the field data every AI tool depends on; the other argues the battery is a passive component and the orchestration software captures the value. The report argues the resolution may hinge on data-access regulation rather than technology.',
+    },
+    {
+      question: 'What is the EV charging market mispricing?',
+      answer:
+        'Capital tends to model charging as a hardware rollout. The practitioners argue the real economics turn on site utilisation and on maintenance, predicting and preventing failures, rather than charger count or network density. The mispricing is systematic, not incidental.',
+    },
+    {
+      question: "What is AI's real role in EV batteries and charging?",
+      answer:
+        'AI compresses existing processes; it does not replace accumulated manufacturing knowledge or substitute for field data. It is a multiplier for whoever already owns the deployed assets and the data they generate, which tends to favour incumbents over latecomers.',
+    },
+    {
+      question: 'Will these questions be decided by technology or by regulation?',
+      answer:
+        'At least one of the most consequential, who controls the platform layer once the cell is commoditised, likely turns on whether regulation gives software platforms access to battery field data, or lets manufacturers wall it off. On that question, regulation may matter more than technology or strategy.',
+    },
+    {
+      question: 'Is the research independent and credible?',
+      answer:
+        "Yes. Every claim is drawn from three named former practitioners, at Audi AG, Sunlight Group, and E-GAP, with direct operating experience in the relevant layer. No external analyst research or web content was added; the figures are the experts' own and are directional. Not investment advice.",
+    },
+    {
+      question: 'How much does the report cost, and how do I access it?',
+      answer:
+        'The report is $3,499, with a one-hour post-purchase consultation available at $350 per hour. You can buy it at transcript-iq.com or request it by emailing info@nextyn.com.',
+    },
+  ],
 }
