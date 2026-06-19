@@ -686,6 +686,57 @@ function BlogCtaBanner({
   )
 }
 
+// In-body number cards — renders the `statGrid` Lexical block (see blocks/StatGrid.ts).
+// Each item is a boxed card: a large figure, an optional bold lead clause, and body text.
+function StatGridBlock({
+  items,
+}: {
+  items?: Array<{ figure?: string; lead?: string; body?: string }>
+}) {
+  const cards = (items ?? []).filter((it) => it && (it.figure || it.body))
+  if (cards.length === 0) return null
+  return (
+    <div style={{ display: 'grid', gap: 14, margin: '8px 0 28px' }}>
+      {cards.map((it, i) => (
+        <div
+          key={i}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'auto 1fr',
+            gap: 18,
+            alignItems: 'start',
+            padding: '20px 22px',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 14,
+            background: 'var(--s1)',
+          }}
+        >
+          <div
+            style={{
+              fontFamily: 'var(--font-geist-mono)',
+              fontSize: 26,
+              fontWeight: 600,
+              letterSpacing: '-0.03em',
+              color: 'var(--accent)',
+              lineHeight: 1.05,
+              whiteSpace: 'nowrap',
+              paddingTop: 2,
+            }}
+          >
+            {it.figure}
+          </div>
+          <p style={{ fontSize: 16, color: 'var(--ink-2)', lineHeight: 1.62, margin: 0 }}>
+            {it.lead && (
+              <strong style={{ color: 'var(--ink)', fontWeight: 600 }}>{it.lead} </strong>
+            )}
+            {it.body}
+          </p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function LexicalNode({ node }: { node: unknown }) {
   if (!node || typeof node !== 'object') return null
   const n = node as {
@@ -708,6 +759,7 @@ function LexicalNode({ node }: { node: unknown }) {
       subline?: string
       buttonLabel?: string
       buttonUrl?: string
+      items?: Array<{ figure?: string; lead?: string; body?: string }>
     }
     if (fields.blockType === 'blogCta') {
       return (
@@ -719,6 +771,9 @@ function LexicalNode({ node }: { node: unknown }) {
           buttonUrl={fields.buttonUrl}
         />
       )
+    }
+    if (fields.blockType === 'statGrid') {
+      return <StatGridBlock items={fields.items} />
     }
     return null
   }

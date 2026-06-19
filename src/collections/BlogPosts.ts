@@ -6,6 +6,7 @@ import { adminOrEditor } from '../access/adminOnly'
 import { CACHE_TAGS, revalidateOnPublish } from '@/lib/cache/revalidation'
 import { pingCollectionPage } from '@/lib/indexnow'
 import { BlogCta } from '../blocks/BlogCta'
+import { StatGrid } from '../blocks/StatGrid'
 
 // Show a leadForm sub-field only when the form is enabled on this post.
 const whenLeadFormEnabled = (_: unknown, siblingData: Record<string, unknown>) =>
@@ -64,8 +65,8 @@ export const BlogPosts: CollectionConfig = {
       editor: lexicalEditor({
         features: ({ defaultFeatures }) => [
           ...defaultFeatures,
-          // In-body CTA banner — insertable anywhere in the article, editable per insertion.
-          BlocksFeature({ blocks: [BlogCta] }),
+          // In-body blocks — insertable anywhere in the article, editable per insertion.
+          BlocksFeature({ blocks: [BlogCta, StatGrid] }),
         ],
       }),
     },
