@@ -302,4 +302,46 @@ export const ARTICLE_FAQS: Record<string, FaqItem[]> = {
         "Yes. Every claim is drawn from three named former practitioners at Audi AG, Sunlight Group, and E-GAP, with direct operating experience in the relevant layer. No external analyst research or web content was added; the figures are the experts' own and are directional. This brief is not investment advice.",
     },
   ],
+  'europe-ev-battery-numbers-three-insiders': [
+    {
+      question: "What is Europe's gigafactory success rate?",
+      answer:
+        'Roughly one in ten announced European gigafactory projects reached commercial production. The failures clustered among well-funded independents that lacked an automotive parent to absorb losses through the long, low-yield scale-up ramp; the survivors are OEM-backed.',
+    },
+    {
+      question: 'Why does it cost more to make EV batteries in Europe than to import them from China?',
+      answer:
+        'There is roughly a 15% cost penalty for producing the same cell design in Europe, before any policy support. The dependency is structural: a single cathode-processing step, calcination, has no European supplier, so policy alone cannot neutralise the gap.',
+    },
+    {
+      question: 'Why is Europe slower than China at certifying battery technology?',
+      answer:
+        'Next-generation energy storage takes about 6 months from concept to certification in China and up to 24 months in Europe. The gap is execution and process discipline, not patents or technology, which is why it undercuts the European battery renaissance narrative.',
+    },
+    {
+      question: "Is Europe's EV battery race actually lost?",
+      answer:
+        'For lithium-ion cell manufacturing, effectively yes: the three practitioners converge on that. But the contested, investable layer sits above the cell, in charging infrastructure, stationary storage, grid integration, and the software that orchestrates them, where Europe holds genuine assets.',
+    },
+    {
+      question: 'When will vehicle-to-grid (V2G) become mainstream?',
+      answer:
+        'Not this decade for consumers. Meaningful consumer V2G is roughly ten years out, constrained by battery-wear concerns and grid limits; near-term activity stays confined to captive fleets, typically buffered through stationary storage rather than direct car-to-grid flows.',
+    },
+    {
+      question: 'What is the EV charging market getting wrong?',
+      answer:
+        'Much of the capital models charging as a hardware rollout. The practitioners argue the real economics turn on site utilisation, around a 20% threshold for sustainable returns, and on maintenance, not charger count. That mispricing is systematic, not incidental.',
+    },
+    {
+      question: 'Is the research independent and credible?',
+      answer:
+        "Yes. Every claim is drawn from three named former practitioners, at Audi AG, Sunlight Group, and E-GAP, with direct operating experience in the relevant layer. No external analyst research or web content was added; the figures are the experts' own and are directional. Not investment advice.",
+    },
+    {
+      question: 'How much does the report cost, and how do I access it?',
+      answer:
+        'The report is $3,499, with a one-hour post-purchase consultation available at $350 per hour. You can buy it at transcript-iq.com or request it by emailing info@nextyn.com.',
+    },
+  ],
 }

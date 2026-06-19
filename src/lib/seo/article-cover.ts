@@ -10,4 +10,8 @@ export const ARTICLE_COVER: Record<string, ArticleCover> = {
     src: '/blog/ev-gigafactory-cover.jpg',
     alt: 'Robotic arms assembling a vehicle body on a modern automotive production line',
   },
+  'europe-ev-battery-numbers-three-insiders': {
+    src: '/blog/ev-five-numbers-cover.jpg',
+    alt: 'Close-up of an electric vehicle charging port with a charging cable connected',
+  },
 }
