@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { getBlogPostBySlug, getRelatedBlogPosts, getNextBlogPost } from '@/lib/cache/queries'
 import { ReadingProgress } from './ReadingProgress'
 import { ArticleSidebar } from './ArticleSidebar'
+import { CtaClickTracker } from '@/components/site/CtaClickTracker'
 import type { BlogLeadFormConfig } from './BlogLeadForm'
 import { blogPostingSchema, breadcrumbSchema, faqPageSchema, JsonLd } from '@/lib/seo/jsonld'
 import { canonical, truncate } from '@/lib/seo/metadata'
@@ -123,6 +124,10 @@ export default async function ResourceArticlePage({
 
       {/* Reading progress bar */}
       <ReadingProgress />
+
+      {/* Fires GA4 `cta_click` for any click on a link to the EV report (closing
+          block, in-body blogCta banners, inline links) — feeds the campaign report. */}
+      <CtaClickTracker location={`/resources/${slug}`} />
 
       <div
         style={{
