@@ -24,12 +24,12 @@ import Script from 'next/script'
  *   NEXT_PUBLIC_BING_UET_ID, NEXT_PUBLIC_TABOOLA_ID
  */
 export function AnalyticsTags({ clarity = true, ga4 = true }: { clarity?: boolean; ga4?: boolean } = {}) {
-  const ga4Id = process.env.NEXT_PUBLIC_GA4_ID
+  const ga4Id = process.env.NEXT_PUBLIC_GA4_ID ?? 'G-WWNHDYT1HZ'
   const googleAdsId = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID
-  const clarityId = process.env.NEXT_PUBLIC_CLARITY_ID
+  const clarityId = process.env.NEXT_PUBLIC_CLARITY_ID ?? 'x8bt9licv7'
   const metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID
   const linkedInPartnerId = process.env.NEXT_PUBLIC_LINKEDIN_PARTNER_ID
-  const bingUetId = process.env.NEXT_PUBLIC_BING_UET_ID
+  const bingUetId = process.env.NEXT_PUBLIC_BING_UET_ID ?? process.env.NEXT_PUBLIC_UET_TAG_ID ?? '187193740'
   const taboolaId = process.env.NEXT_PUBLIC_TABOOLA_ID
 
   return (
