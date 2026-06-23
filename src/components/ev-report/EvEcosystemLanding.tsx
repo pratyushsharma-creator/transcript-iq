@@ -318,7 +318,7 @@ const MARKUP_TOP = `
       <a href="#questions" class="nav-link">What's inside</a>
       <a href="#evidence" class="nav-link">The verdicts</a>
       <a href="#talk" class="btn btn-ghost">Talk to an analyst</a>
-      <a href="#pricing" class="btn btn-emerald">Buy — $3,499</a>
+      <a href="#pricing" class="btn btn-emerald" data-ev-buy="header">Buy — $3,499</a>
     </div>
   </div>
 </nav>
