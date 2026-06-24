@@ -5,6 +5,7 @@ import { motion } from 'motion/react'
 import { Check, X } from 'lucide-react'
 import { SectionShell, MintGradientHeading } from './SectionShell'
 import { TurnstileWidget } from '@/components/ui/Turnstile'
+import { trackLeadConversion } from '@/lib/analytics/events'
 
 // ─── Shared animation preset ──────────────────────────────────────────────────
 
@@ -441,6 +442,7 @@ export function CustomTranscriptHeroRenderer({ block }: { block: CustomTranscrip
         return
       }
       setSubmitted(true)
+      trackLeadConversion({ category: 'custom_transcript' })
     } catch {
       setApiError('Something went wrong. Please try again.')
     } finally {

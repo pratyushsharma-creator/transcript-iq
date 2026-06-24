@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import { Mail, MapPin, Send, ChevronDown } from 'lucide-react'
 import { TurnstileWidget } from '@/components/ui/Turnstile'
+import { trackLeadConversion } from '@/lib/analytics/events'
 
 // Note: metadata exported from a separate layout.tsx (this file uses 'use client')
 
@@ -71,6 +72,7 @@ export default function ContactPage() {
       }
 
       setStatus('sent')
+      trackLeadConversion({ category: 'contact', label: form.subject })
     } catch {
       setErrorMsg('Something went wrong. Please try again.')
       setStatus('error')

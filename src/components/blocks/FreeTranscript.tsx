@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback } from 'react'
 import { TurnstileWidget } from '@/components/ui/Turnstile'
+import { trackLeadConversion } from '@/lib/analytics/events'
 
 // ── Corporate email validation ─────────────────────────────────────────────
 const BLOCKED_DOMAINS = new Set([
@@ -189,6 +190,7 @@ export function FreeTranscriptHeroRenderer({ block }: { block: FreeTranscriptHer
         return
       }
       setSubmitted(true)
+      trackLeadConversion({ category: 'free_transcript', label: sectors[activeSector]?.label })
     } catch {
       setApiError('Something went wrong. Please try again.')
     } finally {
