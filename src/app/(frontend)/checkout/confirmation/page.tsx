@@ -4,8 +4,10 @@ import { useEffect, useState, useCallback, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { CheckCircle2, ArrowRight, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react'
+import { AnalyticsTags } from '@/components/site/AnalyticsTags'
+import { PurchaseTracking } from '@/components/site/PurchaseTracking'
 
-// ── Types ──────────────────────────────────────────────────────────────────────
+// ── Types ─────────────────────────────────────────────────────────
 
 type OrderItem = {
   title: string
@@ -23,7 +25,7 @@ type OrderData = {
   totalUsd: number
 }
 
-// ── Progress steps ─────────────────────────────────────────────────────────────
+// ── Progress steps ────────────────────────────────────────────────
 
 function Steps({ current }: { current: 1 | 2 | 3 }) {
   const steps = ['Cart', 'Checkout', 'Confirmation']
@@ -58,7 +60,7 @@ function Steps({ current }: { current: 1 | 2 | 3 }) {
   )
 }
 
-// ── Loading state ──────────────────────────────────────────────────────────────
+// ── Loading state ────────────────────────────────────────────────
 
 function LoadingState() {
   return (
@@ -74,7 +76,7 @@ function LoadingState() {
   )
 }
 
-// ── Error state ────────────────────────────────────────────────────────────────
+// ── Error state ──────────────────────────────────────────────────
 
 function ErrorState({ message }: { message: string }) {
   return (
@@ -104,7 +106,7 @@ function ErrorState({ message }: { message: string }) {
   )
 }
 
-// ── Inner content — uses useSearchParams ───────────────────────────────────────
+// ── Inner content — uses useSearchParams ────────────────────────────────
 
 function ConfirmationContent() {
   const searchParams = useSearchParams()
@@ -147,6 +149,8 @@ function ConfirmationContent() {
 
   return (
     <div className="mx-auto max-w-[680px] px-6 py-12">
+      {/* Fire the purchase conversion suite once the paid order is shown (deduped per order). */}
+      {sessionId && <PurchaseTracking sessionId={sessionId} value={o.totalUsd} />}
       <Steps current={3} />
 
       {/* Success header */}
@@ -268,12 +272,17 @@ function ConfirmationContent() {
   )
 }
 
-// ── Default export — wraps ConfirmationContent in Suspense ─────────────────────
+// ── Default export — wraps ConfirmationContent in Suspense ───────────────────
 
 export default function OrderConfirmationPage() {
   return (
-    <Suspense fallback={<LoadingState />}>
-      <ConfirmationContent />
-    </Suspense>
+    <>
+      {/* Tag loads ungated here (like the EV thank-you page) so the purchase conversion
+          fires even pre-consent; the global loader skips this route to avoid double-load. */}
+      <AnalyticsTags />
+      <Suspense fallback={<LoadingState />}>
+        <ConfirmationContent />
+      </Suspense>
+    </>
   )
 }

@@ -67,3 +67,29 @@ export function trackTaboolaEvent(name: string, params?: Record<string, string |
   w._tfa = w._tfa || []
   w._tfa.push({ notify: 'event', name, id, ...(params ?? {}) })
 }
+
+/**
+ * Fire the full purchase-conversion suite (GA4 + Google Ads + Microsoft UET + Taboola)
+ * exactly once per order. Deduped by Stripe session id via localStorage, so a refresh
+ * or a later revisit of the thank-you URL doesn't double-count (matters for the
+ * Microsoft Ads goal's "count every conversion" setting). Each underlying helper still
+ * no-ops when its platform isn't configured.
+ */
+export function firePurchaseOnce(opts: { sessionId: string; value: number; currency?: string }) {
+  if (typeof window === 'undefined') return
+  const { sessionId, value, currency = 'USD' } = opts
+
+  const key = `tiq_purchase_fired_${sessionId}`
+  try {
+    if (localStorage.getItem(key)) return
+    localStorage.setItem(key, '1')
+  } catch {
+    // localStorage unavailable (private mode) — fall through; the caller's mount
+    // guard still prevents a repeat within the same render.
+  }
+
+  trackEvent('purchase', { transaction_id: sessionId, value, currency })
+  trackAdsConversion({ value, currency, transactionId: sessionId })
+  trackBingEvent('purchase', { revenue_value: value, currency, transaction_id: sessionId })
+  trackTaboolaEvent('make_purchase', { revenue: value, currency })
+}

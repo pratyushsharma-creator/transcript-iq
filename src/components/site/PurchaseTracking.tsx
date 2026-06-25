@@ -4,11 +4,12 @@ import { useEffect, useRef } from 'react'
 import { firePurchaseOnce } from '@/lib/analytics/events'
 
 /**
- * Fires the full purchase-conversion suite (GA4 + Google Ads + Microsoft UET +
- * Taboola) exactly once, after the server has already verified the Stripe session
- * as paid. Deduped per order id (see firePurchaseOnce) so a refresh can't double-count.
+ * Marketplace (transcript / earnings) equivalent of the EV report's ThankYouTracking.
+ * Fires the full purchase-conversion suite (GA4 + Google Ads + Microsoft UET + Taboola)
+ * exactly once, after the confirmation page has fetched and shown the paid order.
+ * Deduped per Stripe session id (see firePurchaseOnce) so a refresh can't double-count.
  */
-export function ThankYouTracking({
+export function PurchaseTracking({
   sessionId,
   value,
   currency = 'USD',
