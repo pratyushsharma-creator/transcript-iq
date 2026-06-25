@@ -43,12 +43,13 @@ export function trackAdsConversion(opts: {
 }
 
 /**
- * Fire a Microsoft Advertising (Bing) UET event. No-ops unless the UET tag is
- * configured, so it stays dormant until NEXT_PUBLIC_BING_UET_ID is set.
+ * Fire a Microsoft Advertising (Bing) UET event. The UET tag now always loads
+ * (AnalyticsTags / EvReportHeadScripts bake in a default tag id), so this pushes
+ * unconditionally — if no UET tag is present the push lands in a plain array and
+ * never sends, which is harmless.
  */
 export function trackBingEvent(name: string, params?: GtagParams) {
   if (typeof window === 'undefined') return
-  if (!process.env.NEXT_PUBLIC_BING_UET_ID) return
   const w = window as unknown as { uetq?: unknown[] }
   w.uetq = w.uetq || []
   w.uetq.push('event', name, params ?? {})
