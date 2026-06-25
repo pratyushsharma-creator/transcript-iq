@@ -8,15 +8,16 @@ const STORAGE_KEY = 'tiq-cookie-consent'
 
 // Routes that load their own ungated analytics (via <AnalyticsTags/> on the page).
 // The global gate skips these so nothing loads twice.
-const SELF_MANAGED_PREFIXES = ['/reports/ev-ecosystem']
+const SELF_MANAGED_PREFIXES = ['/reports/ev-ecosystem', '/checkout/confirmation']
 
 /**
  * Global, consent-aware analytics loader (rendered once in the layout).
  * Loads nothing until the user has accepted cookies (same localStorage key as
  * CookieBanner). Tag markup lives in <AnalyticsTags/>.
  *
- * Exception: the EV report landing + thank-you pages render <AnalyticsTags/>
- * themselves, ungated, so this component skips those routes to avoid double-loading.
+ * Exception: the EV report landing + thank-you pages and the checkout confirmation
+ * page render <AnalyticsTags/> themselves, ungated, so this component skips those
+ * routes to avoid double-loading.
  */
 export function Analytics() {
   const [consent, setConsent] = useState(false)
