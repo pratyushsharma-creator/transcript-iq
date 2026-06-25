@@ -14,22 +14,23 @@ import Script from 'next/script'
  * Props:
  *   clarity — set false to suppress the Clarity tag.
  *   ga4     — set false to suppress GA4.
- *   (The EV report page loads GA4 + Clarity itself in <head> via EvReportHeadScripts,
+ *   uet     — set false to suppress the Microsoft UET tag.
+ *   (The EV report page loads GA4 + Clarity + UET itself in <head> via EvReportHeadScripts,
  *    because next/script does not reliably inject on that dynamic route — so it passes
- *    ga4={false} + clarity={false} to avoid a double-load.)
+ *    ga4={false} + clarity={false} + uet={false} to avoid a double-load.)
  *
  * Env vars:
  *   NEXT_PUBLIC_GA4_ID, NEXT_PUBLIC_GOOGLE_ADS_ID, NEXT_PUBLIC_CLARITY_ID,
  *   NEXT_PUBLIC_META_PIXEL_ID, NEXT_PUBLIC_LINKEDIN_PARTNER_ID,
  *   NEXT_PUBLIC_BING_UET_ID, NEXT_PUBLIC_TABOOLA_ID
  */
-export function AnalyticsTags({ clarity = true, ga4 = true }: { clarity?: boolean; ga4?: boolean } = {}) {
+export function AnalyticsTags({ clarity = true, ga4 = true, uet = true }: { clarity?: boolean; ga4?: boolean; uet?: boolean } = {}) {
   const ga4Id = process.env.NEXT_PUBLIC_GA4_ID ?? 'G-WWNHDYT1HZ'
   const googleAdsId = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID
   const clarityId = process.env.NEXT_PUBLIC_CLARITY_ID ?? 'x8bt9licv7'
   const metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID
   const linkedInPartnerId = process.env.NEXT_PUBLIC_LINKEDIN_PARTNER_ID
-  const bingUetId = process.env.NEXT_PUBLIC_BING_UET_ID ?? process.env.NEXT_PUBLIC_UET_TAG_ID ?? '187193740'
+  const bingUetId = process.env.NEXT_PUBLIC_BING_UET_ID ?? '187259236'
   const taboolaId = process.env.NEXT_PUBLIC_TABOOLA_ID
 
   return (
@@ -122,7 +123,7 @@ export function AnalyticsTags({ clarity = true, ga4 = true }: { clarity?: boolea
       )}
 
       {/* ── Microsoft Advertising (Bing) UET ──────── */}
-      {bingUetId && (
+      {uet && bingUetId && (
         <Script id="bing-uet" strategy="afterInteractive">
           {`
             (function(w,d,t,r,u){
