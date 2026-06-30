@@ -95,6 +95,8 @@ import {
   AnchorRenderer,
 } from './Misc'
 
+import { EARNINGS_ANALYSIS_ENABLED } from '@/lib/flags'
+
 type AnyBlock = { blockType: string } & Record<string, unknown>
 
 export async function RenderBlocks({ blocks }: { blocks: AnyBlock[] | undefined | null }) {
@@ -177,6 +179,9 @@ export async function RenderBlocks({ blocks }: { blocks: AnyBlock[] | undefined 
           case 'personaCarousel':
             return <PersonaCarouselRenderer key={key} block={block as never} />
           case 'featuredProducts':
+            // Earnings Analysis is temporarily hidden (see src/lib/flags.ts) —
+            // skip a featured-products block that sources earnings analyses.
+            if (!EARNINGS_ANALYSIS_ENABLED && (block as { productSource?: string }).productSource === 'earnings-analyses') return null
             return <FeaturedProductsRenderer key={key} block={block as never} />
           case 'productFilter':
             return <ProductFilterRenderer key={key} block={block as never} />
@@ -189,6 +194,7 @@ export async function RenderBlocks({ blocks }: { blocks: AnyBlock[] | undefined 
           case 'resourcesGrid':
             return <ResourcesGridRenderer key={key} block={block as never} />
           case 'earningsCalendar':
+            if (!EARNINGS_ANALYSIS_ENABLED) return null
             return <EarningsCalendarRenderer key={key} block={block as never} />
           case 'scrollPinned':
             return <ScrollPinnedRenderer key={key} block={block as never} />
