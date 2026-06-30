@@ -2,6 +2,7 @@
 import type { MetadataRoute } from 'next'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+import { EARNINGS_ANALYSIS_ENABLED } from '@/lib/flags'
 
 export const revalidate = 3600 // rebuild hourly
 
@@ -37,7 +38,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE_URL, priority: 1.0, changeFrequency: 'daily', lastModified: new Date() },
     { url: `${BASE_URL}/expert-transcripts`, priority: 0.9, changeFrequency: 'daily', lastModified: new Date() },
-    { url: `${BASE_URL}/earnings-analysis`, priority: 0.9, changeFrequency: 'daily', lastModified: new Date() },
+    ...(EARNINGS_ANALYSIS_ENABLED
+      ? ([{ url: `${BASE_URL}/earnings-analysis`, priority: 0.9, changeFrequency: 'daily', lastModified: new Date() }] as MetadataRoute.Sitemap)
+      : []),
     { url: `${BASE_URL}/resources`, priority: 0.8, changeFrequency: 'weekly', lastModified: new Date() },
     { url: `${BASE_URL}/free-transcript`, priority: 0.8, changeFrequency: 'monthly', lastModified: new Date() },
     { url: `${BASE_URL}/how-to-use`, priority: 0.7, changeFrequency: 'monthly', lastModified: new Date() },
@@ -54,12 +57,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: t.updatedAt ? new Date(t.updatedAt) : new Date(),
   }))
 
-  const analysisPages: MetadataRoute.Sitemap = analyses.docs.map((a) => ({
-    url: `${BASE_URL}/earnings-analysis/${a.slug}`,
-    priority: 0.8,
-    changeFrequency: 'weekly',
-    lastModified: a.updatedAt ? new Date(a.updatedAt) : new Date(),
-  }))
+  const analysisPages: MetadataRoute.Sitemap = EARNINGS_ANALYSIS_ENABLED
+    ? analyses.docs.map((a) => ({
+        url: `${BASE_URL}/earnings-analysis/${a.slug}`,
+        priority: 0.8,
+        changeFrequency: 'weekly',
+        lastModified: a.updatedAt ? new Date(a.updatedAt) : new Date(),
+      }))
+    : []
 
   const blogPages: MetadataRoute.Sitemap = posts.docs.map((p) => ({
     url: `${BASE_URL}/resources/${p.slug}`,
