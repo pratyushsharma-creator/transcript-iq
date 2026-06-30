@@ -8,10 +8,13 @@ import { ShoppingCart, Menu, X } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { ThemeToggle } from './ThemeToggle'
 import { useCart } from '@/context/CartContext'
+import { EARNINGS_ANALYSIS_ENABLED } from '@/lib/flags'
 
 const NAV_ITEMS = [
   { label: 'Transcript Library', href: '/expert-transcripts' },
-  { label: 'Earnings Analysis', href: '/earnings-analysis' },
+  ...(EARNINGS_ANALYSIS_ENABLED
+    ? [{ label: 'Earnings Analysis', href: '/earnings-analysis' }]
+    : []),
   { label: 'How It Works', href: '/how-to-use' },
   { label: 'Custom Transcript', href: '/custom-reports' },
   { label: 'Resources', href: '/resources' },
