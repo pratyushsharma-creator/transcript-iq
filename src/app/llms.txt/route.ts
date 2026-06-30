@@ -3,6 +3,15 @@
 // no headers, no searchParams), so Next.js 15 treats it as static by default.
 // The content is fixed at build time. To update, redeploy.
 
+import { EARNINGS_ANALYSIS_ENABLED } from '@/lib/flags'
+
+// Earnings Analysis is temporarily hidden (see src/lib/flags.ts) — omit its
+// site-structure row so it isn't advertised to AI crawlers. Returns when the
+// flag is flipped back to true.
+const earningsStructureRow = EARNINGS_ANALYSIS_ENABLED
+  ? '| https://transcript-iq.com/earnings-analysis | Earnings analysis briefs |\n'
+  : ''
+
 const CONTENT = `# Transcript IQ — llms.txt
 # https://transcript-iq.com
 # Last updated: 2026-05-04
@@ -54,8 +63,7 @@ https://transcript-iq.com/llms-full.txt
 |-----|---------|
 | https://transcript-iq.com/ | Homepage — product overview, value proposition |
 | https://transcript-iq.com/expert-transcripts | Browse all transcripts (filter by sector, geography, tier) |
-| https://transcript-iq.com/earnings-analysis | Earnings analysis briefs |
-| https://transcript-iq.com/resources | Research guides and articles |
+${earningsStructureRow}| https://transcript-iq.com/resources | Research guides and articles |
 | https://transcript-iq.com/free-transcript | Request a free matched transcript |
 | https://transcript-iq.com/how-to-use | How to integrate transcripts into research workflows |
 | https://transcript-iq.com/custom-reports | Custom expert network research commissioning |
