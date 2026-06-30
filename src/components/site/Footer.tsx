@@ -1,13 +1,16 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ComplianceBadgePill } from '../blocks/shared/ComplianceBadgePill'
+import { EARNINGS_ANALYSIS_ENABLED } from '@/lib/flags'
 
 const FOOTER_COLUMNS = [
   {
     title: 'Product',
     links: [
       { label: 'Transcript Library', href: '/expert-transcripts' },
-      { label: 'Earnings Analysis', href: '/earnings-analysis' },
+      ...(EARNINGS_ANALYSIS_ENABLED
+        ? [{ label: 'Earnings Analysis', href: '/earnings-analysis' }]
+        : []),
       { label: 'Custom Reports', href: '/custom-reports' },
       { label: 'Free Transcript', href: '/free-transcript' },
     ],

@@ -2,19 +2,34 @@ import { withPayload } from '@payloadcms/next/withPayload'
 import type { NextConfig } from 'next'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { EARNINGS_ANALYSIS_ENABLED } from './src/lib/flags'
 
 const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
   async redirects() {
-    return [
+    const redirects = [
       // Legacy seed-data URLs that shipped with wrong paths
       { source: '/transcripts', destination: '/expert-transcripts', permanent: true },
-      { source: '/earnings', destination: '/earnings-analysis', permanent: true },
       { source: '/transcript-library', destination: '/expert-transcripts', permanent: true },
       { source: '/blog', destination: '/resources', permanent: true },
     ]
+
+    if (EARNINGS_ANALYSIS_ENABLED) {
+      redirects.push({ source: '/earnings', destination: '/earnings-analysis', permanent: true })
+    } else {
+      // Earnings Analysis is temporarily hidden. Send the section (and the
+      // legacy /earnings alias) to the Transcript Library with a TEMPORARY
+      // (307) redirect so the URLs can be reclaimed cleanly on relaunch.
+      redirects.push(
+        { source: '/earnings', destination: '/expert-transcripts', permanent: false },
+        { source: '/earnings-analysis', destination: '/expert-transcripts', permanent: false },
+        { source: '/earnings-analysis/:slug*', destination: '/expert-transcripts', permanent: false },
+      )
+    }
+
+    return redirects
   },
   images: {
     remotePatterns: [
