@@ -19,13 +19,14 @@ const nextConfig: NextConfig = {
     if (EARNINGS_ANALYSIS_ENABLED) {
       redirects.push({ source: '/earnings', destination: '/earnings-analysis', permanent: true })
     } else {
-      // Earnings Analysis is temporarily hidden. Send the section (and the
-      // legacy /earnings alias) to the Transcript Library with a TEMPORARY
-      // (307) redirect so the URLs can be reclaimed cleanly on relaunch.
+      // Earnings Analysis is temporarily hidden. Send the section, its custom
+      // request page, and the legacy /earnings alias to the closest live page
+      // with a TEMPORARY (307) redirect so the URLs can be reclaimed on relaunch.
       redirects.push(
         { source: '/earnings', destination: '/expert-transcripts', permanent: false },
         { source: '/earnings-analysis', destination: '/expert-transcripts', permanent: false },
         { source: '/earnings-analysis/:slug*', destination: '/expert-transcripts', permanent: false },
+        { source: '/custom-earnings', destination: '/custom-reports', permanent: false },
       )
     }
 
