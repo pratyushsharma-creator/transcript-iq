@@ -3,6 +3,7 @@ import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { CACHE_TAGS } from '@/lib/cache/revalidation'
+import { EARNINGS_ANALYSIS_ENABLED } from '@/lib/flags'
 
 export const revalidate = 3600
 
@@ -81,15 +82,19 @@ const getLlmsFullContent = unstable_cache(
       lines.push('')
     }
 
-    lines.push(`## Earnings Analysis Briefs (${analyses.docs.length} published)`, '')
-    for (const a of analyses.docs) {
-      lines.push(`### ${a.title}`)
-      lines.push(`URL: ${BASE_URL}/earnings-analysis/${a.slug}`)
-      const earningsSummary = (a as Record<string, unknown>).executiveSummaryPreview
-      if (typeof earningsSummary === 'string') {
-        lines.push(`Summary: ${earningsSummary.slice(0, 300)}`)
+    // Earnings Analysis is temporarily hidden (see src/lib/flags.ts). Skip the
+    // whole section so AI crawlers don't discover the hidden report pages.
+    if (EARNINGS_ANALYSIS_ENABLED) {
+      lines.push(`## Earnings Analysis Briefs (${analyses.docs.length} published)`, '')
+      for (const a of analyses.docs) {
+        lines.push(`### ${a.title}`)
+        lines.push(`URL: ${BASE_URL}/earnings-analysis/${a.slug}`)
+        const earningsSummary = (a as Record<string, unknown>).executiveSummaryPreview
+        if (typeof earningsSummary === 'string') {
+          lines.push(`Summary: ${earningsSummary.slice(0, 300)}`)
+        }
+        lines.push('')
       }
-      lines.push('')
     }
 
     return lines.join('\n')
