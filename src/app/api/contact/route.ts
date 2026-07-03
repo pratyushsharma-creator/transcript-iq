@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { verifyTurnstile } from '@/lib/turnstile'
 import { getNotificationTo, getNotificationCC } from '@/lib/notifications'
+import { isPersonalEmail, BUSINESS_EMAIL_ERROR } from '@/lib/email-domains'
 import { sendLeadConfirmation } from '@/lib/resend'
 
 /**
@@ -34,6 +35,11 @@ export async function POST(req: NextRequest) {
     const { name, company, email, subject, message } = body
     if (!name?.trim() || !company?.trim() || !email?.trim() || !subject?.trim() || !message?.trim()) {
       return NextResponse.json({ error: 'All fields are required.' }, { status: 400 })
+    }
+
+    // Business-email gate — reject personal / free inboxes.
+    if (isPersonalEmail(email)) {
+      return NextResponse.json({ error: BUSINESS_EMAIL_ERROR }, { status: 400 })
     }
 
     // 3. Send email via Resend
