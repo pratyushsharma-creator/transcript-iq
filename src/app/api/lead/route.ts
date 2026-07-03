@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { verifyTurnstile } from '@/lib/turnstile'
 import { getNotificationTo, getNotificationCC } from '@/lib/notifications'
+import { isPersonalEmail, BUSINESS_EMAIL_ERROR } from '@/lib/email-domains'
 import { sendLeadConfirmation } from '@/lib/resend'
 
 /**
@@ -42,6 +43,13 @@ export async function POST(req: NextRequest) {
     // Email is optional for custom-earnings (phone-only form); required for all other types
     if (body.type !== 'custom-earnings' && !body.email?.trim()) {
       return NextResponse.json({ error: 'Email is required.' }, { status: 400 })
+    }
+
+    // Business-email gate — reject personal / free inboxes so sales only gets
+    // qualified leads. Only checked when an email was actually provided
+    // (custom-earnings can be phone-only).
+    if (body.email?.trim() && isPersonalEmail(body.email)) {
+      return NextResponse.json({ error: BUSINESS_EMAIL_ERROR }, { status: 400 })
     }
 
     // 3. Build notification email

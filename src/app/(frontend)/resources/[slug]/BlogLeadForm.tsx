@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, type FormEvent } from 'react'
+import { isPersonalEmail, BUSINESS_EMAIL_ERROR } from '@/lib/email-domains'
 
 export type BlogLeadFormConfig = {
   enabled?: boolean | null
@@ -34,6 +35,7 @@ export function BlogLeadForm({
 }) {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
+  const [emailError, setEmailError] = useState('')
 
   const options = (config.selectOptions ?? '')
     .split('\n')
@@ -45,6 +47,15 @@ export function BlogLeadForm({
     if (status === 'submitting') return
     const form = e.currentTarget
     const data = new FormData(form)
+
+    // Business-email gate — block personal inboxes before we hit the server.
+    const emailVal = String(data.get('email') ?? '')
+    if (isPersonalEmail(emailVal)) {
+      setEmailError(BUSINESS_EMAIL_ERROR)
+      return
+    }
+    setEmailError('')
+
     setStatus('submitting')
     setErrorMsg('')
     try {
@@ -112,7 +123,19 @@ export function BlogLeadForm({
 
           <label className="mt-2.5 block">
             <span className={labelCls}>Work email</span>
-            <input name="email" type="email" required placeholder="jane@firm.com" className={inputCls} />
+            <input
+              name="email"
+              type="email"
+              required
+              placeholder="jane@firm.com"
+              className={`${inputCls}${emailError ? ' !border-[#b91c1c] focus:!border-[#b91c1c]' : ''}`}
+              onChange={() => { if (emailError) setEmailError('') }}
+              onBlur={(e) => setEmailError(isPersonalEmail(e.target.value) ? BUSINESS_EMAIL_ERROR : '')}
+              aria-invalid={emailError ? true : undefined}
+            />
+            {emailError && (
+              <span className="mt-1 block text-[11px] leading-snug text-[#b91c1c]">{emailError}</span>
+            )}
           </label>
 
           {config.collectCompany && (

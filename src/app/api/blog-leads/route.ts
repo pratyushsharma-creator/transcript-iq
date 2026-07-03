@@ -3,6 +3,7 @@ import { Resend } from 'resend'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { getNotificationTo, getNotificationCC } from '@/lib/notifications'
+import { isPersonalEmail, BUSINESS_EMAIL_ERROR } from '@/lib/email-domains'
 import { sendLeadConfirmation } from '@/lib/resend'
 
 export const runtime = 'nodejs'
@@ -49,6 +50,10 @@ export async function POST(req: NextRequest) {
   }
   if (!EMAIL_RE.test(email)) {
     return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
+  }
+  // Business-email gate — reject personal / free inboxes.
+  if (isPersonalEmail(email)) {
+    return NextResponse.json({ error: BUSINESS_EMAIL_ERROR }, { status: 400 })
   }
 
   let payload
