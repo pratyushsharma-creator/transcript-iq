@@ -4,12 +4,14 @@ import { useRef, useState } from 'react'
 import { CheckCircle2, Loader2 } from 'lucide-react'
 import { getStoredUtm } from '@/components/site/UTMCapture'
 import { trackEvent, trackAdsConversion, trackBingEvent, trackTaboolaEvent } from '@/lib/analytics/events'
+import { isPersonalEmail, BUSINESS_EMAIL_ERROR } from '@/lib/email-domains'
 
 type Status = 'idle' | 'submitting' | 'success' | 'error'
 
 export function AnalystLeadForm() {
   const [status, setStatus] = useState<Status>('idle')
   const [error, setError] = useState<string | null>(null)
+  const [emailError, setEmailError] = useState('')
   const startedRef = useRef(false)
 
   function handleFirstFocus() {
@@ -21,10 +23,19 @@ export function AnalystLeadForm() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
-    setStatus('submitting')
 
     const form = e.currentTarget
     const data = new FormData(form)
+
+    // Business-email gate — block personal inboxes before we hit the server.
+    const emailVal = String(data.get('email') ?? '').trim()
+    if (isPersonalEmail(emailVal)) {
+      setEmailError(BUSINESS_EMAIL_ERROR)
+      return
+    }
+    setEmailError('')
+
+    setStatus('submitting')
     const utm = getStoredUtm()
 
     const payload = {
@@ -96,7 +107,21 @@ export function AnalystLeadForm() {
           <label htmlFor="lead-email" className="mb-1.5 block text-sm font-medium text-[var(--ink-2)]">
             Work email <span className="text-[var(--accent)]">*</span>
           </label>
-          <input id="lead-email" name="email" type="email" required autoComplete="email" className={inputClass} placeholder="jane@firm.com" />
+          <input
+            id="lead-email"
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            className={`${inputClass}${emailError ? ' !border-[#EF4444] focus:!border-[#EF4444]' : ''}`}
+            placeholder="jane@firm.com"
+            onChange={() => { if (emailError) setEmailError('') }}
+            onBlur={(e) => setEmailError(isPersonalEmail(e.target.value.trim()) ? BUSINESS_EMAIL_ERROR : '')}
+            aria-invalid={emailError ? true : undefined}
+          />
+          {emailError && (
+            <p className="mt-1 text-xs leading-snug text-[#EF4444]">{emailError}</p>
+          )}
         </div>
       </div>
 
