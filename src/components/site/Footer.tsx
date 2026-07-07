@@ -34,11 +34,6 @@ const FOOTER_COLUMNS = [
   },
 ]
 
-interface FooterProps {
-  logoUrl?: string | null
-  logoDarkUrl?: string | null
-}
-
 export function Footer({ logoUrl, logoDarkUrl }: FooterProps) {
   return (
     <footer className="relative mt-20 border-t border-[var(--border)] bg-[var(--bg)]">
@@ -113,11 +108,48 @@ export function Footer({ logoUrl, logoDarkUrl }: FooterProps) {
           ))}
         </div>
 
-        <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-[var(--border)] pt-8 text-[12px] text-[var(--mist)] sm:flex-row sm:items-center">
+        {/* Legal notice / Impressum — required by EU ad platforms (Taboola/Google/Meta).
+            Must be crawlable text on the advertised page: legal entity, registered
+            address, company registration number, and direct contact. */}
+        <div className="mt-16 space-y-1.5 border-t border-[var(--border)] pt-8 text-[11px] leading-relaxed text-[var(--mist)]">
+          <p className="font-mono text-[10px] uppercase tracking-[0.12em]">Legal Notice / Impressum</p>
+          <p>
+            Transcript IQ is operated by{' '}
+            <span className="text-[var(--ink-2)]">Nextyn Advisory Private Limited</span>, 32 Madhuban
+            Industrial Estate, Mahakali Caves Road, Andheri (East), Mumbai, Maharashtra 400093, India.
+          </p>
+          <p>
+            Corporate Identity Number (CIN): U74999MH2018PTC304669 · Represented by Rasesh Seth,
+            Director.
+          </p>
+          <p>
+            Contact:{' '}
+            <a
+              href="mailto:info@nextyn.com"
+              className="transition-colors duration-fast hover:text-[var(--accent)]"
+            >
+              info@nextyn.com
+            </a>
+            {' · '}
+            <a
+              href="tel:+919819736520"
+              className="transition-colors duration-fast hover:text-[var(--accent)]"
+            >
+              +91 98197 36520
+            </a>
+          </p>
+        </div>
+
+        <div className="mt-8 flex flex-col items-start justify-between gap-4 border-t border-[var(--border)] pt-8 text-[12px] text-[var(--mist)] sm:flex-row sm:items-center">
           <span className="font-mono">© 2026 Transcript IQ · All rights reserved</span>
           <span className="font-mono">Every transcript is MNPI-screened and PII-redacted.</span>
         </div>
       </div>
     </footer>
   )
+}
+
+interface FooterProps {
+  logoUrl?: string | null
+  logoDarkUrl?: string | null
 }
