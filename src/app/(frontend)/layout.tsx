@@ -12,6 +12,7 @@ import { CACHE_TAGS } from '@/lib/cache/revalidation'
 import { ThemeProvider } from '@/components/site/ThemeProvider'
 import { Header } from '@/components/site/Header'
 import { Footer } from '@/components/site/Footer'
+import { LegalNotice } from '@/components/site/LegalNotice'
 import { CartProvider } from '@/context/CartContext'
 import { CartDrawer } from '@/components/site/CartDrawer'
 import { CookieBanner } from '@/components/site/CookieBanner'
@@ -107,6 +108,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Analytics />
             <main className="flex-1">{children}</main>
             {!isEvReport && <Footer logoUrl={logoUrl} logoDarkUrl={logoDarkUrl} />}
+            {/* The EV report suppresses the site Footer but still needs the EU legal
+                imprint, so render the shared LegalNotice as a standalone strip there. */}
+            {isEvReport && <LegalNotice standalone />}
           </CartProvider>
         </ThemeProvider>
       </body>
