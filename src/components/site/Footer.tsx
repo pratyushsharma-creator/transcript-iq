@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ComplianceBadgePill } from '../blocks/shared/ComplianceBadgePill'
+import { LegalNotice } from './LegalNotice'
 import { EARNINGS_ANALYSIS_ENABLED } from '@/lib/flags'
 
 const FOOTER_COLUMNS = [
@@ -113,7 +114,12 @@ export function Footer({ logoUrl, logoDarkUrl }: FooterProps) {
           ))}
         </div>
 
-        <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-[var(--border)] pt-8 text-[12px] text-[var(--mist)] sm:flex-row sm:items-center">
+        {/* Legal notice / Impressum — required by EU ad platforms (Taboola/Google/Meta). */}
+        <div className="mt-16 border-t border-[var(--border)] pt-8">
+          <LegalNotice />
+        </div>
+
+        <div className="mt-8 flex flex-col items-start justify-between gap-4 border-t border-[var(--border)] pt-8 text-[12px] text-[var(--mist)] sm:flex-row sm:items-center">
           <span className="font-mono">© 2026 Transcript IQ · All rights reserved</span>
           <span className="font-mono">Every transcript is MNPI-screened and PII-redacted.</span>
         </div>
