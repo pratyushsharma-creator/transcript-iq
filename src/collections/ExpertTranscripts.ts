@@ -53,6 +53,30 @@ export const ExpertTranscripts: CollectionConfig = {
         description: 'e.g. "C-Suite", "Vice President", "Director", "Managing Director"',
       },
     },
+    {
+      name: 'expertBio',
+      type: 'textarea',
+      admin: {
+        description:
+          'Full expert profile / bio paragraph shown in the Expert Profile tab on the product page. Optional.',
+      },
+    },
+    {
+      name: 'expertExperience',
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+        description: 'Short credential shown as a box in the Expert Profile grid, e.g. "20+ years". Optional.',
+      },
+    },
+    {
+      name: 'expertPatents',
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+        description: 'Short credential shown as a box in the Expert Profile grid, e.g. "16 U.S. + 1 Indian". Optional.',
+      },
+    },
 
     // ── Call details ───────────────────────────────────────────────────
     {
@@ -73,7 +97,7 @@ export const ExpertTranscripts: CollectionConfig = {
     {
       name: 'executiveSummaryPreview',
       type: 'textarea',
-      admin: { description: 'Shown locked on the product detail page before purchase. Separate paragraphs with a blank line.' },
+      admin: { description: 'Shown locked on the product detail page before purchase. Separate paragraphs with a blank line. Consecutive lines starting with "- " render as a bulleted list.' },
     },
     {
       name: 'topicsCovered',
