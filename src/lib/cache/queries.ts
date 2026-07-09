@@ -106,7 +106,7 @@ export const getTranscriptBySlug = unstable_cache(
     })
     return docs[0] ?? null
   },
-  ['expert-transcript-by-slug'],
+  ['expert-transcript-by-slug-v2'],
   { tags: [CACHE_TAGS.expertTranscripts], revalidate: 86400 },
 )
 
