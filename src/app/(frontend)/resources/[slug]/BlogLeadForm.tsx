@@ -149,7 +149,7 @@ export function BlogLeadForm({
               required
               placeholder="jane@firm.com"
               className={`${inputCls}${emailError ? ' !border-[#b91c1c] focus:!border-[#b91c1c]' : ''}`}
-              onChange={() => { if (emailError) setEmailError('') }}
+              onChange={(e) => setEmailError(isPersonalEmail(e.target.value) ? BUSINESS_EMAIL_ERROR : '')}
               onBlur={(e) => setEmailError(isPersonalEmail(e.target.value) ? BUSINESS_EMAIL_ERROR : '')}
               aria-invalid={emailError ? true : undefined}
             />
