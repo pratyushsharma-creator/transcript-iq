@@ -1,4 +1,5 @@
 import type { MigrateUpArgs, MigrateDownArgs } from '@payloadcms/db-postgres'
+import { sql } from '@payloadcms/db-postgres'
 
 /**
  * Data migration: apply the new copy to the "AI execution gap" transcript.
@@ -7,6 +8,16 @@ import type { MigrateUpArgs, MigrateDownArgs } from '@payloadcms/db-postgres'
  * during `payload migrate` (before `next build`), so the statically generated
  * product page picks up the new content in the same deploy — no manual script
  * run against prod required.
+ *
+ * Implementation note: this uses direct SQL rather than payload.update() on
+ * purpose. payload.update() runs checkDocumentLockStatus(), which queries
+ * payload_locked_documents_rels — a table that is missing the blog_leads_id
+ * column on this database (pre-existing schema drift). That made the operation
+ * (and the whole deploy) fail. Direct SQL touches only the transcript tables.
+ *
+ * We update both the main table (what the published frontend reads) and the
+ * latest row of the _v versions table (what the admin edit view loads), so the
+ * admin doesn't later revert the copy on save.
  *
  * The expert_bio / expert_experience / expert_patents columns were added by the
  * preceding 20260709_000000_expert_profile_fields migration.
@@ -39,43 +50,33 @@ const EXPERT_BIO =
 const EXPERT_EXPERIENCE = '20+ years'
 const EXPERT_PATENTS = '16 U.S. + 1 Indian'
 
-export async function up({ payload, req }: MigrateUpArgs): Promise<void> {
-  const res = await payload.find({
-    collection: 'expert-transcripts',
-    where: { slug: { equals: SLUG } },
-    limit: 1,
-    depth: 0,
-    req,
-  })
+export async function up({ db }: MigrateUpArgs): Promise<void> {
+  // Main table — what the published frontend reads.
+  await db.execute(sql`
+    UPDATE "expert_transcripts" SET
+      "title" = ${TITLE},
+      "summary" = ${SUMMARY},
+      "executive_summary_preview" = ${EXECUTIVE_SUMMARY},
+      "expert_bio" = ${EXPERT_BIO},
+      "expert_experience" = ${EXPERT_EXPERIENCE},
+      "expert_patents" = ${EXPERT_PATENTS},
+      "updated_at" = now()
+    WHERE "slug" = ${SLUG};
+  `)
 
-  const doc = res.docs[0]
-  if (!doc) {
-    payload.logger.warn(`[migration] transcript "${SLUG}" not found — skipping content update`)
-    return
-  }
-
-  await payload.update({
-    collection: 'expert-transcripts',
-    id: doc.id,
-    overrideAccess: true,
-    req,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    data: {
-      title: TITLE,
-      slug: SLUG, // pin slug — keeps the live URL unchanged despite the new title
-      summary: SUMMARY,
-      executiveSummaryPreview: EXECUTIVE_SUMMARY,
-      expertBio: EXPERT_BIO,
-      expertExperience: EXPERT_EXPERIENCE,
-      expertPatents: EXPERT_PATENTS,
-      _status: 'published',
-    } as any,
-  })
-
-  payload.logger.info(`[migration] applied new copy to transcript "${SLUG}"`)
+  // Latest version row — what the admin edit view loads (prevents revert on save).
+  await db.execute(sql`
+    UPDATE "_expert_transcripts_v" SET
+      "version_title" = ${TITLE},
+      "version_summary" = ${SUMMARY},
+      "version_executive_summary_preview" = ${EXECUTIVE_SUMMARY},
+      "version_expert_bio" = ${EXPERT_BIO},
+      "version_expert_experience" = ${EXPERT_EXPERIENCE},
+      "version_expert_patents" = ${EXPERT_PATENTS}
+    WHERE "version_slug" = ${SLUG} AND "latest" = true;
+  `)
 }
 
-export async function down({ payload }: MigrateDownArgs): Promise<void> {
+export async function down(): Promise<void> {
   // No-op: this is a one-way content migration; the prior copy is not restored.
-  payload.logger.info('[migration] ai_execution_gap_content down() is a no-op')
 }
