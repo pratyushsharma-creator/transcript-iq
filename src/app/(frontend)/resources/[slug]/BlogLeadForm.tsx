@@ -36,11 +36,26 @@ export function BlogLeadForm({
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
   const [emailError, setEmailError] = useState('')
+  // Enables the submit button only once the form is genuinely submittable, so a
+  // click event (which the Taboola conversion pixel counts) never fires on an
+  // incomplete form — no dead clicks inflating the conversion count.
+  const [canSubmit, setCanSubmit] = useState(false)
 
   const options = (config.selectOptions ?? '')
     .split('\n')
     .map((o) => o.trim())
     .filter(Boolean)
+
+  // Recomputed on every field change. Relies on the browser's own constraint
+  // validation (required name + email format) plus our business-email gate and
+  // the role select (when that dropdown is shown).
+  function recomputeValidity(form: HTMLFormElement) {
+    const data = new FormData(form)
+    const email = String(data.get('email') ?? '').trim()
+    const emailBusiness = email.length > 0 && !isPersonalEmail(email)
+    const roleFilled = options.length === 0 || String(data.get('role') ?? '') !== ''
+    setCanSubmit(form.checkValidity() && emailBusiness && roleFilled)
+  }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -81,6 +96,7 @@ export function BlogLeadForm({
       }
       setStatus('success')
       form.reset()
+      setCanSubmit(false)
     } catch (err) {
       setStatus('error')
       setErrorMsg(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
@@ -115,7 +131,11 @@ export function BlogLeadForm({
           {config.successMessage || 'Thank you — we’ll be in touch within one business day.'}
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="mt-4">
+        <form
+          onSubmit={handleSubmit}
+          onChange={(e) => recomputeValidity(e.currentTarget)}
+          className="mt-4"
+        >
           <label className="block">
             <span className={labelCls}>Full name</span>
             <input name="name" type="text" required placeholder="Jane Doe" className={inputCls} />
@@ -174,8 +194,9 @@ export function BlogLeadForm({
 
           <button
             type="submit"
-            disabled={status === 'submitting'}
-            className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-[9px] bg-[var(--accent)] px-5 py-3 text-[14px] font-semibold text-white shadow-cta transition-all duration-150 hover:-translate-y-px hover:bg-[var(--accent-bright)] disabled:cursor-not-allowed disabled:opacity-70"
+            disabled={status === 'submitting' || !canSubmit}
+            aria-disabled={status === 'submitting' || !canSubmit}
+            className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-[9px] bg-[var(--accent)] px-5 py-3 text-[14px] font-semibold text-white shadow-cta transition-all duration-150 hover:-translate-y-px hover:bg-[var(--accent-bright)] disabled:cursor-not-allowed disabled:!translate-y-0 disabled:!bg-[var(--border)] disabled:!text-[var(--mist)] disabled:!shadow-none"
           >
             {status === 'submitting' ? 'Sending…' : config.submitLabel || 'Request conversation'}
             {status !== 'submitting' && (
