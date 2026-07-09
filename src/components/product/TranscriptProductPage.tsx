@@ -17,6 +17,9 @@ interface TranscriptDoc {
   slug: string
   expertFormerTitle: string
   expertLevel: string
+  expertBio?: string
+  expertExperience?: string
+  expertPatents?: string
   dateConducted?: string
   duration?: number
   pageCount?: number
@@ -101,6 +104,36 @@ const COMP_ICONS: Record<CompKey, React.ReactNode> = {
       <circle cx="5" cy="3" r="1.5"/><path d="M1.5 8.5c0-1.66 1.57-3 3.5-3s3.5 1.34 3.5 3"/>
     </svg>
   ),
+}
+
+/**
+ * Renders the executive summary preview. Paragraphs are separated by a blank
+ * line; a block whose lines all start with "- " (or "•") renders as a bulleted
+ * list instead of a paragraph.
+ */
+function ExecSummaryContent({ text }: { text: string }) {
+  const blocks = text.split(/\n\n+/)
+  return (
+    <>
+      {blocks.map((block, i) => {
+        const lines = block.split(/\n/).map((l) => l.trim()).filter(Boolean)
+        const isList = lines.length > 0 && lines.every((l) => l.startsWith('- ') || l.startsWith('•'))
+        if (isList) {
+          return (
+            <ul key={i} className="list-none pl-0 space-y-2.5">
+              {lines.map((l, j) => (
+                <li key={j} className="flex items-start gap-2.5">
+                  <span className="w-[6px] h-[6px] rounded-full bg-[var(--accent)] flex-shrink-0 mt-[9px]" />
+                  <span>{l.replace(/^[-•]\s*/, '')}</span>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        return <p key={i}>{block}</p>
+      })}
+    </>
+  )
 }
 
 function RelatedCard({ doc }: { doc: RelatedTranscript }) {
@@ -205,12 +238,23 @@ export function TranscriptProductPage({
     { label: 'Geography', value: geoDisplay || '—', accent: false },
   ]
 
+  const hasExtraCreds = Boolean(transcript.expertExperience || transcript.expertPatents)
   const expertSpecs = [
     { label: 'Seniority', value: levelDisplay, accent: false },
     { label: 'Sector', value: primarySector?.name ?? '—', accent: false },
     { label: 'Geography', value: geoDisplay || '—', accent: false },
-    { label: 'Status', value: 'Former (no active conflicts)', accent: false },
-    { label: 'Compliance', value: 'Pre-screened ✓', accent: true },
+    ...(transcript.expertExperience
+      ? [{ label: 'Experience', value: transcript.expertExperience, accent: false }]
+      : []),
+    ...(transcript.expertPatents
+      ? [{ label: 'Patents', value: transcript.expertPatents, accent: false }]
+      : []),
+    ...(hasExtraCreds
+      ? [{ label: 'Status', value: 'Pre-screened ✓', accent: true }]
+      : [
+          { label: 'Status', value: 'Former (no active conflicts)', accent: false },
+          { label: 'Compliance', value: 'Pre-screened ✓', accent: true },
+        ]),
   ]
 
   const includedItems = [
@@ -357,11 +401,9 @@ export function TranscriptProductPage({
                       </span>
                     </div>
                     <div className="px-6 py-6 text-[15px] text-[var(--ink-2)] leading-[1.75] space-y-4">
-                      {(transcript.executiveSummaryPreview ?? transcript.summary ?? 'Executive summary available after purchase.')
-                        .split(/\n\n+/)
-                        .map((para, i) => (
-                          <p key={i}>{para}</p>
-                        ))}
+                      <ExecSummaryContent
+                        text={transcript.executiveSummaryPreview ?? transcript.summary ?? 'Executive summary available after purchase.'}
+                      />
                     </div>
                   </div>
                 </div>
@@ -404,6 +446,11 @@ export function TranscriptProductPage({
                         </div>
                       </div>
                     </div>
+                    {transcript.expertBio && (
+                      <p className="text-[14px] text-[var(--ink-2)] leading-[1.7] mb-5 pl-3.5 border-l-2 border-[var(--accent-border)]">
+                        {transcript.expertBio}
+                      </p>
+                    )}
                     <div
                       className="grid grid-cols-2 sm:grid-cols-3 gap-px rounded-[8px] overflow-hidden"
                       style={{ background: 'var(--border)', border: '1px solid var(--border)' }}
