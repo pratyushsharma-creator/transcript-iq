@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from 'react'
 import { isPersonalEmail, BUSINESS_EMAIL_ERROR } from '@/lib/email-domains'
+import { trackEvent, trackBingEvent, trackTaboolaEvent } from '@/lib/analytics/events'
 
 export type BlogLeadFormConfig = {
   enabled?: boolean | null
@@ -95,6 +96,14 @@ export function BlogLeadForm({
         throw new Error(j.error || 'Something went wrong. Please try again.')
       }
       setStatus('success')
+      // Fire lead conversions ONLY on a server-confirmed save (res.ok) — never on
+      // the button click — so Taboola / GA4 / Bing count real leads, not dead,
+      // blocked, or failed clicks. Point the Taboola conversion at this `lead`
+      // event rather than the submit-button click. Every helper no-ops unless its
+      // pixel/tag ID is configured, so this is safe when a channel is unset.
+      trackEvent('generate_lead', { event_category: 'blog', event_label: 'request_conversation' })
+      trackBingEvent('lead', { event_category: 'blog', event_label: 'request_conversation' })
+      trackTaboolaEvent('lead')
       form.reset()
       setCanSubmit(false)
     } catch (err) {
