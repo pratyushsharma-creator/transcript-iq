@@ -136,7 +136,7 @@ export default async function Image({ params }: Props) {
             >
               PS
             </div>
-            <div style={{ fontSize: 15, color: 'rgba(250,250,250,0.6)', fontFamily: 'sans-serif' }}>
+            <div style={{ display: 'flex', fontSize: 15, color: 'rgba(250,250,250,0.6)', fontFamily: 'sans-serif' }}>
               {authorName as string}{publishedAt ? ` · ${publishedAt}` : ''}
             </div>
           </div>
