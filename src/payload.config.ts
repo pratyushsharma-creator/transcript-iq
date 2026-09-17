@@ -129,6 +129,10 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URI || '',
     },
     migrationDir: path.resolve(dirname, 'migrations'),
+    // Never let `next dev` auto-sync the schema. Every environment currently points at the
+    // production database, so a dev server on an older branch would silently drop columns.
+    // Schema changes go through `pnpm payload migrate:create` — see docs/database-workflow.md.
+    push: false,
   }),
   sharp,
   plugins,
