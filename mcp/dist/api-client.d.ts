@@ -6,8 +6,10 @@
  * deployable-anywhere side-car process.
  *
  * Configuration (env vars):
- *   TIQ_API_URL    Base URL for the Next.js app (default: http://localhost:3000)
- *   TIQ_API_KEY    Your personal MCP API key from /admin/account — used for admin routes and write tools
+ *   TIQ_API_URL    Base URL for the Next.js app (default: http://localhost:3000;
+ *                  production: https://www.transcript-iq.com)
+ *   TIQ_API_KEY    Your personal MCP API key from /admin/account (admin/editor users) —
+ *                  used for admin routes and write tools. Not PAYLOAD_SECRET.
  */
 export declare const BASE_URL: string;
 export interface Transcript {
@@ -63,7 +65,7 @@ export interface Order {
     status: string;
     createdAt: string;
 }
-export declare function apiGet<T>(path: string, params?: Record<string, string>): Promise<T>;
+export declare function apiGet<T>(path: string, params?: Record<string, string>, adminAuth?: boolean): Promise<T>;
 export declare function apiPost<T>(path: string, body: unknown, adminAuth?: boolean): Promise<T>;
 export interface PayloadList<T> {
     docs: T[];
