@@ -23,8 +23,8 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) o
       "command": "node",
       "args": ["/absolute/path/to/Transcript IQ (Claude Build)/mcp/dist/index.js"],
       "env": {
-        "TIQ_API_URL": "https://transcript-iq.com",
-        "TIQ_API_KEY": "<your PAYLOAD_SECRET value>"
+        "TIQ_API_URL": "https://www.transcript-iq.com",
+        "TIQ_API_KEY": "<your MCP API key>"
       }
     }
   }
@@ -41,7 +41,7 @@ For local development (Next.js running on port 3000):
       "args": ["/absolute/path/to/mcp/dist/index.js"],
       "env": {
         "TIQ_API_URL": "http://localhost:3000",
-        "TIQ_API_KEY": "<your PAYLOAD_SECRET from .env.local>"
+        "TIQ_API_KEY": "<your MCP API key>"
       }
     }
   }
@@ -60,7 +60,7 @@ Add to your `.claude/settings.json`:
       "args": ["./mcp/dist/index.js"],
       "env": {
         "TIQ_API_URL": "http://localhost:3000",
-        "TIQ_API_KEY": "<PAYLOAD_SECRET>"
+        "TIQ_API_KEY": "<your MCP API key>"
       }
     }
   }
@@ -84,7 +84,7 @@ Add to your `.claude/settings.json`:
 
 | Tool | Description |
 |------|-------------|
-| `list_orders` | List customer orders. Filter by status or email. |
+| `list_orders` | List customer orders. Filter by status or email. Admin users only. |
 | `draft_content` | Draft blog, transcript summary, or earnings summary from a brief using Claude. |
 | `generate_meta` | Generate SEO title + meta description for content using Claude. |
 | `suggest_tags` | Suggest industry and category tags using Claude. |
@@ -110,4 +110,4 @@ list_orders with status=paid, limit=10
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `TIQ_API_URL` | No | Base URL (default: `http://localhost:3000`) |
-| `TIQ_API_KEY` | Admin tools only | Value of `PAYLOAD_SECRET` from `.env.local` |
+| `TIQ_API_KEY` | Admin tools only | Your personal MCP API key: the auto-generated **MCP API Key** field on your admin/editor account at `/admin/account`. Not `PAYLOAD_SECRET`. |

@@ -9,7 +9,7 @@
  *
  * Configuration:
  *   TIQ_API_URL   Base URL for the running Next.js app (default: http://localhost:3000)
- *   TIQ_API_KEY   PAYLOAD_SECRET value — required for admin-only tools
+ *   TIQ_API_KEY   Your personal MCP API key from /admin/account — required for admin-only tools
  *
  * Setup:
  *   1. Install: cd mcp && npm install
@@ -21,8 +21,8 @@
  *            "command": "node",
  *            "args": ["/path/to/mcp/dist/index.js"],
  *            "env": {
- *              "TIQ_API_URL": "https://transcript-iq.com",
- *              "TIQ_API_KEY": "<PAYLOAD_SECRET>"
+ *              "TIQ_API_URL": "https://www.transcript-iq.com",
+ *              "TIQ_API_KEY": "<your MCP API key>"
  *            }
  *          }
  *        }

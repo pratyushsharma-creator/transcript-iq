@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { apiGet, apiPost, buildPayloadQuery } from '../api-client.js';
+import { apiGet, apiPost } from '../api-client.js';
 // ── List Orders ────────────────────────────────────────────────────────────────
 export const listOrdersSchema = z.object({
     status: z.enum(['paid', 'pending', 'refunded', 'failed']).optional().describe('Filter by order status'),
@@ -8,17 +8,14 @@ export const listOrdersSchema = z.object({
     page: z.number().int().min(1).default(1).describe('Page number'),
 });
 export async function listOrders(args) {
-    const where = {};
+    const params = { limit: String(args.limit), page: String(args.page) };
     if (args.status)
-        where.status = args.status;
+        params.status = args.status;
     if (args.customerEmail)
-        where.customerEmail = args.customerEmail;
-    const params = buildPayloadQuery(where, {
-        limit: String(args.limit),
-        page: String(args.page),
-        sort: '-createdAt',
-    });
-    const result = await apiGet('/api/orders', params);
+        params.customerEmail = args.customerEmail;
+    // Payload's own /api/orders only accepts a logged-in admin session, so orders come from
+    // an MCP route that checks the API key instead (admin users only).
+    const result = await apiGet('/api/mcp/orders', params, true);
     if (result.docs.length === 0) {
         return 'No orders found.';
     }
