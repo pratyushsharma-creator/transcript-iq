@@ -3,10 +3,14 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { stripePlugin } from '@payloadcms/plugin-stripe'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+import { attachDatabasePool } from '@vercel/functions'
 import path from 'path'
 import { buildConfig, type Plugin } from 'payload'
+import type { Pool } from 'pg'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
+
+import { resilientPg, withExplicitSslMode, withoutInitCrash } from './lib/db/postgres'
 
 import {
   Users,
@@ -124,16 +128,29 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  db: postgresAdapter({
-    pool: {
-      connectionString: process.env.DATABASE_URI || '',
-    },
-    migrationDir: path.resolve(dirname, 'migrations'),
-    // Never let `next dev` auto-sync the schema. Every environment currently points at the
-    // production database, so a dev server on an older branch would silently drop columns.
-    // Schema changes go through `pnpm payload migrate:create` — see docs/database-workflow.md.
-    push: false,
-  }),
+  db: withoutInitCrash(
+    postgresAdapter({
+      // Retries the connection errors Neon returns while its compute wakes up.
+      pg: resilientPg,
+      pool: {
+        connectionString: withExplicitSslMode(process.env.DATABASE_URI || ''),
+        connectionTimeoutMillis: 5_000,
+        idleTimeoutMillis: 5_000,
+        keepAlive: true,
+      },
+      migrationDir: path.resolve(dirname, 'migrations'),
+      // Never let `next dev` auto-sync the schema. Every environment currently points at the
+      // production database, so a dev server on an older branch would silently drop columns.
+      // Schema changes go through `pnpm payload migrate:create` — see docs/database-workflow.md.
+      push: false,
+    }),
+  ),
+  onInit: async (payload) => {
+    // Vercel Fluid compute: keep the instance alive until idle pool clients have closed, so a
+    // suspended instance never resumes holding sockets Neon has already dropped.
+    const pool = (payload.db as unknown as { pool?: Pool }).pool
+    if (pool) attachDatabasePool(pool)
+  },
   sharp,
   plugins,
 })
