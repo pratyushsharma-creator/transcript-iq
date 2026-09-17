@@ -1,4 +1,5 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { resendAdapter } from '@payloadcms/email-resend'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { stripePlugin } from '@payloadcms/plugin-stripe'
@@ -128,6 +129,15 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
+  // Payload's auth emails (forgot / reset password) go out through the site's Resend account.
+  // Without a key (local dev) Payload falls back to logging emails to the console.
+  email: process.env.RESEND_API_KEY
+    ? resendAdapter({
+        apiKey: process.env.RESEND_API_KEY,
+        defaultFromAddress: (process.env.RESEND_FROM_EMAIL || 'hello@transcript-iq.com').replace(/^.*<([^>]+)>.*$/, '$1'),
+        defaultFromName: 'Transcript IQ',
+      })
+    : undefined,
   db: withoutInitCrash(
     postgresAdapter({
       // Retries the connection errors Neon returns while its compute wakes up.

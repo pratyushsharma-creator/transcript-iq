@@ -1,11 +1,20 @@
 import type { CollectionConfig } from 'payload'
 import { adminOnly, adminOrSelf } from '../access/adminOnly'
+import { renderPasswordResetEmail } from '../lib/passwordResetEmail'
 
 export const Users: CollectionConfig = {
   slug: 'users',
   auth: {
     cookies: { secure: true, sameSite: 'Lax' },
     tokenExpiration: 60 * 60 * 24 * 30,
+    forgotPassword: {
+      generateEmailSubject: () => 'Reset your Transcript IQ password',
+      generateEmailHTML: (args) =>
+        renderPasswordResetEmail({
+          token: args?.token ?? '',
+          user: args?.user as { name?: string | null; role?: string | null } | undefined,
+        }),
+    },
   },
   admin: {
     useAsTitle: 'email',
