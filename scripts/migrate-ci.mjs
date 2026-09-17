@@ -45,8 +45,11 @@ try {
   )
 
   if (rowCount > 0) {
-    console.log(
-      `[migrate-ci] Removed ${rowCount} dev-mode sentinel row(s): ${rows.map((r) => r.name).join(', ')}`,
+    // With `push: false` in payload.config.ts this should never happen. If it does, someone
+    // ran a dev server with schema push enabled against this database — check for drift.
+    console.warn(
+      `[migrate-ci] WARNING: removed ${rowCount} dev-mode sentinel row(s): ${rows.map((r) => r.name).join(', ')}. ` +
+        'A dev server pushed schema changes directly to this database; the schema may have drifted from migrations.',
     )
   } else {
     console.log('[migrate-ci] No dev-mode sentinel found — payload_migrations is clean')
